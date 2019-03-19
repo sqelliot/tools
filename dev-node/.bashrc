@@ -23,7 +23,7 @@ function psqlconnect() {
 }
 
 
-alias editAlia='vim ~/.bashrc; echo '\''SOURCE THAT FILE'\''; source ~/.bashrc'
+alias editBashrc='vim ~/.bashrc; echo '\''SOURCE THAT FILE'\''; source ~/.bashrc'
 
 
 
