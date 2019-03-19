@@ -11,6 +11,11 @@ fi
 
 # User specific aliases and functions
 
+# self-source
+self='/tools/alias/euca/.bashrc'
+alias editEucaBash='vim ~/${self}; source ~/${self}'
+
+
 alias which='which '
 export PGPASSWORD=fcms_pass
 #sudo yum install rh-postgres96

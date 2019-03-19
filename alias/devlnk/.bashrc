@@ -12,6 +12,11 @@ export PATH=$PATH:$M2
 PS1='\u@\h:\W\$ '
 
 
+# self-source
+self='/tools/alias/devlnk/.bashrc'
+alias editDevlnkBash='vim ~/${self}; source ~/${self}'
+
+
 alias intellij=/opt/selliott/idea-IC-181.5087.20/bin/idea.sh
 alias repos='cd /project/git/selliott/dev/'
 PATH=$PATH:/opt/selliott/sublime_text_3
@@ -46,21 +51,7 @@ function govscp() {
   scp $1 sean.elliott3@${govIP}:~
 }
 
-
-
-# Git aliases
-alias gfall='git fetch --all -p'
-
-
-
 alias scpspring='scp /home/users/selliott/.m2/repository/com/baesystems/auth/service/applications/spring-reverse-proxy/99.99.T-SNAPSHOT/spring-reverse-proxy-99.99.T-SNAPSHOT.jar sean.elliott3@${cint99IP}:'
-
-
-
-# repos stuff
-alias gogit='cd ~/repos/'
-alias fc='cd ~/repos/fcms-config'
-alias fd='cd ~/repos/fcms-deployment'
 
 #function clone_fcms(){
 #
@@ -74,5 +65,3 @@ alias editBashrc='vim ~/.bashrc; source ~/.bashrc'
 
 
 
-# git
-alias gfo='git fetch origin -p'
