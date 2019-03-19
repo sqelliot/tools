@@ -5,6 +5,7 @@ alias editSharedBash='vim ~/${self}; source ~/${self}'
 
 
 # Shared git commands
+alias gpo='git push origin'
 alias gfo='git fetch origin -p'
 alias gogit='cd ~/repos/'
 alias fc='cd ~/repos/fcms-config'
