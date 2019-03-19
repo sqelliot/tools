@@ -13,8 +13,8 @@ PS1='\u@\h:\W\$ '
 
 
 # self-source
-self='/tools/alias/devlnk/.bashrc'
-alias editDevlnkBash='vim ~/${self}; source ~/${self}'
+devlnkBash='/tools/alias/devlnk/.bashrc'
+alias editDevlnkBash='vim ~/${devlnkBash}; source ~/${devlnkBash}'
 
 
 alias intellij=/opt/selliott/idea-IC-181.5087.20/bin/idea.sh

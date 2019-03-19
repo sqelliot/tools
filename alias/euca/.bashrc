@@ -12,8 +12,12 @@ fi
 # User specific aliases and functions
 
 # self-source
-self='/tools/alias/euca/.bashrc'
-alias editEucaBash='vim ~/${self}; source ~/${self}'
+eucaBash='/tools/alias/euca/.bashrc'
+alias editEucaBash='vim ~/${eucaBash}; source ~/${eucaBash}'
+
+# source the shared .basrhc
+shared='/tools/alias/shared/.bashrc'
+source ~/${shared}
 
 
 alias which='which '
