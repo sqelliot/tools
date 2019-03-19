@@ -17,6 +17,11 @@ devlnkBash='/tools/alias/devlnk/.bashrc'
 alias editDevlnkBash='vim ~/${devlnkBash}; source ~/${devlnkBash}'
 
 
+# source the shared .basrhc
+shared='/tools/alias/shared/.bashrc'
+source ~/${shared}
+
+
 alias intellij=/opt/selliott/idea-IC-181.5087.20/bin/idea.sh
 alias repos='cd /project/git/selliott/dev/'
 PATH=$PATH:/opt/selliott/sublime_text_3
