@@ -1,7 +1,8 @@
 
 # self-source
 self='/tools/alias/shared/.bashrc'
-alias editSharedBash='vim ~/${self}; source ~/${self}'
+alias sourceSharedBash='source ~/${self}'
+alias editSharedBash='vim ~/${self}; sourceSharedBash'
 
 
 # Shared git commands
