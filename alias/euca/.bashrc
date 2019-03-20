@@ -34,7 +34,7 @@ function psqlconnect() {
 
 alias editBashrc='vim ~/.bashrc; echo '\''SOURCE THAT FILE'\''; source ~/.bashrc'
 
-
+alias ap='ansible-playbook -vv'
 
 
 
