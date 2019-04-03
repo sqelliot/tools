@@ -73,3 +73,7 @@ function celb(){
   name=$1
   aws elb describe-load-balancers --load-balancer-names *${name}* --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
+
+function clkillinst(){
+  aws ec2 terminate-instances --instance-ids $@
+}
