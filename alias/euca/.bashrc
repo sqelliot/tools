@@ -14,6 +14,7 @@ fi
 # self-source
 eucaBash='/tools/alias/euca/.bashrc'
 alias editEucaBash='vim ~/${eucaBash}; source ~/${eucaBash}'
+alias sourceEucaBash='source ~/${eucaBash}'
 
 # source the shared .basrhc
 shared='/tools/alias/shared/.bashrc'
@@ -58,12 +59,21 @@ function all_subsystem_instances_by_name(){
   aws ec2 describe-instances --filter "Name=tag:Name,Values=fcms-*-99-${subsystem}*" --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value[]' --output text
 }
 
-function instance_lookup(){
+function clinstlookup(){
   name=$1
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
 
-function elb_lookup(){
+function clinstfilter(){
+  name=$1
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" 
+}
+
+function celb(){
   name=$1
   aws elb describe-load-balancers --load-balancer-names *${name}* --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
+}
+
+function clkillinst(){
+  aws ec2 terminate-instances --instance-ids $@
 }
