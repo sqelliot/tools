@@ -21,7 +21,6 @@ alias gpllo='git pull origin'
 alias gpll='git pull'
 alias gpsho='git push origin'
 alias gpsh='git push'
-alias gogit='cd ~/repos/'
 alias    gadd='git add'
 alias    gbra='git branch'
 alias   gbram='git branch -m'
@@ -35,7 +34,13 @@ alias    gsta='git status'
 alias   gka='gitk --all'
 alias    fc='cd ~/repos/fcms-config'
 alias    fd='cd ~/repos/fcms-deployment'
+alias   mci='mvn clean install'
+alias  mciskip='mci -Dmaven.test.skip=true'
 
 function gitnew() {
   git checkout -b $1 origin/dev
+}
+
+function gogit() {
+  cd ~/repos/$1
 }
