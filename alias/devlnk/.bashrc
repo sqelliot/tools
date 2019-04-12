@@ -28,17 +28,17 @@ PATH=$PATH:/opt/selliott/sublime_text_3
 
 
 
-# ssh into dev-99 public subnet
-#alias dev-99='ssh sean.elliott3@10.93.20.95'
+# ssh into dev99 public subnet
+#alias dev99='ssh sean.elliott3@10.93.20.95'
 alias ls='ls --color=auto'
 alias rel12='ssh -i ~/keys/m868-fcms.pem cloud-user@10.93.23.182'
 
 alias rel-12b='ssh -i ~/keys/fcms-rel-devops.pem -p 1122 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 20" cloud-user@fcms-rel-bastion-000821152832.elb.cdc-west-2.devlnk.net'
 export cint99IP=10.93.23.165
-alias cint-99='ssh sean.elliott3@${cint99IP}'
+alias cint99='ssh sean.elliott3@${cint99IP}'
 export dev99IP=10.93.21.16
-alias dev-99='ssh sean.elliott3@${dev99IP}'
-alias devmgmt='ssh sean.elliott3@fcms-dev-99-inf-mgmt-000821152832.elb.cdc-west-2.devlnk.net'
+alias dev99='ssh sean.elliott3@${dev99IP}'
+alias devmgmt='ssh sean.elliott3@fcms-dev99-inf-mgmt-000821152832.elb.cdc-west-2.devlnk.net'
 function scpcint (){ 
   scp $1 sean.elliott3@${cint99IP}:~
 }
