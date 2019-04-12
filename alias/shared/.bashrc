@@ -5,6 +5,8 @@ sharedBash='/tools/alias/shared/.bashrc'
 alias sourceSharedBash='source ~/${sharedBash}'
 alias editSharedBash='vim ~/${sharedBash}; sourceSharedBash'
 
+alias tools='cd ~/tools/'
+
 ## This does not work
 #function tools(){
 #  git_tool=--git-dir=${toolsPath}
