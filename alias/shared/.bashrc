@@ -21,6 +21,7 @@ alias tools='cd ~/tools/'
 # Shared git commands
 alias gpllo='git pull origin'
 alias gpll='git pull'
+alias gpsha='git push --all'
 alias gpsho='git push origin'
 alias gpsh='git push'
 alias    gadd='git add'
