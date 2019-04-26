@@ -9,16 +9,7 @@ alias editLocalBash='vim ${localBash}; source ${localBash}'
 
 alias tools='cd ~/tools/'
 
-## This does not work
-#function tools(){
-#  git_tool=--git-dir=${toolsPath}
-#
-#  echo "==========================================="
-#  echo "tools: $@ ${git_tool}"
-#  echo "==========================================="
-#  echo;echo
-#  eval '"$@" ${git_tool}'
-#}
+# Random junk for now
 
 # Shared git commands
 alias gpllo='git pull origin'
