@@ -14,7 +14,6 @@ PS1='\u@\h:\W\$ '
 
 # self-source
 devlnkBash='/tools/alias/devlnk/.bashrc'
-alias editDevlnkBash='vim ~/${devlnkBash}; source ~/${devlnkBash}'
 
 
 # source the shared .basrhc
