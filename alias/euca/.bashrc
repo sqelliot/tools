@@ -65,6 +65,11 @@ function clinstlookup(){
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[0])' --output table
 }
 
+function clinstcount(){
+  name=$1
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value] | sort_by(@,&[0])' --output text | nl
+}
+
 function clinstfilter(){
   name=$1
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" 
@@ -77,4 +82,9 @@ function celb(){
 
 function clkillinst(){
   aws ec2 terminate-instances --instance-ids $@
+}
+
+function volume_usage(){
+  sum=0
+  vals=$(aws ec2 --describe-volumes --filters "Name=tag:Name,Values=*$1*" --query)
 }
