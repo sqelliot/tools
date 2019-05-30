@@ -1,7 +1,7 @@
 
 # self-source
 toolsPath=~/tools/
-sharedBash='/tools/alias/shared/.bashrc'
+sharedBash='/tools/bash/shared/.bashrc'
 localBash='~/.bashrc'
 alias sourceSharedBash='source ~/${sharedBash}'
 alias editSharedBash='vim ~/${sharedBash}; sourceSharedBash'

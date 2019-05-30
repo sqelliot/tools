@@ -16,11 +16,11 @@ PS1='\u@\h:\W\$ '
 
 
 # self-source
-devlnkBash='/tools/alias/devlnk/.bashrc'
+devlnkBash='/tools/bash/devlnk/.bashrc'
 
 
 # source the shared .basrhc
-shared='/tools/alias/shared/.bashrc'
+shared='/tools/bash/shared/.bashrc'
 source ~/${shared}
 
 
