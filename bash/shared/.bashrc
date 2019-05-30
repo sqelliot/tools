@@ -52,12 +52,13 @@ function gitclone() {
 }
 
 
-function cd_up() {
+function goup() {
   num=$1
 
   for i in $(seq 1 ${num})
   do
-    echo "Went up ${i} dirs"
+    #echo "Went up ${i} dirs"
+    pwd
     cd ..
   done
 }
