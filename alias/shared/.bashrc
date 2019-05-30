@@ -25,6 +25,7 @@ alias    gco='git commit'
 alias   gcom='git commit -m'
 alias   gfo='git fetch origin -p'
 alias    glog='git log'     
+alias  greset='git stash; gfo; git reset --hard'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
@@ -41,4 +42,22 @@ function gitnew() {
 
 function gogit() {
   cd ~/repos/$1
+}
+
+function gitclone() {
+  proj=$1
+  repo=$2
+
+  git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
+}
+
+
+function cd_up() {
+  num=$1
+
+  for i in $(seq 1 ${num})
+  do
+    echo "Went up ${i} dirs"
+    cd ..
+  done
 }

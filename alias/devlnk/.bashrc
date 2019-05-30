@@ -6,6 +6,9 @@ export JAVA_HOME=/common/COTS/java/release/jdk1.8.0_66/jdk1.8.0_66-x64
 export JAVA_PATH=/$JAVA_HOME/bin
 export PATH=$PATH:$JAVA_PATH
 export PATH=$PATH:$M2
+export PATH=$PATH:~/gradle
+export PATH=$PATH:~/gradle/gradle-4.2.1/bin/
+export GRADLE_USER_HOME=~/gradle/
 
 
 # terminal display
@@ -34,7 +37,7 @@ alias rel12='ssh -i ~/keys/m868-fcms.pem cloud-user@10.93.23.182'
 
 alias rel-12b='ssh -i ~/keys/fcms-rel-devops.pem -p 1122 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 20" cloud-user@fcms-rel-bastion-000821152832.elb.cdc-west-2.devlnk.net'
 export cint99IP=10.93.23.165
-alias cint99='ssh cint'
+alias cint='ssh cint'
 export devIP=10.93.21.16
 alias dev='ssh dev'
 alias devmgmt='ssh sean.elliott3@fcms-dev99-inf-mgmt-000821152832.elb.cdc-west-2.devlnk.net'
