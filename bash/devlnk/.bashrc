@@ -36,7 +36,7 @@ alias ls='ls --color=auto'
 alias rel12='ssh -i ~/keys/m868-fcms.pem cloud-user@10.93.23.182'
 
 alias rel-12b='ssh -i ~/keys/fcms-rel-devops.pem -p 1122 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 20" cloud-user@fcms-rel-bastion-000821152832.elb.cdc-west-2.devlnk.net'
-export cint99IP=10.93.23.165
+export cint99IP=10.93.23.161
 alias cint='ssh cint'
 export devIP=10.93.21.16
 alias dev='ssh dev'
