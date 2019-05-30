@@ -35,7 +35,7 @@ function psqlconnect() {
 function hspsqlconnect() {
   ip=$1
   echo 'Connecting to ${ip}'
-  source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_ago_db --dbname=fcms_ago_db
+  source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_ago_db --dbname=ago_db --password
 }
 
 alias editBashrc='vim ~/.bashrc; echo '\''SOURCE THAT FILE'\''; source ~/.bashrc'
