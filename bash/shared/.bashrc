@@ -3,7 +3,17 @@
 toolsPath=~/tools/
 sharedBash='/tools/bash/shared/.bashrc'
 localBash='~/.bashrc'
-alias sourceSharedBash='source ~/${sharedBash}'
+updateFileMessage=$'
+
+#########################################
+
+               BASH UPDATED
+
+#########################################
+
+'
+
+alias sourceSharedBash='source ~/${sharedBash} && echo \"$updateFileMessage\"'
 alias editSharedBash='vim ~/${sharedBash}; sourceSharedBash'
 alias editLocalBash='vim ${localBash}; source ${localBash}'
 
@@ -34,7 +44,7 @@ alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
-alias gupdate='git stash; gfo; git rebase; git stash pop'
+alias gupdate='gfo; git rebase'
 alias    fc='cd ~/repos/fcms-config'
 alias    fd='cd ~/repos/fcms-deployment'
 alias   mci='mvn clean install'
