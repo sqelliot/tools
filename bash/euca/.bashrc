@@ -65,17 +65,17 @@ function all_subsystem_instances_by_name(){
 }
 
 ## cl: command lineup
-function clinstlookup(){
+function instlookup(){
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[0])' --output table
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' --output table
 }
 
-function clinstcount(){
+function instcount(){
   name=$1
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value] | sort_by(@,&[0])' --output text | nl
 }
 
-function clinstfilter(){
+function instfilter(){
   name=$1
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" 
 }
@@ -85,7 +85,7 @@ function celb(){
   aws elb describe-load-balancers --load-balancer-names *${name}* --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
 
-function clkillinst(){
+function instkill(){
   aws ec2 terminate-instances --instance-ids $@
 }
 
