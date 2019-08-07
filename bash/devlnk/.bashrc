@@ -6,14 +6,18 @@ export JAVA_HOME=/common/COTS/java/release/jdk1.8.0_66/jdk1.8.0_66-x64
 export JAVA_PATH=/$JAVA_HOME/bin
 export PATH=$PATH:$JAVA_PATH
 export PATH=$PATH:$M2
-export PATH=$PATH:~/gradle
-export PATH=$PATH:~/gradle/gradle-4.2.1/bin/
-export GRADLE_USER_HOME=~/gradle/
+#export GRADLE_USER_HOME=/home/users/selliott/project-git-selliott/gradle/
+#export GRADLE=/home/users/selliott/project-git-selliott/gradle/gradle-5.3.1/bin/
+#export PATH=$PATH:$GRADLE_USER_HOME
+#export PATH=$PATH:$GRADLE
+#export GRADLE4=/home/users/selliott/project-git-selliott/gradle/gradle-4.2.1/bin/
+#export PATH=$PATH:$GRADLE4
 
 
 # terminal display
 PS1='\u@\h:\W\$ '
 
+alias gradle='~/repos/fast/gradlew'
 
 # self-source
 devlnkBash='/tools/bash/devlnk/.bashrc'
@@ -42,7 +46,7 @@ export devIP=10.93.21.16
 alias dev='ssh dev'
 alias devmgmt='ssh sean.elliott3@fcms-dev99-inf-mgmt-000821152832.elb.cdc-west-2.devlnk.net'
 function scpcint (){ 
-  scp $1 sean.elliott3@${cint99IP}:~
+  scp $1 sean.elliott3@cint:~
 }
 
 alias ll='ls -l'
