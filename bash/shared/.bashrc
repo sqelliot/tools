@@ -10,20 +10,24 @@ alias editLocalBash='vim ${localBash}; source ${localBash}'
 alias tools='cd ~/tools/'
 
 # Random junk for now
+alias grep='grep --color'
 
 # Shared git commands
 alias gpllo='git pull origin'
 alias gpll='git pull'
 alias gpsha='git push --all'
 alias gpsho='git push origin'
+alias gpshodefault='gpsho $(gcurrbra)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
+alias  gcurrbra="git branch | grep \* | cut -d ' ' -f2"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
 alias    gco='git commit'
 alias   gcom='git commit -m'
 alias   gfo='git fetch origin -p'
+alias  gtfo='gfo'
 alias    glog='git log'     
 alias  greset='git stash; gfo; git reset --hard'
 alias   grv='git remote -v'
