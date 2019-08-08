@@ -13,7 +13,7 @@ updateFileMessage=$'
 
 '
 
-alias sourceSharedBash='source ~/${sharedBash} && echo \"$updateFileMessage\"'
+alias sourceSharedBash='source ~/${sharedBash} && echo "$updateFileMessage"'
 alias editSharedBash='vim ~/${sharedBash}; sourceSharedBash'
 alias editLocalBash='vim ${localBash}; source ${localBash}'
 
