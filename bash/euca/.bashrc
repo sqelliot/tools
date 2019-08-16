@@ -80,7 +80,7 @@ function instfilter(){
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" 
 }
 
-function celb(){
+function elb(){
   name=$1
   aws elb describe-load-balancers --load-balancer-names *${name}* --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
@@ -92,4 +92,9 @@ function instkill(){
 function volume_usage(){
   sum=0
   vals=$(aws ec2 --describe-volumes --filters "Name=tag:Name,Values=*$1*" --query)
+}
+
+function elb_instances() {
+  name=$1
+  aws elb describe-instance-health --load-balancer-name ${name}
 }
