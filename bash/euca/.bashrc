@@ -89,6 +89,11 @@ function ec2kill(){
   aws ec2 terminate-instances --instance-ids $@
 }
 
+function ec2instanceIds() {
+  name=$1
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[InstanceId]' --output text
+}
+
 function volume_usage(){
   sum=0
   vals=$(aws ec2 --describe-volumes --filters "Name=tag:Name,Values=*$1*" --query)
