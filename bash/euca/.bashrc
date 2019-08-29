@@ -94,6 +94,11 @@ function ec2instanceIds() {
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[InstanceId]' --output text
 }
 
+function ec2instanceIps() {
+  name=$1
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text
+}
+
 function volume_usage(){
   sum=0
   vals=$(aws ec2 --describe-volumes --filters "Name=tag:Name,Values=*$1*" --query)
