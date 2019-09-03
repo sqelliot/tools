@@ -19,12 +19,13 @@ alias editLocalBash='vim ${localBash}; source ${localBash}'
 
 alias tools='cd ~/tools/'
 
-# Random junk for now
+# pretty grep
 alias grep='grep --color'
 
+# Random junk for now
+alias grep='grep --color -n'
+
 # Shared git commands
-alias gpllo='git pull origin'
-alias gpll='git pull'
 alias gpsha='git push --all'
 alias gpsho='git push origin'
 alias gpshodefault='gpsho $(gbracurr)'
@@ -40,12 +41,13 @@ alias   gcom='git commit -m'
 alias   gfo='git fetch origin -p'
 alias  gtfo='gfo'
 alias    glog='git log --oneline --graph --all --decorate'     
+alias grebase='gfo; git rebase'
 alias  greset=' gfo; git reset --hard origin/$(gbracurr)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
-alias gupdate='gfo; git rebase'
+alias gupdate='gfo; git rebase origin/$(gbracurr)'
 alias    fc='cd ~/repos/fcms-config'
 alias    fd='cd ~/repos/fcms-deployment'
 alias   mci='mvn clean install'
@@ -64,6 +66,21 @@ function gitclone() {
   repo=$2
 
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
+}
+
+function gitDR() {
+
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: gitDR <jira number> <release number>"
+    exit 2
+  fi
+
+  branch_suffix=$1
+  release_num=$2
+  
+  gfo
+  git branch drfix/dev/${branch_suffix} origin/dev
+  gch -b drfix/release/${release_num}/${branch_suffix} origin/release/${release_num}
 }
 
 
