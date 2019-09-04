@@ -68,11 +68,21 @@ function gitclone() {
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
 }
 
+function gitdev() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: git dev <jira number>[-<info>]"
+    return 0
+  fi
+  
+  name=$1
+  git checkout -b feature/dev/${name} origin/dev
+}
+
 function gitDR() {
 
   if [ "$#" -ne 2 ]; then
     echo "Usage: gitDR <jira number> <release number>"
-    exit 2
+    return 0
   fi
 
   branch_suffix=$1
