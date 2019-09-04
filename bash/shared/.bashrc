@@ -94,3 +94,12 @@ function goup() {
     cd ..
   done
 }
+
+function git_jira() {
+  echo $(gbracurr) | awk -F'[/]' '{print $3}' | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+}
+
+function gjiracommit(){
+  msg=$@
+  git commit -m "$(git_jira): ${msg}"
+}
