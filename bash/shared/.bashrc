@@ -110,6 +110,10 @@ function git_jira() {
 }
 
 function gjiracommit(){
+  if [ "$#" -lt 1  ]; then
+    echo "Usage: gjiracommit <msg>"
+    return 0
+  fi
   msg=$@
   git commit -m "$(git_jira): ${msg}"
 }
