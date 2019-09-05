@@ -32,7 +32,7 @@ alias gpshodefault='gpsho $(gbracurr)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
-alias gdev='git checkout dev'
+alias gdev='gfo;git checkout dev;gupdate'
 alias  gbracurr="git branch | grep \* | cut -d ' ' -f2"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
@@ -68,7 +68,7 @@ function gitclone() {
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
 }
 
-function gitdev() {
+function gitdevbranch() {
   if [ "$#" -ne 1 ]; then
     echo "Usage: git dev <jira number>[-<info>]"
     return 0
