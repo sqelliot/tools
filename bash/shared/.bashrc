@@ -1,8 +1,6 @@
 
 # self-source
-toolsPath=~/tools/
-sharedBash='/tools/bash/shared/.bashrc'
-localBash='~/.bashrc'
+sharedBash='/repos/tools/bash/shared/.bashrc'
 updateFileMessage=$'
 
 #########################################
@@ -16,8 +14,6 @@ updateFileMessage=$'
 alias sourceSharedBash='source ~/${sharedBash} && echo "$updateFileMessage"'
 alias editSharedBash='vim ~/${sharedBash}; sourceSharedBash'
 alias editLocalBash='vim ${localBash}; source ${localBash}'
-
-alias tools='cd ~/tools/'
 
 # pretty grep
 alias grep='grep --color'
