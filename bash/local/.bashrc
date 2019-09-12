@@ -9,4 +9,4 @@ function scpcint (){
   scp $1 sean.elliott3@cint:~
 }
 
-alias govaccess='ssh gov' 
+alias gov='ssh gov' 
