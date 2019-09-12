@@ -1,19 +1,9 @@
 #!/bin/bash
 # .bashrc
 
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
-fi
-
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-# export SYSTEMD_PAGER=
-
-# User specific aliases and functions
-
 # self-source
-eucaBash='/tools/bash/euca/.bashrc'
-alias editEucaBash='vim ~/${eucaBash}; source ~/${eucaBash}'
+eucaBash=~/repos/tools/bash/euca/.bashrc
+alias editEucaBash='vim ${eucaBash}; source ${eucaBash}'
 alias sourceEucaBash='source ~/${eucaBash}'
 
 # source the shared .basrhc
