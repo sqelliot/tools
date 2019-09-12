@@ -1,7 +1,7 @@
-
-# self-source
-sharedBash=~/repos/tools/bash/shared/.bashrc
-localBash=~/repos/tools/bash/local/.bashrc
+# self-references
+toolsPath=~/repos/tools/
+sharedBash=${toolsPath}/bash/shared/.bashrc
+localBash=${toolsPath}/bash/local/.bashrc
 updateFileMessage=$'
 
 #########################################
@@ -22,13 +22,15 @@ function editLocalBash() {
   vim ${localBash}; sourceBash ${localBash}
 }
 
-# pretty grep
-alias grep='grep --color'
+# go to tools
+alias tools="cd ${toolsPath}"
 
 # Random junk for now
 alias grep='grep --color -n'
 
-# Shared git commands
+##########################################################
+################# Shared git commands ####################
+##########################################################
 alias gpsha='git push --all'
 alias gpsho='git push origin'
 alias gpshodefault='gpsho $(gbracurr)'
@@ -53,6 +55,11 @@ alias   gka='gitk --all'
 alias gupdate='gfo; git rebase origin/$(gbracurr)'
 alias    fc='cd ~/repos/fcms-config'
 alias    fd='cd ~/repos/fcms-deployment'
+##########################################################
+################# Shared git commands ####################
+##########################################################
+
+##### Maven commands ##### 
 alias   mci='mvn clean install'
 alias  mciskip='mci -Dmaven.test.skip=true'
 
