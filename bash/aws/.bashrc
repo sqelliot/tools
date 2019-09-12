@@ -2,19 +2,12 @@
 # .bashrc
 
 # self-source
-eucaBash=~/repos/tools/bash/euca/.bashrc
-alias editEucaBash='vim ${eucaBash}; source ${eucaBash}'
-alias sourceEucaBash='source ~/${eucaBash}'
+awsBash=~/repos/tools/bash/aws/.bashrc
+alias editEucaBash='vim ${awsBash}; source ${awsBash}'
+alias sourceEucaBash='source ${awsBash}'
 
-# source the shared .basrhc
-shared='/tools/bash/shared/.bashrc'
-source ~/${shared}
-
-
-alias which='which '
 export PGPASSWORD=fcms_pass
-#sudo yum install rh-postgres96
-#source /opt/rh/rh-postgresql96/enable
+alias ap='ansible-playbook -vv'
 
 function psqlconnect() {
   ip=$1
@@ -27,13 +20,6 @@ function hspsqlconnect() {
   echo 'Connecting to ${ip}'
   source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_hs_db --dbname=hs_db --password
 }
-
-alias editBashrc='vim ~/.bashrc; echo '\''SOURCE THAT FILE'\''; source ~/.bashrc'
-
-alias ap='ansible-playbook -vv'
-
-
-
 
 function cintssh() {
   ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1
