@@ -1,5 +1,6 @@
 # self-references
-toolsPath=~/repos/tools/
+reposPath=~/repos/
+toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
 updateFileMessage=$'
@@ -54,8 +55,8 @@ alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
 alias gupdate='gfo; git rebase origin/$(gbracurr)'
-alias    fc='cd ~/repos/fcms-config'
-alias    fd='cd ~/repos/fcms-deployment'
+alias    fc='cd ${reposPath}/fcms-config'
+alias    fd='cd ${reposPath}/fcms-deployment'
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -69,7 +70,7 @@ function gitnew() {
 }
 
 function gogit() {
-  cd ~/repos/$1
+  cd ${reposPath}/$1
 }
 
 function gitclone() {
