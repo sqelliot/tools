@@ -55,8 +55,8 @@ alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
 alias gupdate='gfo; git rebase origin/$(gbracurr)'
-alias    fc='cd ${reposPath}/fcms-config'
-alias    fd='cd ${reposPath}/fcms-deployment'
+alias    fc='gogit fcms-config'
+alias    fd='gogit fcms-deployment'
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
