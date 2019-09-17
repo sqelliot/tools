@@ -115,7 +115,7 @@ function goup() {
 }
 
 function git_jira_issue() {
-  echo $(gbracurr ) | grep -o "\(FCMS\|FES\|WOOD\).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+  echo $(gbracurr ) | grep -oE "(FCMS|FES|WOOD).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
 function gjiracommit(){
