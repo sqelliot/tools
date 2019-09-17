@@ -114,7 +114,7 @@ function goup() {
   done
 }
 
-function git_jira() {
+function git_jira_issue() {
   echo $(gbracurr ) | grep -o "\(FCMS\|FES\|WOOD\).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
@@ -124,5 +124,5 @@ function gjiracommit(){
     return 0
   fi
   msg=$@
-  git commit -m "$(git_jira): ${msg}"
+  git commit -m "$(git_jira_issue): ${msg}"
 }
