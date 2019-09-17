@@ -71,12 +71,17 @@ function gogit() {
 }
 
 function gitclone() {
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: gitclone <project> <repo>"
+    return 0
+  fi
   proj=$1
   repo=$2
 
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
 }
 
+# Create a new branch off remote origin/dev
 function gitdevbranch() {
   if [ "$#" -ne 1 ]; then
     echo "Usage: git dev <jira number>[-<info>]"
@@ -87,6 +92,7 @@ function gitdevbranch() {
   git checkout -b feature/dev/${name} origin/dev
 }
 
+# Create the two branches necessary for a DR
 function gitDR() {
 
   if [ "$#" -ne 2 ]; then
@@ -114,10 +120,13 @@ function goup() {
   done
 }
 
+# Grabs only the jira number from the current git branch
+# Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 function git_jira_issue() {
   echo $(gbracurr ) | grep -oE "(FCMS|FES|WOOD).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
+# Commit with message starting with the current jira issue 
 function gjiracommit(){
   if [ "$#" -lt 1  ]; then
     echo "Usage: gjiracommit <msg>"
