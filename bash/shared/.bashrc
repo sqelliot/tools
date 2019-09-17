@@ -24,7 +24,7 @@ function editLocalBash() {
 }
 
 # go to tools
-alias tools="cd ${toolsPath}"
+alias tools="gogit tools"
 
 # Random junk for now
 alias grep='grep --color -n'
