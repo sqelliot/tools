@@ -3,8 +3,8 @@
 
 # self-source
 awsBash=~/repos/tools/bash/aws/.bashrc
-alias editEucaBash='vim ${awsBash}; source ${awsBash}'
-alias sourceEucaBash='source ${awsBash}'
+alias editAwsBash='vim ${awsBash}; source ${awsBash}'
+alias sourceAwsBash='source ${awsBash}'
 
 export PGPASSWORD=fcms_pass
 alias ap='ansible-playbook -vv'
