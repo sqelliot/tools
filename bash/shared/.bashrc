@@ -26,9 +26,6 @@ function editLocalBash() {
 # go to tools
 alias tools="gogit tools"
 
-# Random junk for now
-alias grep='grep --color -n'
-
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -118,7 +115,7 @@ function goup() {
 }
 
 function git_jira() {
-  echo $(gbracurr) | awk -F'[/]' '{print $3}' | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+  echo $(gbracurr ) | grep -o "\(FCMS\|FES\|WOOD\).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
 function gjiracommit(){
