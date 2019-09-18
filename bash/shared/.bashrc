@@ -62,6 +62,9 @@ alias    fd='gogit fcms-deployment'
 alias   mci='mvn clean install'
 alias  mciskip='mci -Dmaven.test.skip=true'
 
+##### Gradle commands ##### 
+alias gradlefast='${reposPath}/fast/gradlew'
+
 function gitnew() {
   git checkout -b $1 origin/dev
 }
@@ -134,4 +137,25 @@ function gjiracommit(){
   fi
   msg=$@
   git commit -m "$(git_jira_issue): ${msg}"
+}
+
+function is_repo_path() {
+  path=$(pwd)
+  if [[ $path != *"repos"* ]]; then
+    echo "Error: Not a repo path"
+    return 0
+  fi
+}
+
+function curr_repo_path() {
+  path=$(echo $(pwd) | grep -oE ".*repos\/.*")
+  git_bck_path=${path}/.git/GITGUI_BCK
+
+  echo "$(git_jira_issue): " > $git_bck_path
+}
+
+function gitguijira() {
+  is_repo_path
+  curr_repo_path
+  git gui
 }
