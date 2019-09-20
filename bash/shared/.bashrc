@@ -96,7 +96,7 @@ function gitdevbranch() {
 }
 
 # Create the two branches necessary for a DR
-function gitDR() {
+function gitDr() {
 
   if [ "$#" -ne 2 ]; then
     echo "Usage: gitDR <jira number> <release number>"
@@ -107,10 +107,9 @@ function gitDR() {
   release_num=$2
   
   gfo
-  git branch drfix/dev/${branch_suffix} origin/dev
-  gch -b drfix/release/${release_num}/${branch_suffix} origin/release/${release_num}
+  git branch drfix/release/${release_num}/${branch_suffix} origin/release/${release_num}
+  gch -b drfix/dev/${branch_suffix} origin/dev
 }
-
 
 function goup() {
   num=$1
