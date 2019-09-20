@@ -43,22 +43,22 @@ function all_subsystem_instances_by_name(){
 ## cl: command lineup
 function ec2lookup(){
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=running,stopped" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' --output table
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" "Name=instance-state-name,Values=running,stopped" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' --output table
 }
 
 function ec2count(){
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --filters "Name=instance-state-name,Values=running"  --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value] | sort_by(@,&[0])' --output text | nl
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --filters "Name=instance-state-name,Values=running"  --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value] | sort_by(@,&[0])' --output text | nl
 }
 
 function ec2filter(){
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" 
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" 
 }
 
 function elb(){
   name=$1
-  aws elb describe-load-balancers --load-balancer-names *${name}* --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
+  aws elb describe-load-balancers --load-balancer-names *${name} --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
 
 function ec2kill(){
@@ -67,12 +67,12 @@ function ec2kill(){
 
 function ec2instanceIds() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[InstanceId]' --output text
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[InstanceId]' --output text
 }
 
 function ec2instanceIps() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text
 }
 
 function volume_usage(){
