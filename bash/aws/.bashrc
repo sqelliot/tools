@@ -84,3 +84,12 @@ function elb_instances() {
   name=$1
   aws elb describe-instance-health --load-balancer-name ${name}
 }
+
+function scpToInstance (){ 
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: scpToEuc <ip> <file>" 
+    return 0
+  fi
+
+  scp $2 sean.elliott3@${1}:~
+}
