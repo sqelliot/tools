@@ -2,8 +2,13 @@
 
 alias ls='ls --color=auto'
 
-function scpcint (){ 
-  scp $1 sean.elliott3@cint:~
+function scpToEuc (){ 
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: scpToEuc <locale> <file>" 
+    return 0
+  fi
+
+  scp $2 sean.elliott3@${1}:~
 }
 
 alias gov='ssh gov' 
