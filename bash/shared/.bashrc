@@ -52,7 +52,6 @@ alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
-alias gupdate='gfo; git rebase origin/$(gbracurr)'
 alias    fc='gogit fcms-config'
 alias    fd='gogit fcms-deployment'
 ##########################################################
@@ -86,7 +85,7 @@ function gitclone() {
 }
 
 # Create a new branch off remote origin/dev
-function gitdevbranch() {
+function gitfeaturebranch() {
   if [ "$#" -ne 1 ]; then
     echo "Usage: git dev <jira number>[-<info>]"
     return 0
@@ -112,6 +111,7 @@ function gitDr() {
   gch -b drfix/dev/${branch_suffix} origin/dev
 }
 
+
 function goup() {
   num=$1
 
@@ -127,6 +127,17 @@ function goup() {
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 function git_jira_issue() {
   echo $(gbracurr ) | grep -oE "(FCMS|FES|WOOD).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+}
+
+# update a branch
+# default to remote if no arg given
+function gupdate() {
+  if [ "$#" -ne 1 ]; then
+    gfo; git rebase origin/$(gbracurr)
+    return 0
+  fi
+
+  gfo; git rebase origin/$1
 }
 
 # Commit with message starting with the current jira issue 
