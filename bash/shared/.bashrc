@@ -26,6 +26,11 @@ function editLocalBash() {
 # go to tools
 alias tools="gogit tools"
 
+
+function functions() {
+  grep -hr "function .*().*{" ${toolsPath} | sort
+}
+
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
