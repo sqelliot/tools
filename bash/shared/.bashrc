@@ -175,3 +175,7 @@ function gitguijira() {
   curr_repo_path
   git gui
 }
+
+function gchgrep() {
+  gch $(gbragrep $1)
+}
