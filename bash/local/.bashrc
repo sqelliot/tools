@@ -2,7 +2,7 @@
 
 alias ls='ls --color=auto'
 
-function scpToEuc (){ 
+function scptoeuc (){ 
   if [ "$#" -ne 2 ]; then
     echo "Usage: scpToEuc <locale> <file>" 
     return 0
