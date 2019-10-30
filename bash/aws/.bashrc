@@ -93,3 +93,11 @@ function scptoinstance (){
 
   scp -i /etc/ansible/keypairs/fcms-dev-99.pem $2 cloud-user@$1:~
 }
+
+function delete_my_enis() {
+  echo "Ok......."
+  for i in $(aws ec2 describe-network-interfaces --filters "Name=description,Values=*sean_elliott3*" --query NetworkInterfaces[].NetworkInterfaceId --output text);
+  do 
+      aws ec2 delete-network-interface --network-interface-id ${i};
+  done
+}
