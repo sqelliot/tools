@@ -35,7 +35,7 @@ function curl_auth_instance(){
 }
 
 
-function all_subsystem_instances_by_name(){
+function ec2subsystem(){
   subsystem=$1
   aws ec2 describe-instances --filter "Name=tag:Name,Values=fcms-*-99-${subsystem}*" --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value[]' --output text
 }
@@ -61,8 +61,16 @@ function elb(){
   aws elb describe-load-balancers --load-balancer-names *${name} --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
 
-function ec2kill(){
+function ec2terminate(){
   aws ec2 terminate-instances --instance-ids $@
+}
+
+function ec2terminatebyquery() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: ec2terminatebyquery <name>" 
+    return 0
+  fi
+  ec2terminate $(ec2instanceIds $1)
 }
 
 function ec2instanceIds() {
@@ -94,10 +102,25 @@ function scptoinstance (){
   scp -i /etc/ansible/keypairs/fcms-dev-99.pem $2 cloud-user@$1:~
 }
 
-function delete_my_enis() {
+function ec2enilookup() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: ec2enilookup <name>"
+    return 0
+  fi
+  name=$1
+  aws ec2 describe-network-interfaces --filters "Name=description,Values=*${name}*" --query NetworkInterfaces[].NetworkInterfaceId --output text
+}
+
+function ec2deleteenis() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: ec2deleteenis <name>"
+    return 0
+  fi
+  name=$1
   echo "Ok......."
-  for i in $(aws ec2 describe-network-interfaces --filters "Name=description,Values=*sean_elliott3*" --query NetworkInterfaces[].NetworkInterfaceId --output text);
+  for i in $(ec2enilookup ${name});
   do 
+      echo ${i}
       aws ec2 delete-network-interface --network-interface-id ${i};
   done
 }
