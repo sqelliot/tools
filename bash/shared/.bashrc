@@ -41,7 +41,7 @@ alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
 alias gdev='git checkout dev'
-alias gorigindev='gfo; gdev; greset'
+alias gorigindev='gfo && gdev && greset'
 alias  gbracurr="git rev-parse --abbrev-ref HEAD"
 alias gbragrep="git branch | grep"
 alias   gbram='git branch -m'
@@ -164,7 +164,7 @@ function is_repo_path() {
 }
 
 function curr_repo_path() {
-  path=$(echo $(pwd) | grep -oE ".*repos\/.*")
+  path=$(git rev-parse --show-toplevel)
   git_bck_path=${path}/.git/GITGUI_BCK
 
   echo "$(git_jira_issue): " > $git_bck_path
