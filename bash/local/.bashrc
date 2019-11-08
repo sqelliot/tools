@@ -11,6 +11,16 @@ function scptoeuc (){
   scp $2 sean.elliott3@${1}:~
 }
 
+function scphoptoeuc (){ 
+  if [ "$#" -ne 3 ]; then
+    echo "Usage: scpToEuc <locale> <file> <ip>" 
+    return 0
+  fi
+
+  scp $2 sean.elliott3@${1}:~
+  ssh sean.elliott3@${1} scptoinstance ${3} ${2} 
+}
+
 alias gov='ssh gov' 
 alias cint='ssh cint'
 alias dev='ssh dev'
