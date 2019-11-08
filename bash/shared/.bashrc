@@ -36,12 +36,12 @@ function functions() {
 ##########################################################
 alias gpsha='git push --all'
 alias gpsho='git push origin'
-alias gpshodefault='gpsho $(gbracurr)'
+alias gpshodefault='gpsho -u $(gbracurr)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
 alias gdev='git checkout dev'
-alias gorigindev='gfo && gdev && greset'
+alias gorigindev='gfo && gdev && gitreset origin/dev'
 alias  gbracurr="git rev-parse --abbrev-ref HEAD"
 alias gbragrep="git branch | grep"
 alias   gbram='git branch -m'
@@ -52,7 +52,6 @@ alias   gfo='git fetch origin -p'
 alias  gtfo='gfo'
 alias    glog='git log --oneline --graph --all --decorate'     
 alias grebase='gfo && git rebase'
-alias  greset=' gfo && git reset --hard origin/$(gbracurr)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
@@ -87,6 +86,15 @@ function gitclone() {
   repo=$2
 
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
+}
+
+function gitreset() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: gitreset <remote branch>"
+    return 0
+  fi
+  branch=$1
+  gfo && git reset --hard ${branch}
 }
 
 # Create a new branch off remote origin/dev
