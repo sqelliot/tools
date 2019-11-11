@@ -21,12 +21,8 @@ function hspsqlconnect() {
   source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_hs_db --dbname=hs_db --password
 }
 
-function cintssh() {
-  ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1
-}
-
-function devssh() {
-  ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1
+function eucassh() {
+  ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1 || ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1
 }
 
 
@@ -99,7 +95,7 @@ function scptoinstance (){
     return 0
   fi
 
-  scp -i /etc/ansible/keypairs/fcms-dev-99.pem $2 cloud-user@$1:~
+  scp -i /etc/ansible/keypairs/fcms-dev-99.pem $2 cloud-user@$1:~ || scp -i /etc/ansible/keypairs/fcms-cint-99.pem $2 cloud-user@$1:~
 }
 
 function ec2enilookup() {
