@@ -95,7 +95,7 @@ function gpshodefault() {
     echo "Error: cannot push to dev"
     return 0
   fi
-  gpsho -u $(git_branch)
+  gpsho -u $(git_branch) $@
 }
 
 function gitreset() {
