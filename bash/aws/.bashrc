@@ -21,8 +21,9 @@ function hspsqlconnect() {
   source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_hs_db --dbname=hs_db --password
 }
 
-function eucassh() {
+function ec2ssh() {
   ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1 || ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1
+  echo $?
 }
 
 
