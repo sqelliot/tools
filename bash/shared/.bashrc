@@ -36,7 +36,7 @@ function functions() {
 ##########################################################
 alias gpsha='git push --all'
 alias gpsho='git push origin'
-alias gpshodefault='gpsho -u $(gbracurr)'
+alias gpshodefault='gpsho -u $(git_branch)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
@@ -141,14 +141,14 @@ function goup() {
 # Grabs only the jira number from the current git branch
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 function git_jira_issue() {
-  echo $(gbracurr ) | grep -oE "(FCMS|FES|WOOD).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+  echo $(git_branch ) | grep -oE "(FCMS|FES|WOOD).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
 # update a branch
 # default to remote if no arg given
 function gupdate() {
   if [ "$#" -ne 1 ]; then
-    gfo; git rebase origin/$(gbracurr)
+    gfo; git rebase origin/$(git_branch)
     return 0
   fi
 
