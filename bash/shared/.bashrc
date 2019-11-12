@@ -36,7 +36,6 @@ function functions() {
 ##########################################################
 alias gpsha='git push --all'
 alias gpsho='git push origin'
-alias gpshodefault='gpsho -u $(git_branch)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
@@ -79,6 +78,7 @@ function gogit() {
 function git_branch() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ""
 }
+
 function gitclone() {
   if [ "$#" -ne 2 ]; then
     echo "Usage: gitclone <project> <repo>"
@@ -88,6 +88,14 @@ function gitclone() {
   repo=$2
 
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
+}
+
+function gpshodefault() {
+  if [[ $(git_branch) == "dev" ]]; then
+    echo "Error: cannot push to dev"
+    return 0
+  fi
+  gpsho -u $(git_branch)
 }
 
 function gitreset() {
