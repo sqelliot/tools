@@ -17,8 +17,7 @@ function scphoptoeuc (){
     return 0
   fi
 
-  scp $2 sean.elliott3@${1}:~
-  ssh sean.elliott3@${1} scptoinstance ${3} ${2} 
+  scp $2 sean.elliott3@${1}:~ && ssh sean.elliott3@${1} scptoinstance ${3} ${2} 
 }
 
 alias gov='ssh gov' 
