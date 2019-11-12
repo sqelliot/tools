@@ -42,7 +42,6 @@ alias    gadd='git add'
 alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gorigindev='gfo && gdev && gitreset origin/dev'
-alias  gbracurr="git rev-parse --abbrev-ref HEAD"
 alias gbragrep="git branch | grep"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
@@ -77,6 +76,9 @@ function gogit() {
   cd ${reposPath}/$1
 }
 
+function git_branch() {
+  git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ""
+}
 function gitclone() {
   if [ "$#" -ne 2 ]; then
     echo "Usage: gitclone <project> <repo>"
@@ -166,9 +168,10 @@ function gjiracommit(){
 function is_repo_path() {
   path=$(pwd)
   if [[ $path != *"repos"* ]]; then
-    echo "Error: Not a repo path"
-    return 0
+    return 1
   fi
+
+  return 0
 }
 
 function curr_repo_path() {
@@ -179,7 +182,10 @@ function curr_repo_path() {
 }
 
 function gitguijira() {
-  is_repo_path
+  if [[ is_repo_path != 0 ]];then
+    echo "Error: Not a repo path"
+    return 1
+  fi
   curr_repo_path
   git gui
 }
