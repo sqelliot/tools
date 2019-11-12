@@ -28,6 +28,7 @@ function hspsqlconnect() {
 function ec2ssh() {
   ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1 
   status=$?
+  echo $status
   if [[ ${status} == 255 || ${status} == 0 ]]; then
     return 0
   fi
@@ -49,6 +50,10 @@ function ec2subsystem(){
 function ec2lookup(){
   name=$1
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=running,stopped" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' --output table
+}
+
+function ec2me() {
+  ec2lookup sean_elliott3
 }
 
 function ec2count(){
