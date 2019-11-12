@@ -7,7 +7,11 @@ alias editAwsBash='vim ${awsBash}; source ${awsBash}'
 alias sourceAwsBash='source ${awsBash}'
 
 export PGPASSWORD=fcms_pass
-alias ap='ansible-playbook -vv'
+
+function ap() {
+  dt=$(date '+%d%m%Y-%H:%M:%S');
+  ansible-playbook -vv $@ | tee /tmp/ansible-logs-${dt}.txt
+}
 
 function psqlconnect() {
   ip=$1
