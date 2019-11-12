@@ -26,8 +26,12 @@ function hspsqlconnect() {
 }
 
 function ec2ssh() {
-  ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1 || ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1
-  echo $?
+  ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1 
+  status=$?
+  if [[ ${status} == 255 || ${status} == 0 ]]; then
+    return 0
+  fi
+  ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1
 }
 
 
