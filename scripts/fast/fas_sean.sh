@@ -1,1 +1,1 @@
-cd ~/repos/fcms-deployment && ansible-playbook -vv plays/fas_one_button.yml -e build_no=-sean_elliott3 -e fas_version=99.99.T-SNAPSHOT -e deploy_types="fas-apps-nontrackstanag" -e make_asg=no -e deploy_zone=a -e '{"git": {"branch" : "dev"}}'
+cd ~/repos/fcms-deployment && ansible-playbook -vv plays/fas_one_button.yml -e build_no=-sean_elliott3 -e fas_version=99.99.T-SNAPSHOT -e deploy_types="fas-apps-nontrackstanag,fas-kafka,fas-kafka-rest,fas-zookeeper,fas-ods-simulator" -e make_asg=no -e deploy_zone=a -e '{"git": {"branch" : "dev"}}'
