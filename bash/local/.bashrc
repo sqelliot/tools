@@ -20,7 +20,7 @@ function scphoptoeuc (){
   file=$2
   ip=$3
 
-  scp $file sean.elliott3@${node}:~ && ssh sean.elliott3@${node} scptoinstance ${ip} ${file} 
+  scp $file sean.elliott3@${node}:~ && ssh sean.elliott3@${node} "scptoinstance ${ip} ${file} && rm ${file}"
 }
 
 alias gov='ssh gov' 
