@@ -115,6 +115,7 @@ function gitfeaturebranch() {
   fi
   
   name=$1
+  gfo
   git checkout -b feature/dev/${name} origin/dev
 }
 
@@ -190,10 +191,10 @@ function curr_repo_path() {
 }
 
 function gitguijira() {
-  if [[ is_repo_path != 0 ]];then
-    echo "Error: Not a repo path"
-    return 1
-  fi
+  #if [[ is_repo_path != 0 ]];then
+  #  echo "Error: Not a repo path"
+  #  return 1
+  #fi
   curr_repo_path
   git gui
 }
