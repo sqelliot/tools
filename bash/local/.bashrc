@@ -49,12 +49,12 @@ function ml_forward() {
 }
 
 function run_command_on() {
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: run_command_on <node>  <command>" 
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: run_command_on <command>" 
     return 0
   fi
-  node=$1
-  _command=$2
+  node=dev
+  _command=$1
   
   ssh $node ${_command}
 }
