@@ -6,6 +6,10 @@ awsBash=~/repos/tools/bash/aws/.bashrc
 alias editAwsBash='vim ${awsBash}; source ${awsBash}'
 alias sourceAwsBash='source ${awsBash}'
 
+# keys
+cint=/etc/ansible/keypairs/fcms-cint-99.pem
+dev=/etc/ansible/keypairs/fcms-dev-99.pem
+
 export PGPASSWORD=fcms_pass
 
 function ap() {
@@ -26,13 +30,8 @@ function hspsqlconnect() {
 }
 
 function ec2ssh() {
-  ssh -i /etc/ansible/keypairs/fcms-dev-99.pem cloud-user@$1 
-  status=$?
-  echo $status
-  if [[ ${status} == 255 || ${status} == 0 ]]; then
-    return 0
-  fi
-  ssh -i /etc/ansible/keypairs/fcms-cint-99.pem cloud-user@$1
+  key=$(getEucaKey)
+  ssh -i $key cloud-user@$1
 }
 
 
@@ -105,11 +104,12 @@ function elb_instances() {
 
 function scptoinstance (){ 
   if [ "$#" -ne 2 ]; then
-    echo "Usage: scpToEuc <ip> <file>" 
+    echo "Usage: scptoinstance <ip> <file>" 
     return 0
   fi
 
-  scp -i /etc/ansible/keypairs/fcms-dev-99.pem $2 cloud-user@$1:~ || scp -i /etc/ansible/keypairs/fcms-cint-99.pem $2 cloud-user@$1:~
+  key=$(getEucaKey)
+  scp -i $key  $2 cloud-user@$1:~ 
 }
 
 function ec2enilookup() {
@@ -133,4 +133,12 @@ function ec2deleteenis() {
       echo ${i}
       aws ec2 delete-network-interface --network-interface-id ${i};
   done
+}
+
+function getEucaKey() {
+  if [[ -f "$dev" ]];then
+      echo $dev
+  else
+      echo $cint
+  fi
 }
