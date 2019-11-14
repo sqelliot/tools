@@ -3,24 +3,23 @@
 alias ls='ls --color=auto'
 
 function scptoeuc (){ 
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: scpToEuc <locale> <file>" 
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: scpToEuc <file>" 
     return 0
   fi
 
-  scp $2 sean.elliott3@${1}:~
+  scp $1 sean.elliott3@dev:~
 }
 
 function scphoptoeuc (){ 
-  if [ "$#" -ne 3 ]; then
-    echo "Usage: scpToEuc <locale> <file> <ip>" 
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: scphoptoEuc <file> <ip>" 
     return 0
   fi
-  node=$1
-  file=$2
-  ip=$3
+  file=$1
+  ip=$2
 
-  scp $file sean.elliott3@${node}:~ && ssh sean.elliott3@${node} "scptoinstance ${ip} ${file} && rm ${file}"
+  scptoeuc $file  && ssh dev "scptoinstance ${ip} ${file} && rm ${file}"
 }
 
 alias gov='ssh gov' 
@@ -28,13 +27,13 @@ alias cint='ssh cint'
 alias dev='ssh dev'
 
 function port_forward() {
-  if [ "$#" -ne 3 ]; then
-    echo "Usage: port_forward <node> <ip> <port>" 
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: port_forward <ip> <port>" 
     return 0
   fi
-  node=$1
-  ip=$2
-  port=$3
+  node=dev
+  ip=$1
+  port=$2
 
   ssh ${node} -L ${port}:${ip}:${port}
 }
