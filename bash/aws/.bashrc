@@ -31,7 +31,7 @@ function hspsqlconnect() {
 
 function ec2ssh() {
   key=$(getEucaKey)
-  ssh -i $key cloud-user@$1
+  ssh -i $key cloud-user@$1 ${@:2}
 }
 
 
@@ -67,7 +67,7 @@ function ec2filter(){
 
 function elb(){
   name=$1
-  aws elb describe-load-balancers --load-balancer-names *${name} --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
+  aws elb describe-load-balancers --load-balancer-names ${name} --query 'LoadBalancerDescriptions[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,InstanceId,Placement.AvailabilityZone]' --output table
 }
 
 function ec2terminate(){
@@ -103,13 +103,19 @@ function elb_instances() {
 }
 
 function scptoinstance (){ 
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: scptoinstance <ip> <file>" 
+  if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
+    echo "Usage: scptoinstance <file> <ip> [dstPath]"
     return 0
   fi
-
+  dstPath=~
+  if  [ "$#" == 3 ]; then
+    dstPath=$3
+  fi
   key=$(getEucaKey)
-  scp -i $key  $2 cloud-user@$1:~ 
+  ip=$1
+  file=$2
+  echo "here"
+  scp -q -i $key  $file cloud-user@${ip}:~ && ec2ssh ${ip} "sudo  mv ${file} ${dstPath}"
 }
 
 function ec2enilookup() {
