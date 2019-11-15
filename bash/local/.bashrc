@@ -12,14 +12,19 @@ function scptoeuc (){
 }
 
 function scphoptoeuc (){ 
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: scphoptoEuc <file> <ip>" 
+  if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
+    echo "Usage: scphoptoEuc <file> <ip> [dstPath]" 
     return 0
   fi
-  file=$1
+  dstPath=~
+  if  [ "$#" == 3 ]; then
+    dstPath=$3
+  fi
+  filepath=$1
   ip=$2
+  filename=$(basename ${filepath})
 
-  scptoeuc $file  && ssh dev "scptoinstance ${ip} ${file} && rm ${file}"
+  scptoeuc $filepath  && ssh dev "scptoinstance ${ip} ${filename} ${dstPath} && rm ${filename}"
 }
 
 alias gov='ssh gov' 
