@@ -32,27 +32,30 @@ alias cint='ssh cint'
 alias dev='ssh dev'
 
 function port_forward() {
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: port_forward <ip> <port>" 
+  if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
+    echo "Usage: port_forward <ip> <port> [local_port]" 
     return 0
   fi
   node=dev
   ip=$1
   port=$2
+  local_port=$port
+  if  [ "$#" == 3 ]; then
+    local_port=$3
+  fi
 
-  ssh ${node} -L ${port}:${ip}:${port}
+  ssh ${node} -L ${local_port}:${ip}:${port}
 }
 
 function ml_forward() {
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: ml_forward <node> <ip>" 
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: ml_forward <ip>" 
     return 0
   fi
-  node=$1
-  ip=$2
+  ip=$1
   port=8000
 
-  ssh ${node} -L ${port}:${ip}:${port}
+  port_forward $ip $port
 }
 
 function runCommandOnDev() {
