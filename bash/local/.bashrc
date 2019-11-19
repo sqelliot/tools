@@ -8,7 +8,7 @@ function scptoeuc (){
     return 0
   fi
 
-  scp $1 sean.elliott3@dev:~
+  scp $1 dev:~
 }
 
 function scphoptoeuc (){ 
