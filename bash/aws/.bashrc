@@ -34,6 +34,10 @@ function ec2ssh() {
   ssh -i $key cloud-user@$1 ${@:2}
 }
 
+function ec2sshdefault() {
+  key=$(getEucaKey)
+  ssh -i $key cloud-user@$_sship ${@:2}
+}
 
 function curl_auth_instance(){
   curl -vk --cert /home/users/sean.elliott3/certs/valid.user.crt --key /home/users/sean.elliott3/certs/valid.user.key "https://$1:16539/fcms-admin/console/#/headers/"
@@ -92,6 +96,11 @@ function ec2instanceIps() {
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text
 }
 
+function ec2instanceNames() {
+  name=$1
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value]' --output text
+}
+
 function volume_usage(){
   sum=0
   vals=$(aws ec2 --describe-volumes --filters "Name=tag:Name,Values=*$1*" --query)
@@ -147,4 +156,21 @@ function getEucaKey() {
   else
       echo $cint
   fi
+}
+
+function ec2setinstanceip() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: ec2setinstnaceip <name>"
+    return 0
+  fi
+  name=$1
+
+  _name=$(ec2instanceNames $name)
+  _name=$(echo $_name | awk '{print $1}')
+  _sship=$(ec2instanceIps $_name)
+  _sship=$(echo $_sship | awk '{print $1}')
+
+  echo
+  echo "Instance Name:  $_name"
+  echo "Instance Ip:    $_sship"
 }
