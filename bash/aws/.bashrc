@@ -171,6 +171,19 @@ function ec2setinstanceip() {
   _sship=$(echo $_sship | awk '{print $1}')
 
   echo
+  echo "----------------------------------------------------------"
   echo "Instance Name:  $_name"
   echo "Instance Ip:    $_sship"
+  echo "----------------------------------------------------------"
+
+  echo
+  read -p "ssh to instance? (y/n): " response
+  if [ "$response" == "y" ]; then
+      ec2sshdefault
+  else
+      echo
+      echo "Done..."
+  fi
+
+
 }
