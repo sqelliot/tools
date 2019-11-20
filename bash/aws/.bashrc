@@ -78,6 +78,10 @@ function ec2terminate(){
   aws ec2 terminate-instances --instance-ids $@
 }
 
+function ec2terminatebyquery(){
+  aws ec2 terminate-instances --instance-ids $(ec2instanceIds $1)
+}
+
 function ec2terminatebyquery() {
   if [ "$#" -ne 1 ]; then
     echo "Usage: ec2terminatebyquery <name>" 
@@ -165,7 +169,7 @@ function ec2setinstanceip() {
   fi
   name=$1
 
-  _name=$(ec2instanceNames $name)
+  _name=$(ec2instanceNames "$name*")
   _name=$(echo $_name | awk '{print $1}')
   _sship=$(ec2instanceIps $_name)
   _sship=$(echo $_sship | awk '{print $1}')
