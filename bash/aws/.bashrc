@@ -100,9 +100,9 @@ function ec2instanceIps() {
   aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[PrivateIpAddress]' --output text
 }
 
-function ec2instanceNames() {
+function ec2instanceInfo() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value]' --output text
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,PrivateIpAddress]' --output text
 }
 
 function volume_usage(){
@@ -162,32 +162,43 @@ function getEucaKey() {
   fi
 }
 
-function ec2setinstanceip() {
+function ec2sshsearch() {
   if [ "$#" -ne 1 ]; then
-    echo "Usage: ec2setinstnaceip <name>"
+    echo "Usage: ec2sshsearch <name>"
     return 0
   fi
   name=$1
+  count=0
+  _instanceNames=()
+  _instanceIps=()
 
-  _name=$(ec2instanceNames "$name*")
-  _name=$(echo $_name | awk '{print $1}')
-  _sship=$(ec2instanceIps $_name)
-  _sship=$(echo $_sship | awk '{print $1}')
+  info=$(ec2instanceInfo "$name*" )
+  while IFS= read -r line; 
+  do  
+    instanceName=$(echo $line | awk '{print $1}');
+    instanceIp=$(echo $line | awk '{print $2}');
+    _instanceNames+=($instanceName)
+    _instanceIps+=($instanceIp)
+    echo -e "\t$count: \t$instanceName"
+    count=$(($count+1))
+  done <<< "$info"
 
-  echo
-  echo "----------------------------------------------------------"
-  echo "Instance Name:  $_name"
-  echo "Instance Ip:    $_sship"
-  echo "----------------------------------------------------------"
-
-  echo
-  read -p "ssh to instance? (y/n): " response
-  if [ "$response" == "y" ]; then
-      ec2sshdefault
+  if [ $count == 0 ]; then
+      echo "\nNo instances match $name"
+      return
+  elif [ $count == 1 ]; then
+    read -p "ssh to instance? (y/n): " response
+      if [ "$response" == "y" ]; then
+         ec2ssh $instanceIp 
+      fi
   else
-      echo
-      echo "Done..."
+    read -p "ssh to instance (0...$count): " response
+    echo
+    echo "Going to (${_instanceNames[$response]})"
+    ec2ssh ${_instanceIps[$response]}
   fi
 
+  echo
+  echo "Done..."
 
 }
