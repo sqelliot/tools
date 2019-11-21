@@ -193,9 +193,11 @@ function ec2sshsearch() {
       fi
   else
     read -p "ssh to instance (0...$count): " response
-    echo
-    echo "Going to (${_instanceNames[$response]})"
-    ec2ssh ${_instanceIps[$response]}
+    if [ $response -ge 0 ] && [ $response -le $count ];then
+      echo
+      echo "Going to (${_instanceNames[$response]})"
+      ec2ssh ${_instanceIps[$response]}
+    fi
   fi
 
   echo
