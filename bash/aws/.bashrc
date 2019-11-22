@@ -34,17 +34,12 @@ function ec2ssh() {
   ssh -i $key cloud-user@$1 ${@:2}
 }
 
-function ec2sshdefault() {
-  key=$(getEucaKey)
-  ssh -i $key cloud-user@$_sship ${@:2}
-}
-
 function curl_auth_instance(){
   curl -vk --cert /home/users/sean.elliott3/certs/valid.user.crt --key /home/users/sean.elliott3/certs/valid.user.key "https://$1:16539/fcms-admin/console/#/headers/"
 }
 
 
-function ec2subsystem(){
+function ec2lookupsubsystem(){
   subsystem=$1
   aws ec2 describe-instances --filter "Name=tag:Name,Values=fcms-*-99-${subsystem}*" --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value[]' --output text
 }
@@ -162,38 +157,38 @@ function getEucaKey() {
   fi
 }
 
-function ec2sshsearch() {
+function ec2go() {
   if [ "$#" -ne 1 ]; then
     echo "Usage: ec2sshsearch <name>"
     return 0
   fi
   name=$1
-  count=0
+  index=-1
   _instanceNames=()
   _instanceIps=()
 
   info=$(ec2instanceInfo "$name*" )
   while IFS= read -r line; 
   do  
+    index=$(($index+1))
     instanceName=$(echo $line | awk '{print $1}');
     instanceIp=$(echo $line | awk '{print $2}');
     _instanceNames+=($instanceName)
     _instanceIps+=($instanceIp)
-    echo -e "\t$count: \t$instanceName"
-    count=$(($count+1))
+    echo -e "\t$index: \t$instanceName"
   done <<< "$info"
 
-  if [ $count == 0 ]; then
+  if [ $index -lt 0 ]; then
       echo "\nNo instances match $name"
       return
-  elif [ $count == 1 ]; then
+  elif [ $index == 0 ]; then
     read -p "ssh to instance? (y/n): " response
       if [ "$response" == "y" ]; then
          ec2ssh $instanceIp 
       fi
   else
-    read -p "ssh to instance (0...$count): " response
-    if [ $response -ge 0 ] && [ $response -le $count ];then
+    read -p "ssh to instance (0...$index): " response
+    if [ $response -ge 0 ] && [ $response -le $index ];then
       echo
       echo "Going to (${_instanceNames[$response]})"
       ec2ssh ${_instanceIps[$response]}
@@ -203,4 +198,8 @@ function ec2sshsearch() {
   echo
   echo "Done..."
 
+}
+
+function s3ls() {
+  aws s3 ls s3://$@
 }
