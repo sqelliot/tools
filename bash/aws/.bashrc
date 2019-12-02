@@ -163,9 +163,9 @@ function ec2go() {
     return 0
   fi
   name=$1
-  index=-1
-  _instanceNames=()
-  _instanceIps=()
+  declare -a index=-1
+  declare -a instanceNames=()
+  declare -a instanceIps=()
 
   info=$(ec2instanceInfo "$name*" )
   while IFS= read -r line; 
@@ -173,26 +173,29 @@ function ec2go() {
     index=$(($index+1))
     instanceName=$(echo $line | awk '{print $1}');
     instanceIp=$(echo $line | awk '{print $2}');
-    _instanceNames+=($instanceName)
-    _instanceIps+=($instanceIp)
-    echo -e "\t$index: \t$instanceName"
+    instanceNames+=($instanceName)
+    instanceIps+=($instanceIp)
   done <<< "$info"
 
-  if [ $index -lt 0 ]; then
-      echo "\nNo instances match $name"
+  if [ $index == 0 ]; then
+      echo "No instances match $name"
       return
-  elif [ $index == 0 ]; then
-    read -p "ssh to instance? (y/n): " response
-      if [ "$response" == "y" ]; then
-         ec2ssh $instanceIp 
-      fi
-  else
-    read -p "ssh to instance (0...$index): " response
-    if [ $response -ge 0 ] && [ $response -le $index ];then
-      echo
-      echo "Going to (${_instanceNames[$response]})"
-      ec2ssh ${_instanceIps[$response]}
-    fi
+  fi
+
+  for i in $(seq 1 $index); do
+    echo -e "\t$i: \t$instanceName"
+  done
+
+  read -p "ssh to instance (0...$index): " response
+  # exit for positive integer value
+  if ! [[ $(isWholeNumber $response) == 0 ]]; then
+    echo "Exiting ${FUNCNAME[0]}..."
+    return
+  fi
+  if [ $response -ge 0 ] && [ $response -le $index ];then
+    echo
+    echo "Going to (${instanceNames[$response]})"
+    ec2ssh ${instanceIps[$response]}
   fi
 
   echo
