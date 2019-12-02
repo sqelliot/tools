@@ -202,3 +202,18 @@ function gitguijira() {
 function gchgrep() {
   gch $(gbragrep $1)
 }
+
+
+function isWholeNumber() {
+  re='^[0-9]+$'
+
+  if [ "$#" != 1  ]; then
+    echo 1
+    return
+  fi
+  if ! [[ $1 =~ $re ]] ; then
+      echo 1
+      return
+  fi
+  echo 0
+}
