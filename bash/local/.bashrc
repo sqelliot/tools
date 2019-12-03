@@ -58,9 +58,9 @@ function ml_forward() {
   port_forward $ip $port
 }
 
-function remote_exec() {
+function runremote() {
   if [ "$#" -lt 2 ]; then
-    echo "Usage: remote_exec <node> <command>" 
+    echo "Usage: run_remote <node> <command>" 
     return 0
   fi
   node=$1
@@ -69,13 +69,13 @@ function remote_exec() {
   ssh -t $node "${_command}"
 }
 
-function remote_exec_dev() {
+function rundev() {
   if [ "$#" -lt 1 ]; then
-    echo "Usage: remote_exec <command>" 
+    echo "Usage: run_dev <command>" 
     return 0
   fi
   
-  remote_exec dev $@
+  runremote dev $@
 }
 
 alias gradle_upload="~/repos/fast/gradlew clean build -x test uploadArchives -PfastVersion=sean -PNEXUS_REPO_URL=http://ncl-nexus-lnx7-01.devlnk.net:8081/nexus/content/repositories/ncl-central/ -PGRADLE_PLUGINS_REPO=https://plugins.gradle.org/m2/ -PGRADLE_PLUGINS_REPO_USERNAME='' -PGRADLE_PLUGINS_REPO_PASSWORD='' -PRELEASE_REPO_UPLOAD_URL=http://ncl-nexus-lnx7-01.devlnk.net:8081/nexus/content/repositories/ncl-releases/ -PSNAPSHOT_REPO_UPLOAD_URL=http://ncl-nexus-lnx7-01.devlnk.net:8081/nexus/content/repositories/ncl-snapshots/ -Dorg.gradle.jvmargs='-Xmx2048m -Xms1024m -XX:MaxPermSize=512m'"
