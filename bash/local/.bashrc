@@ -69,7 +69,7 @@ function runremote() {
   ssh -t $node "${_command}"
 }
 
-function rundev() {
+function euca() {
   if [ "$#" -lt 1 ]; then
     echo "Usage: run_dev <command>" 
     return 0
