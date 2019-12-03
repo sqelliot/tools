@@ -209,7 +209,7 @@ function ec2go() {
   fi
 
   echo
-  echo "Done..."
+  echo "${FUNCNAME[0]} done..."
 
 }
 
