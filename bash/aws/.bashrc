@@ -79,7 +79,7 @@ function ec2terminatebyquery(){
 
 function ec2terminatebyquery() {
   if [ "$#" -ne 1 ]; then
-    echo "Usage: ec2terminatebyquery <name>" 
+    echo "Usage: ${FUNCNAME[0]} <name>" 
     return 0
   fi
   ec2terminate $(ec2instanceIds $1)
@@ -112,7 +112,7 @@ function elb_instances() {
 
 function scptoinstance (){ 
   if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
-    echo "Usage: scptoinstance <file> <ip> [dstPath]"
+    echo "Usage: ${FUNCNAME[0]} <file> <ip> [dstPath]"
     return 0
   fi
   dstPath=~
@@ -128,7 +128,7 @@ function scptoinstance (){
 
 function ec2enilookup() {
   if [ "$#" -ne 1 ]; then
-    echo "Usage: ec2enilookup <name>"
+    echo "Usage: ${FUNCNAME[0]} <name>"
     return 0
   fi
   name=$1
@@ -137,7 +137,7 @@ function ec2enilookup() {
 
 function ec2deleteenis() {
   if [ "$#" -ne 1 ]; then
-    echo "Usage: ec2deleteenis <name>"
+    echo "Usage: ${FUNCNAME[0]} <name>"
     return 0
   fi
   name=$1
@@ -159,7 +159,7 @@ function getEucaKey() {
 
 function ec2go() {
   if [ "$#" -ne 1 ]; then
-    echo "Usage: ec2sshsearch <name>"
+    echo "Usage: ${FUNCNAME[0]} <name>"
     return 0
   fi
   name=$1
