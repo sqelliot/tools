@@ -14,7 +14,7 @@ export PGPASSWORD=fcms_pass
 
 function ap() {
   dt=$(date '+%d%m%Y-%H:%M:%S');
-  ansible-playbook -vv $@ | tee /tmp/ansible-logs-${dt}.txt
+  ansible-playbook -vv $@ 
 }
 
 function psqlconnect() {
@@ -97,7 +97,7 @@ function ec2instanceIps() {
 
 function ec2instanceInfo() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,PrivateIpAddress]' --output text
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" "Name=instance-state-name,Values=running" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,PrivateIpAddress]' --output text
 }
 
 function volume_usage(){
