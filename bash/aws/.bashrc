@@ -51,7 +51,8 @@ function ec2lookup(){
 }
 
 function ec2me() {
-  ec2lookup sean_elliott3
+  user=$(whoami | sed 's/[^A-Za-z0-9\_-]/_/g')
+  ec2lookup $user
 }
 
 function ec2count(){
