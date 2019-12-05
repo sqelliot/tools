@@ -47,10 +47,10 @@ function curl_auth_instance(){
 }
 
 
-function ec2lookupsubsystem(){
-  subsystem=$1
-  aws ec2 describe-instances --filter "Name=tag:Name,Values=fcms-*-99-${subsystem}*" --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value[]' --output text
-}
+#function ec2lookupsubsystem(){
+#  subsystem=$1
+#  aws ec2 describe-instances --filter "Name=tag:Name,Values=fcms-*-99-${subsystem}*" --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value[]' --output text
+#}
 
 ## cl: command lineup
 function ec2lookup(){
