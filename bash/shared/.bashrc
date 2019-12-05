@@ -13,6 +13,10 @@ updateFileMessage=$'
 
 '
 
+## Source other bash files
+source ~/repos/tools/bash/aws/.bashrc
+
+
 function sourceBash() {
   source $1 ; echo "$updateFileMessage"
 }
