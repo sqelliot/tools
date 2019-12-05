@@ -12,9 +12,12 @@ dev=/etc/ansible/keypairs/fcms-dev-99.pem
 
 export PGPASSWORD=fcms_pass
 
+# ssh history
+declare last_ip
+
 function ap() {
   dt=$(date '+%d%m%Y-%H:%M:%S');
-  ansible-playbook -vv $@ 
+  script ansible-playbook -vv $@
 }
 
 function psqlconnect() {
@@ -30,8 +33,13 @@ function hspsqlconnect() {
 }
 
 function ec2ssh() {
+  last_ip=$1
   key=$(getEucaKey)
   ssh -i $key cloud-user@$1 ${@:2}
+}
+
+function ec2prevssh() {
+  ec2ssh $last_ip
 }
 
 function curl_auth_instance(){
@@ -164,7 +172,6 @@ function ec2go() {
     return 0
   fi
   name=$1
-  declare -a count=0
   declare -a instanceNames=()
   declare -a instanceIps=()
 
@@ -178,6 +185,7 @@ function ec2go() {
     instanceIps+=($instanceIp)
   done <<< "$info"
 
+  declare -a count=${#instanceNames[@]}
   echo "Number of instances found: ${count}"
   if [ $count == 0 ]; then
       echo "No instances match $name"
