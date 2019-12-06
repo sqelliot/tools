@@ -12,12 +12,12 @@ dev=/etc/ansible/keypairs/fcms-dev-99.pem
 
 export PGPASSWORD=fcms_pass
 
-# ssh history
-declare last_ip
+# ssh history path
+ssh_prev=~/.ssh_previous
 
 function ap() {
   dt=$(date '+%d%m%Y-%H:%M:%S');
-  script ansible-playbook -vv $@
+  ansible-playbook -vv $@
 }
 
 function psqlconnect() {
@@ -33,12 +33,13 @@ function hspsqlconnect() {
 }
 
 function ec2ssh() {
-  last_ip=$1
+  echo $1 >> $ssh_prev
   key=$(getEucaKey)
   ssh -i $key cloud-user@$1 ${@:2}
 }
 
 function ec2prevssh() {
+  last_ip=$(head -n 1 ${ssh_prev})
   ec2ssh $last_ip
 }
 
