@@ -123,7 +123,7 @@ function elb_instances() {
   aws elb describe-instance-health --load-balancer-name ${name}
 }
 
-function scptoinstance (){ 
+function scptoinstance() { 
   if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
     echo "Usage: ${FUNCNAME[0]} <file> <ip> [dstPath]"
     return 0
@@ -133,8 +133,8 @@ function scptoinstance (){
     dstPath=$3
   fi
   key=$(getEucaKey)
-  ip=$1
-  file=$2
+  ip=$2
+  file=$1
   echo "here"
   scp -q -i $key  $file cloud-user@${ip}:~ && ec2ssh ${ip} "sudo  mv ${file} ${dstPath}"
 }
