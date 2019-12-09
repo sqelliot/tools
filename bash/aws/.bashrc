@@ -32,8 +32,11 @@ function hspsqlconnect() {
   source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_hs_db --dbname=hs_db --password
 }
 
+function previous_ssh() {
+  echo $1 > $ssh_prev
+}
 function ec2ssh() {
-  echo $1 >> $ssh_prev
+  previous_ssh $1
   key=$(getEucaKey)
   ssh -i $key cloud-user@$1 ${@:2}
 }
@@ -221,8 +224,4 @@ function ec2go() {
   echo
   echo "${FUNCNAME[0]} done..."
 
-}
-
-function s3ls() {
-  aws s3 ls s3://$@
 }
