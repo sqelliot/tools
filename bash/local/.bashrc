@@ -24,7 +24,7 @@ function scphoptoeuc (){
   ip=$2
   filename=$(basename ${filepath})
 
-  scptoeuc $filepath  && ssh dev "scptoinstance ${ip} ${filename} ${dstPath} && rm ${filename}"
+  scptoeuc $filepath  && ssh dev "scptoinstance ${ip} ${filename} ${dstPath}; rm ${filename}"
 }
 
 alias gov='ssh gov' 
