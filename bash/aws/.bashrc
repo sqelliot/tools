@@ -197,7 +197,7 @@ function ec2go() {
   fi
 
   for i in $(seq 0 $(($count-1))); do
-    echo -e "\t$i: \t${instanceNames[$i]}"
+    echo -e "\t$i: ---------- ${instanceNames[$i]}"
   done
 
   if [ $count == 1 ]; then
