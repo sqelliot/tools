@@ -226,3 +226,9 @@ function random_file() {
   gigs=$1
   head -c ${gig}G </dev/urandom > ~/randomFile.txt
 }
+
+
+##########################################################
+################ Shared docker commands ##################
+##########################################################
+alias dpsa='docker ps -a'
