@@ -44,7 +44,9 @@ alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
 alias gdev='git checkout dev'
+alias gmaster='git checkout master'
 alias gorigindev='gfo && gdev && gitreset origin/dev'
+alias goriginmaster='gfo && gmaster && gitreset origin/master'
 alias gbragrep="git branch | grep"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
@@ -58,8 +60,7 @@ alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
-alias    fc='gogit fcms-config'
-alias    fd='gogit fcms-deployment'
+alias gdiff='git diff'
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -95,8 +96,8 @@ function gitclone() {
 }
 
 function gpshodefault() {
-  if [[ $(git_branch) == "dev" ]]; then
-    echo "Error: cannot push to dev"
+  if [[ $(git_branch) == "dev" ]] || [[ $(git_branch) == "master" ]]; then
+    echo "Error: commits cannot be directly pushed to this branch"
     return 0
   fi
   gpsho -u $(git_branch) $@
