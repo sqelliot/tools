@@ -99,6 +99,13 @@ function gitclone() {
   git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
 }
 
+
+function gitcloneenforma() {
+  base_url=https://git.space.enforma.io
+  echo "Cloning ${base_url}/${1} ..."
+  git clone ${base_url}/$1
+}
+
 function gpshodefault() {
   if [[ $(git_branch) == "dev" ]] || [[ $(git_branch) == "master" ]]; then
     echo "Error: commits cannot be directly pushed to this branch"
