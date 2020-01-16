@@ -35,6 +35,9 @@ function functions() {
   grep -hr "function .*().*{" ${toolsPath} | sort
 }
 
+## shell ##
+#################################################
+
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -71,6 +74,7 @@ alias  mciskip='mci -Dmaven.test.skip=true'
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
+
 
 function gitnew() {
   git checkout -b $1 origin/dev
