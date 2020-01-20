@@ -15,6 +15,7 @@ updateFileMessage=$'
 
 ## Source other bash files
 source ~/repos/tools/bash/aws/.bashrc
+source ~/repos/tools/bash/local/.bashrc
 
 
 function sourceBash() {
