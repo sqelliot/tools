@@ -167,7 +167,8 @@ function goup() {
 # Grabs only the jira number from the current git branch
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 function git_jira_issue() {
-  echo $(git_branch ) | grep -oE "(FCMS|FES|WOOD).*" | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+  prefixes="(FCMS|FES|WOOD|ECLDEV|CLDEV).*"
+  echo $(git_branch ) | grep -oE ${prefixes} | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
 # update a branch
