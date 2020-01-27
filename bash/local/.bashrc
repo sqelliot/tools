@@ -2,6 +2,7 @@
 
 alias ls='ls --color=auto'
 
+alias selliott='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 function scptoeuc (){ 
   if [ "$#" -ne 1 ]; then
     echo "Usage: scpToEuc <file>" 
@@ -78,5 +79,3 @@ function euca() {
   runremote dev $@
 }
 
-## local repositories
-alias quicksilver='gogit quicksilver'
