@@ -1,8 +1,12 @@
 # self-references
 reposPath=~/repos/
+if [ $(hostname) == "GLDLBAE496014" ]; then
+  reposPath=/c/dev/repos/
+fi
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
+awsBash=${toolsPath}/bash/aws/.bashrc
 updateFileMessage=$'
 
 #########################################
@@ -13,19 +17,24 @@ updateFileMessage=$'
 
 '
 
-## Source other bash files
-source ~/repos/tools/bash/aws/.bashrc
-source ~/repos/tools/bash/local/.bashrc
-
-
 function sourceBash() {
+  echo "Sourcing $1..."
   source $1 ; echo "$updateFileMessage"
 }
+
+## Source other bash files
+source ${localBash}
+source ${awsBash}
+
 function editSharedBash() {
   vim ${sharedBash}; sourceBash ${sharedBash}
 }
 function editLocalBash() {
   vim ${localBash}; sourceBash ${localBash}
+}
+
+function editAwsBash() {
+  vim ${awsBash}; sourceBash ${awsBash}
 }
 
 # go to tools

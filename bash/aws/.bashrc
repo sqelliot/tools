@@ -1,11 +1,6 @@
 #!/bin/bash
 # .bashrc
 
-# self-source
-awsBash=~/repos/tools/bash/aws/.bashrc
-alias editAwsBash='vim ${awsBash}; source ${awsBash}'
-alias sourceAwsBash='source ${awsBash}'
-
 # keys
 cint=/etc/ansible/keypairs/fcms-cint-99.pem
 dev=/etc/ansible/keypairs/fcms-dev-99.pem
