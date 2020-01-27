@@ -45,6 +45,10 @@ function functions() {
   grep -hr "function .*().*{" ${toolsPath} | sort
 }
 
+function updatetools() {
+  tools && grebase && sourceBash $sharedBash
+}
+
 ## shell ##
 #################################################
 alias ll='ls -l'
