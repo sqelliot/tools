@@ -47,6 +47,7 @@ function functions() {
 
 ## shell ##
 #################################################
+alias ll='ls -l'
 
 ##########################################################
 ################# Shared git commands ####################
@@ -135,14 +136,18 @@ function gitreset() {
 
 # Create a new branch off remote origin/dev
 function gitfeaturebranch() {
-  if [ "$#" -ne 1 ]; then
-    echo "Usage: git dev <jira number>[-<info>]"
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: gitfeaturebranch <jira number>[-<info>] [target branch]"
     return 0
   fi
   
   name=$1
+  target_branch=origin/dev
+  if [ "$#" == 2 ]; then
+    target_branch=$2
+  fi
   gfo
-  git checkout -b feature/dev/${name} origin/dev
+  git checkout -b feature/dev/${name} $target_branch
 }
 
 # Create the two branches necessary for a DR
