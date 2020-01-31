@@ -17,7 +17,9 @@ updateFileMessage=$'
 
 '
 
-
+######################
+## tools management ##
+######################
 
 function sourceBash() {
   echo "Sourcing $1..."
@@ -49,6 +51,26 @@ function functions() {
 
 function updatetools() {
   bash -lic "tools && grebase && sourceBash $sharedBash"
+}
+
+function toolssta() {
+  bash -lic "tools && git status"
+}
+
+
+function toolsgdiff() {
+  bash -lic "tools && git diff"
+}
+function toolsgadd() {
+  bash -lic "tools && git add ."
+}
+
+function toolsgcom() {
+  bash -lic "tools && gcom $@"
+}
+
+function toolsgpshodefault() {
+  bash -lic "tools && gpshodefault"
 }
 
 ## shell ##
