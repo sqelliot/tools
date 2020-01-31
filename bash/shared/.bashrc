@@ -63,8 +63,6 @@ alias    gadd='git add'
 alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gmaster='git checkout master'
-alias gorigindev='gfo && gdev && gitreset origin/dev'
-alias goriginmaster='gfo && gmaster && gitreset origin/master'
 alias gbragrep="git branch | grep"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
@@ -238,7 +236,21 @@ function gitguijira() {
 function gchgrep() {
   gch $(gbragrep $1)
 }
+#######################
+## Utility functions ##
+#######################
 
+function goriginmaster() {
+  branch=dev
+  if [ "$#" == 1 ];then
+    branch=$1
+  fi 
+ 
+  echo "Reseting to local $branch to remote..."
+  gfo
+  git checkout $branch
+  gitreset origin/$branch
+}
 
 function isWholeNumber() {
   re='^[0-9]+$'
