@@ -46,7 +46,7 @@ function functions() {
 }
 
 function updatetools() {
-  tools && grebase && sourceBash $sharedBash
+  bash -lic tools && grebase && sourceBash $sharedBash
 }
 
 ## shell ##
