@@ -129,7 +129,7 @@ function gpshodefault() {
 
 function gitreset() {
   if [ "$#" -ne 1 ]; then
-    echo "Usage: gitreset <remote branch>"
+    echo "Usage: gitreset <branch>"
     return 0
   fi
   branch=$1
