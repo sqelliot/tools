@@ -66,7 +66,7 @@ function toolsgadd() {
 }
 
 function toolsgcom() {
-  bash -lic "tools && gcom $@"
+  bash -lic "tools && gcom '$@'"
 }
 
 function toolsgpshodefault() {
