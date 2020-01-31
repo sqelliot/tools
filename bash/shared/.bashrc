@@ -17,6 +17,8 @@ updateFileMessage=$'
 
 '
 
+
+
 function sourceBash() {
   echo "Sourcing $1..."
   source $1 ; echo "$updateFileMessage"
@@ -139,17 +141,14 @@ function gitreset() {
 # Create a new branch off remote origin/dev
 function gitfeaturebranch() {
   if [ "$#" -lt 1 ]; then
-    echo "Usage: gitfeaturebranch <jira number>[-<info>] [target branch]"
+    echo "Usage: gitfeaturebranch <jira number>[-<info>]"
     return 0
   fi
   
   name=$1
-  target_branch=origin/dev
-  if [ "$#" == 2 ]; then
-    target_branch=$2
-  fi
+  target_branch=$(gitdefaultbranch)
   gfo
-  git checkout -b feature/dev/${name} $target_branch
+  git checkout -b feature/dev/${name} origin/$target_branch
 }
 
 # Create the two branches necessary for a DR
@@ -235,6 +234,10 @@ function gitguijira() {
 
 function gchgrep() {
   gch $(gbragrep $1)
+}
+
+function gitdefaultbranch() {
+  git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
 }
 #######################
 ## Utility functions ##
