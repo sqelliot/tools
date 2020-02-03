@@ -96,6 +96,7 @@ alias   gfo='git fetch origin -p'
 alias  gtfo='gfo'
 alias    glog='git log --oneline --graph --all --decorate'     
 alias grebase='gfo && git rebase'
+alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
@@ -170,7 +171,7 @@ function gitfeaturebranch() {
   name=$1
   target_branch=$(gitdefaultbranch)
   gfo
-  git checkout -b feature/dev/${name} origin/$target_branch
+  git checkout -b feature/$(gitdefaultbranch)/${name} origin/$target_branch
 }
 
 # Create the two branches necessary for a DR
