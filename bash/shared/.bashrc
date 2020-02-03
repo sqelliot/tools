@@ -269,8 +269,8 @@ function gitdefaultbranch() {
 ## Utility functions ##
 #######################
 
-function goriginmaster() {
-  branch=dev
+function gorigindefault() {
+  branch=$(gitdefaultbranch)
   if [ "$#" == 1 ];then
     branch=$1
   fi 
