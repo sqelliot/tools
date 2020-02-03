@@ -110,6 +110,9 @@ alias gdiff='git diff'
 alias   mci='mvn clean install'
 alias  mciskip='mci -Dmaven.test.skip=true'
 
+export MICL='mvn install -P copy-artifacts -Duser.top=~/repos/conlib/top'
+alias micl='echo $MICL; bash ${MICL}'
+
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
 
