@@ -70,7 +70,7 @@ function toolsgcom() {
 }
 
 function toolsgpshodefault() {
-  bash -lic "tools && gpshodefault"
+  bash -lic "tools && git push origin master"
 }
 
 ## shell ##
