@@ -85,6 +85,7 @@ function cdd () {
 ##########################################################
 alias gpsha='git push --all'
 alias gpsho='git push origin'
+alias gd='git diff'
 alias gpsh='git push'
 alias    gadd='git add'
 alias    gbra='git branch'
@@ -112,9 +113,11 @@ alias gdiff='git diff'
 ##### Maven commands ##### 
 alias   mci='mvn clean install'
 alias  mciskip='mci -Dmaven.test.skip=true'
+alias mvntree='mvn dependency:tree'
 
-export MICL='mvn install -P copy-artifacts -Duser.top=~/repos/conlib/top'
-alias micl='echo $MICL; bash ${MICL}'
+export MICL_CONFIGS='-P copy-artifacts -Duser.top=~/repos/conlib/top'
+alias micl='echo "mvn install $MICL_CONFIGS"; mvn install ${MICL_CONFIGS}'
+alias mcicl='echo "mvn clean install $MICL_CONFIGS"; mvn clean install $MICL_CONFIGS'
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
@@ -313,6 +316,10 @@ function pathjump () {
   cd $dest_path
 }
 
+#alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
+function newestfile() {
+  ll -rst | tail -n 1 | awk '{print $NF}'
+}
 
 ##########################################################
 ################ Shared docker commands ##################
