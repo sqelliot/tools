@@ -76,6 +76,9 @@ function toolsgpshodefault() {
 ## shell ##
 #################################################
 alias ll='ls -l'
+function cdd () {
+  cd $1 && ls
+}
 
 ##########################################################
 ################# Shared git commands ####################
@@ -203,6 +206,7 @@ function goup() {
     pwd
     cd ..
   done
+  ls
 }
 
 # Grabs only the jira number from the current git branch
@@ -265,9 +269,6 @@ function gchgrep() {
 function gitdefaultbranch() {
   git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
 }
-#######################
-## Utility functions ##
-#######################
 
 function gorigindefault() {
   branch=$(gitdefaultbranch)
@@ -280,6 +281,10 @@ function gorigindefault() {
   git checkout $branch
   gitreset origin/$branch
 }
+
+#######################
+## Utility functions ##
+#######################
 
 function isWholeNumber() {
   re='^[0-9]+$'
@@ -298,6 +303,14 @@ function isWholeNumber() {
 function random_file() {
   gigs=$1
   head -c ${gig}G </dev/urandom > ~/randomFile.txt
+}
+
+function pathjump () {
+  dest_dir=$1
+  _pwd=$(pwd)
+  dest_path=${_pwd%${dest_dir}*}
+  dest_path=${dest_path}/${dest_dir}
+  cd $dest_path
 }
 
 
