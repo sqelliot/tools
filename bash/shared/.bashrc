@@ -316,6 +316,9 @@ function pathjump () {
   cd $dest_path
 }
 
+function searchsystemctl() {
+  sudo systemctl | grep -i x2dquery | awk '{print $1}'
+}
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
   ll -rst | tail -n 1 | awk '{print $NF}'
