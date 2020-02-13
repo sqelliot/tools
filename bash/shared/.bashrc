@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # self-references
 reposPath=~/repos/
 if [ $(hostname) == "GLDLBAE496014" ]; then
