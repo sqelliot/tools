@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -e
+
 # self-references
 reposPath=~/repos/
 if [ $(hostname) == "GLDLBAE496014" ]; then
@@ -254,6 +258,18 @@ function gjiracommit(){
   fi
   msg=$@
   git commit -m "$(git_jira_issue): ${msg}"
+}
+
+function gitjiracommitandpush () {
+  if [ "$#" -lt 2 ]; then
+    echo "Usage: ${FUNCNAME[0]} <msg> <files>"
+    return 0
+  fi
+
+  msg=$1
+  files=${@:2}
+
+  gadd $files &&  gjiracommit $msg && gpshodefault
 }
 
 function is_repo_path() {
