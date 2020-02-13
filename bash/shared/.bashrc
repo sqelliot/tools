@@ -41,6 +41,10 @@ function editAwsBash() {
   vim ${awsBash}; sourceBash ${awsBash}
 }
 
+function sourceSharedBash() {
+  sourceBash ${sharedBash}
+}
+
 # go to tools
 alias tools="gogit tools"
 
@@ -73,12 +77,15 @@ function toolsgpshodefault() {
   bash -lic "tools && git push origin master"
 }
 
+
+alias conlib='gogit conlib'
+
 ## shell ##
 #################################################
 alias ll='ls -l'
-function cdd () {
-  cd $1 && ls
-}
+#function cd () {
+#  bash -lic "/bin/cd $1 && ls"
+#}
 
 ##########################################################
 ################# Shared git commands ####################
@@ -111,13 +118,17 @@ alias gdiff='git diff'
 ##########################################################
 
 ##### Maven commands ##### 
-alias   mci='mvn clean install'
-alias  mciskip='mci -Dmaven.test.skip=true'
-alias mvntree='mvn dependency:tree'
+MCI='mvn clean install'
+MVN_CL_CONFIGS='-P copy-artifacts -Duser.top=~/repos/conlib/top'
+MICL='mvn install $MVN_CL_CONFIGS'
+MCICL='mvn clean install $MVN_CL_CONFIGS'
+MCISKIP='mvn clean install -Dmaven.test.skip=true -P copy-artifacts -Duser.top=~/repos/conlib/top'
 
-export MICL_CONFIGS='-P copy-artifacts -Duser.top=~/repos/conlib/top'
-alias micl='echo "mvn install $MICL_CONFIGS"; mvn install ${MICL_CONFIGS}'
-alias mcicl='echo "mvn clean install $MICL_CONFIGS"; mvn clean install $MICL_CONFIGS'
+alias   mci='echo $MCI; $MCI'
+alias  mciskip='echo $MCISKIP && $MCISKIP'
+alias mvntree='mvn dependency:tree'
+alias micl='echo $MICL && $MICL'
+alias mcicl='echo $MCICL && $MCICL'
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
@@ -173,14 +184,19 @@ function gitreset() {
 # Create a new branch off remote origin/dev
 function gitfeaturebranch() {
   if [ "$#" -lt 1 ]; then
-    echo "Usage: gitfeaturebranch <jira number>[-<info>]"
+    echo "Usage: gitfeaturebranch <jira number>[-<info>] [target branch]"
     return 0
   fi
   
   name=$1
   target_branch=$(gitdefaultbranch)
+
+  if [ "$#" = 2 ]; then
+    target_branch=$2
+  fi
+
   gfo
-  git checkout -b feature/$(gitdefaultbranch)/${name} origin/$target_branch
+  git checkout -b feature/${target_branch}/${name} origin/$target_branch
 }
 
 # Create the two branches necessary for a DR
