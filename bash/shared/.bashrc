@@ -81,6 +81,7 @@ function toolsgpshodefault() {
 
 
 alias conlib='gogit conlib'
+alias devlnk='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 
 ## shell ##
 #################################################
