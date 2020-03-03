@@ -79,7 +79,6 @@ function toolsgpshodefault() {
   bash -lic "tools && git push origin master"
 }
 
-
 alias conlib='gogit conlib'
 alias devlnk='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 
@@ -89,6 +88,9 @@ alias ll='ls -l'
 #function cd () {
 #  bash -lic "/bin/cd $1 && ls"
 #}
+
+alias untar='tar -xvzf '
+alias aws='/usr/local/bin/aws --no-verify-ssl'
 
 ##########################################################
 ################# Shared git commands ####################
@@ -115,7 +117,7 @@ alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
-alias gdiff='git diff'
+alias gd='git diff'
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -123,9 +125,9 @@ alias gdiff='git diff'
 ##### Maven commands ##### 
 MCI='mvn clean install'
 MVN_CL_CONFIGS='-P copy-artifacts -Duser.top=~/repos/conlib/top'
-MICL='mvn install $MVN_CL_CONFIGS'
-MCICL='mvn clean install $MVN_CL_CONFIGS'
-MCISKIP='mvn clean install -Dmaven.test.skip=true -P copy-artifacts -Duser.top=~/repos/conlib/top'
+MICL='mvn install '$MVN_CL_CONFIGS
+MCICL='mvn clean install '$MVN_CL_CONFIGS
+MCISKIP='mvn clean install -Dmaven.test.skip=true '$MVN_CL_CONFIGS
 
 alias   mci='echo $MCI; $MCI'
 alias  mciskip='echo $MCISKIP && $MCISKIP'
@@ -143,6 +145,10 @@ function gitnew() {
 
 function gogit() {
   cd ${reposPath}/$1
+}
+
+function conlib() {
+  gogit conlib/$1
 }
 
 function git_branch() {
@@ -231,6 +237,18 @@ function goup() {
   ls
 }
 
+function goto() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <delimiter>"
+    return 0
+  fi
+
+  delimiter=$1
+  new_path=$(pwd | awk -F${delimiter} '{print $1}' )$delimiter
+
+  cd $new_path
+}
+
 # Grabs only the jira number from the current git branch
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 function git_jira_issue() {
@@ -297,7 +315,12 @@ function gitguijira() {
 }
 
 function gchgrep() {
-  gch $(gbragrep $1)
+  branch=$(gbragrep $1)
+  if [ ! "$branch" ];then
+    echo "No branch found"
+  else
+    gch $branch
+  fi
 }
 
 function gitdefaultbranch() {
@@ -311,7 +334,7 @@ function gorigindefault() {
   fi 
  
   echo "Reseting to local $branch to remote..."
-  gfo
+  gfo -p
   git checkout $branch
   gitreset origin/$branch
 }
@@ -353,6 +376,10 @@ function searchsystemctl() {
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
   ll -rst | tail -n 1 | awk '{print $NF}'
+}
+
+function findname() {
+  find . -name $@
 }
 
 ##########################################################
