@@ -90,7 +90,7 @@ alias ll='ls -l'
 #}
 
 alias untar='tar -xvzf '
-alias aws='/usr/local/bin/aws --no-verify-ssl'
+#alias aws='/usr/local/bin/aws --no-verify-ssl'
 
 ##########################################################
 ################# Shared git commands ####################
