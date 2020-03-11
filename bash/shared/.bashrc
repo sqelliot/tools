@@ -89,6 +89,8 @@ alias ll='ls -l'
 #  bash -lic "/bin/cd $1 && ls"
 #}
 
+alias mytop='ll $CL_TOP'
+
 alias untar='tar -xvzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
 
@@ -127,7 +129,8 @@ alias gd='git diff'
 
 ##### Maven commands ##### 
 MCI='mvn clean install'
-MVN_CL_CONFIGS='-P copy-artifacts -Duser.top=~/repos/conlib/top'
+CL_TOP=/home/users/selliott/repos/conlib/top
+MVN_CL_CONFIGS='-P copy-artifacts -Duser.top='$CL_TOP
 MICL='mvn install '$MVN_CL_CONFIGS
 MCICL='mvn clean install '$MVN_CL_CONFIGS
 MCISKIP='mvn clean install -Dmaven.test.skip=true '$MVN_CL_CONFIGS
