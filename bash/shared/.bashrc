@@ -94,6 +94,11 @@ alias mytop='ll $CL_TOP'
 alias untar='tar -xvzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
 
+MY_DEVLNK='/project/geoint-2240a/vol/git1/selliott'
+function devlnkhome () {
+  cd $MY_DEVLNK
+}
+
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -133,13 +138,15 @@ CL_TOP=/home/users/selliott/repos/conlib/top
 MVN_CL_CONFIGS='-P copy-artifacts -Duser.top='$CL_TOP
 MICL='mvn install '$MVN_CL_CONFIGS
 MCICL='mvn clean install '$MVN_CL_CONFIGS
-MCISKIP='mvn clean install -Dmaven.test.skip=true '$MVN_CL_CONFIGS
+MCISKIP='mvn clean install -Dmaven.test.skip=true '
+MCICLSKIP=$MCISKIP' '$MVN_CL_CONFIGS
 
 alias   mci='echo $MCI; $MCI'
 alias  mciskip='echo $MCISKIP && $MCISKIP'
 alias mvntree='mvn dependency:tree'
 alias micl='echo $MICL && $MICL'
 alias mcicl='echo $MCICL && $MCICL'
+alias mciclskip='echo $MCICLSKIP && $MCICLSKIP'
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
