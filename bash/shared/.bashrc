@@ -94,9 +94,9 @@ alias mytop='ll $CL_TOP'
 alias untar='tar -xvzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
 
-MY_DEVLNK='/project/geoint-2240a/vol/git1/selliott'
+MYDEVLNK='/project/geoint-2240a/vol/git1/selliott'
 function devlnkhome () {
-  cd $MY_DEVLNK
+  cd $MYDEVLNK
 }
 
 ##########################################################
@@ -134,7 +134,7 @@ alias gd='git diff'
 
 ##### Maven commands ##### 
 MCI='mvn clean install'
-CL_TOP=/home/users/selliott/repos/conlib/top
+CL_TOP=~/repos/conlib/top
 MVN_CL_CONFIGS='-P copy-artifacts -Duser.top='$CL_TOP
 MICL='mvn install '$MVN_CL_CONFIGS
 MCICL='mvn clean install '$MVN_CL_CONFIGS
