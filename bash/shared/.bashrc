@@ -89,7 +89,8 @@ alias ll='ls -l'
 #  bash -lic "/bin/cd $1 && ls"
 #}
 
-alias mytop='ll $CL_TOP'
+MYTOP='ls -lrst '$CL_TOP
+alias mytop='echo $MYTOP; $MYTOP'
 
 alias untar='tar -xvzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
