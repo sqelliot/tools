@@ -92,7 +92,8 @@ alias ll='ls -l'
 MYTOP='ls -lrst '$CL_TOP
 alias mytop='echo $MYTOP; $MYTOP'
 
-alias untar='tar -xvzf '
+alias dotar='tar -czvf'
+alias undotar='tar -xvzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
 
 MYDEVLNK='/project/geoint-2240a/vol/git1/selliott'
