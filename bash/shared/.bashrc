@@ -79,6 +79,10 @@ function toolsgpshodefault() {
   bash -lic "tools && git push origin master"
 }
 
+function toolspush() {
+  git push origin master
+}
+
 alias conlib='gogit conlib'
 alias devlnk='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 
