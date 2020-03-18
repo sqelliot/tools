@@ -32,6 +32,22 @@ alias gov='ssh gov'
 alias cint='ssh cint'
 alias dev='ssh dev'
 
+function do_port_forward() {
+  if [ "$#" -ne 4 ] ; then
+    echo "Usage: port_forward <node> <ip> <port> <local_port>" 
+    return 0
+  fi
+  node=$1
+  ip=$2
+  port=$3
+  local_port=$port
+  if  [ "$#" == 4 ]; then
+    local_port=$4
+  fi
+
+  ssh ${node} -L ${local_port}:${ip}:${port}
+}
+
 function port_forward() {
   if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
     echo "Usage: port_forward <ip> <port> [local_port]" 
@@ -45,7 +61,7 @@ function port_forward() {
     local_port=$3
   fi
 
-  ssh ${node} -L ${local_port}:${ip}:${port}
+  do_port_forward $node $ip $port $local_port
 }
 
 function ml_forward() {
