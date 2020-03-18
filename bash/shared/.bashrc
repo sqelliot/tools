@@ -109,7 +109,7 @@ function devlnkhome () {
 ANSIBLETOP='-e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
 ANSIBLELOCAL='--connection=local'
 ANSIBLE_DEV=$ANSIBLETOP' '$ANSIBLELOCAL
-APCL='ansible-playbook -vv -bK --connection=local'
+APCL='ansible-playbook -v -bK --connection=local'
 alias apcl='echo $APCL; $APCL'
 APCLDEVLOCAL=$APCL' -e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
 alias apcldevlocal='echo $APCLDEVLOCAL; $APCLDEVLOCAL '
