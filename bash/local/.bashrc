@@ -48,6 +48,11 @@ function do_port_forward() {
   ssh ${node} -L ${local_port}:${ip}:${port}
 }
 
+function nexus_port_forward() {
+  echo "do_port_forward devlnk ncl-nexus.devlnk.net 8081 8081"
+  do_port_forward devlnk ncl-nexus.devlnk.net 8081 8081
+}
+
 function port_forward() {
   if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
     echo "Usage: port_forward <ip> <port> [local_port]" 
