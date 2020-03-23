@@ -427,7 +427,7 @@ function pathjump () {
 }
 
 function searchsystemctl() {
-  sudo systemctl | grep -i x2dquery | awk '{print $1}'
+  sudo systemctl | grep -i $@ | awk '{print $1}'
 }
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
