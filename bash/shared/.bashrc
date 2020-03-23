@@ -245,6 +245,23 @@ function gitfeaturebranch() {
   git checkout -b feature/${target_branch}/${name} origin/$target_branch
 }
 
+function gitbugfixbranch() {
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <jira number>[-<info>] [target branch]"
+    return 0
+  fi
+  
+  name=$1
+  target_branch=$(gitdefaultbranch)
+
+  if [ "$#" = 2 ]; then
+    target_branch=$2
+  fi
+
+  gfo
+  git checkout -b drfix/${target_branch}/${name} origin/$target_branch
+}
+
 # Create the two branches necessary for a DR
 function gitDr() {
 
