@@ -105,6 +105,14 @@ function devlnkhome () {
   cd $MYDEVLNK
 }
 
+function mountdevlnk() {
+  sudo umount /project/NCL_SYS
+  sudo umount /project/geoint-2240a
+
+  sudo sshfs -o allow_other,IdentityFile=/home/sean/.ssh/id_rsa selliott@elliott2-lnx7-dev.devlnk.net:/net/geoint-2240a /project/geoint-2240a
+  sudo sshfs -o allow_other,IdentityFile=/home/sean/.ssh/id_rsa selliott@elliott2-lnx7-dev.devlnk.net:/project/NCL_SYS /project/NCL_SYS/
+}
+
 
 ANSIBLETOP='-e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
 ANSIBLELOCAL='--connection=local'
