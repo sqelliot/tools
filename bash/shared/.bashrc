@@ -119,8 +119,10 @@ ANSIBLELOCAL='--connection=local'
 ANSIBLE_DEV=$ANSIBLETOP' '$ANSIBLELOCAL
 APCL='ansible-playbook -v -bK --connection=local'
 alias apcl='echo $APCL; $APCL'
-APCLDEVLOCAL=$APCL' -e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
-alias apcldevlocal='echo $APCLDEVLOCAL; $APCLDEVLOCAL '
+function apcldevlocal () {
+  ansible-playbook -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}"
+}
+
 
 ##########################################################
 ################# Shared git commands ####################
