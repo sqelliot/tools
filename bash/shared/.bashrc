@@ -93,8 +93,10 @@ alias ll='ls -l'
 #  bash -lic "/bin/cd $1 && ls"
 #}
 
-MYTOP='ls -lrst '$CL_TOP
-alias mytop='echo $MYTOP; $MYTOP'
+function mytop() {
+  MYTOP='ls -lrst '$CL_TOP
+  echo $MYTOP; $MYTOP
+}
 
 alias dotar='tar -czf'
 alias undotar='tar -xzf '
