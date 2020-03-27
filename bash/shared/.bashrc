@@ -140,6 +140,7 @@ alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
+alias gbraremotegrep="git branch -r | grep"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
 alias    gco='git commit'
@@ -374,12 +375,20 @@ function gitguijira() {
 }
 
 function gchgrep() {
-  branch=$(gbragrep $1)
+  branch=$(gbragrep  $1)
   if [ ! "$branch" ];then
-    echo "No branch found"
-  else
-    gch $branch
+    branch=$(gbraremotegrep  $1)
+    if [ ! "$branch" ];then
+      echo "No branch found"
+      return
+    fi
   fi
+
+  printf '%s\n' "$branch"
+  branch=$(echo $branch | awk '{print $1}' |  sed -e 's/^origin\///')
+  printf '%s\n' "$branch"
+
+  gch $branch
 }
 
 function gitdefaultbranch() {
