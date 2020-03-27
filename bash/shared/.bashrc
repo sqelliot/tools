@@ -60,23 +60,23 @@ function updatetools() {
 }
 
 function toolssta() {
-  bash -lic "tools && git status"
+  tools && git status
 }
 
 
 function toolsgdiff() {
-  bash -lic "tools && git diff"
+  tools && git diff
 }
 function toolsgadd() {
-  bash -lic "tools && git add ."
+  tools && git add .
 }
 
 function toolsgcom() {
-  bash -lic "tools && gcom '$@'"
+  tools && gcom '$@'
 }
 
 function toolsgpshodefault() {
-  bash -lic "tools && git push origin master"
+  tools && git push origin master
 }
 
 function toolspush() {
@@ -140,7 +140,7 @@ alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
-alias gbraremotegrep="git branch -r | grep"
+alias gbraremotegrep="gfo; git branch -r | grep"
 alias   gbram='git branch -m'
 alias    gch='git checkout'
 alias    gco='git commit'
