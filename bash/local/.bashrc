@@ -49,8 +49,8 @@ function do_port_forward() {
 }
 
 function nexus_port_forward() {
-  echo "do_port_forward devlnk ncl-nexus.devlnk.net 8081 8081"
-  do_port_forward devlnk ncl-nexus.devlnk.net 8081 8081
+  echo "do_port_forward devlnk ncl-nexus-lnx7-01.devlnk.net 8081 8081"
+  do_port_forward devlnk ncl-nexus-lnx7-01.devlnk.net  8081 8081
 }
 
 function port_forward() {
