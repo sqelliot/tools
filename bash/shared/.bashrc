@@ -375,6 +375,7 @@ function gitguijira() {
 }
 
 function gchgrep() {
+  gfo
   branch=$(gbragrep  $1)
   if [ ! "$branch" ];then
     branch=$(gbraremotegrep  $1)
