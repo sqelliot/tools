@@ -2,6 +2,8 @@
 
 alias ls='ls --color=auto'
 
+alias devlnk_vm='elliott2'
+
 alias selliott='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 function scptoeuc (){ 
   if [ "$#" -ne 1 ]; then
@@ -49,8 +51,14 @@ function do_port_forward() {
 }
 
 function nexus_port_forward() {
-  echo "do_port_forward devlnk ncl-nexus-lnx7-01.devlnk.net 8081 8081"
-  do_port_forward devlnk ncl-nexus-lnx7-01.devlnk.net  8081 8081
+  echo "do_port_forward ${devlnk_vm} ncl-nexus-lnx7-01.devlnk.net 8081 8081"
+  do_port_forward ${devlnk_vm} ncl-nexus-lnx7-01.devlnk.net  8081 8081
+}
+
+function jenkins_port_forward() {
+  url='ncl-jenkins.devlnk.net'
+  port='8080'
+  do_port_forward elliott2  ncl-jenkins.devlnk.net 8080 8080
 }
 
 function port_forward() {
