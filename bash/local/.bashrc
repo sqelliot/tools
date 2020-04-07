@@ -51,8 +51,8 @@ function do_port_forward() {
 }
 
 function nexus_port_forward() {
-  echo "do_port_forward ${devlnk_vm} ncl-nexus-lnx7-01.devlnk.net 8081 8081"
-  do_port_forward ${devlnk_vm} ncl-nexus-lnx7-01.devlnk.net  8081 8081
+  echo "do_port_forward elliott2 ncl-nexus-lnx7-01.devlnk.net 8081 8081"
+  do_port_forward elliott2 ncl-nexus-lnx7-01.devlnk.net  8081 8081
 }
 
 function jenkins_port_forward() {
