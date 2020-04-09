@@ -95,6 +95,9 @@ alias ll='ls -l'
 #}
 
 function mytop() {
+  if [ "$#" == 1 ]; then
+    cp $1 $CL_TOP
+  fi
   MYTOP='ls -lrst '$CL_TOP
   echo $MYTOP; $MYTOP
 }
