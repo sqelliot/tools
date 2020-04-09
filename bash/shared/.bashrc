@@ -133,6 +133,9 @@ function apclsqslocal() {
   ansible-playbook --connection=local -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" -e "{receiver : { sqs : { name : SELLIOTT-FG-CLOUD-POP-COMPLETE }}}" -e "{ site : { modify : { destination : SELLIOTT-FG-SITE-FLOW-CONTROL }}}" -e "{ preprocessing : { sqs : { name : SELLIOTT-PP-FRONT-GATE-COMPLETE }}}"
 }
 
+function apcltop() {
+  ansible-playbook -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" ${@:2}
+}
 
 ##########################################################
 ################# Shared git commands ####################
