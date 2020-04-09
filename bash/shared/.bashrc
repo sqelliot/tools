@@ -408,7 +408,7 @@ function gorigindefault() {
     branch=$1
   fi 
  
-  echo "Reseting to local $branch to remote..."
+  echo "Checking out $branch and reseting to remote..."
   gfo -p
   git checkout $branch
   gitreset origin/$branch
