@@ -181,8 +181,8 @@ alias   mci='echo $MCI; $MCI'
 alias  mciskip='echo $MCISKIP && $MCISKIP'
 alias mvntree='mvn dependency:tree'
 alias micl='echo $MICL && $MICL'
-alias mcicl='echo $MCICL && $MCICL'
-alias mciclskip='echo $MCICLSKIP && $MCICLSKIP'
+alias mcicl='echo $MCICL && $MCICL ; mytop'
+alias mciclskip='echo $MCICLSKIP && $MCICLSKIP ; mytop'
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
