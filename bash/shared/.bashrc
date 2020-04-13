@@ -169,6 +169,8 @@ alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
 alias gd='git diff'
+alias grc='git rebase --continue'
+alias gra='git rebase --abort'
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
