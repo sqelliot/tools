@@ -85,7 +85,6 @@ function toolspush() {
 
 alias conlib='gogit conlib'
 alias ecl='gogit ecl'
-alias devlnk='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 
 ## shell ##
 #################################################
