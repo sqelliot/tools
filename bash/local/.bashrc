@@ -2,9 +2,6 @@
 
 alias ls='ls --color=auto'
 
-alias devlnk_vm='elliott2'
-
-alias selliott='ssh selliott@elliott2-lnx7-dev.devlnk.net'
 function scptoeuc (){ 
   if [ "$#" -ne 1 ]; then
     echo "Usage: scpToEuc <file>" 
@@ -35,8 +32,8 @@ alias cint='ssh cint'
 alias dev='ssh dev'
 
 function do_port_forward() {
-  if [ "$#" -ne 4 ] ; then
-    echo "Usage: port_forward <node> <ip> <port> <local_port>" 
+  if [ "$#" -lt 3 ] ; then
+    echo "Usage: ${FUNCNAME[0]} <node> <ip> <port> <local_port>" 
     return 0
   fi
   node=$1
@@ -59,6 +56,28 @@ function jenkins_port_forward() {
   url='ncl-jenkins.devlnk.net'
   port='8080'
   do_port_forward elliott2  ncl-jenkins.devlnk.net 8080 8080
+}
+
+function devlnk_loop_port_forward() {
+  if [ "$#" -ne 2 ] ; then
+    echo "Usage: ${FUNCNAME[0]} <port> <local_port>" 
+    return 0
+  fi
+  port=$1
+  local_port=$2
+
+  do_port_forward elliott2 elliott2-lnx7-dev.devlnk.net $port $local_port
+}
+
+function devlnk_port_forward() {
+  if [ "$#" -ne 2 ] ; then
+    echo "Usage: ${FUNCNAME[0]} <ip> <port>" 
+    return 0
+  fi
+  ip=$1
+  port=$2
+
+  do_port_forward elliott2 $ip $port
 }
 
 function port_forward() {
