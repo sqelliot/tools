@@ -252,6 +252,7 @@ function gitreset() {
 }
 
 # Create a new branch off remote origin/dev
+personal_branch_name=selliott
 function gitfeaturebranch() {
   if [ "$#" -lt 1 ]; then
     echo "Usage: gitfeaturebranch <jira number>[-<info>] [target branch]"
@@ -266,7 +267,7 @@ function gitfeaturebranch() {
   fi
 
   gfo
-  git checkout -b feature/${target_branch}/${name} origin/$target_branch
+  git checkout -b feature/${target_branch}/${personal_branch_name}/${name} origin/$target_branch
 }
 
 function gitbugfixbranch() {
@@ -283,7 +284,7 @@ function gitbugfixbranch() {
   fi
 
   gfo
-  git checkout -b drfix/${target_branch}/${name} origin/$target_branch
+  git checkout -b drfix/${target_branch}/${personal_branch_name}/${name} origin/$target_branch
 }
 
 # Create the two branches necessary for a DR

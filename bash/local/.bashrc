@@ -48,17 +48,17 @@ function do_port_forward() {
 }
 
 function nexus_port_forward() {
-  echo "do_port_forward elliott2 ncl-nexus-lnx7-01.devlnk.net 8081 8081"
-  do_port_forward elliott2 ncl-nexus-lnx7-01.devlnk.net  8081 8081
+  echo "do_port_forward devlnk ncl-nexus-lnx7-01.devlnk.net 8081 8082"
+  do_port_forward devlnk ncl-nexus-lnx7-01.devlnk.net  8081 8082
 }
 
 function jenkins_port_forward() {
   url='ncl-jenkins.devlnk.net'
   port='8080'
-  do_port_forward elliott2  ncl-jenkins.devlnk.net 8080 8080
+  do_port_forward devlnk  ncl-jenkins.devlnk.net 8080 8080
 }
 
-function devlnk_loop_port_forward() {
+function devlnk_self_port_forward() {
   if [ "$#" -ne 2 ] ; then
     echo "Usage: ${FUNCNAME[0]} <port> <local_port>" 
     return 0
@@ -66,7 +66,7 @@ function devlnk_loop_port_forward() {
   port=$1
   local_port=$2
 
-  do_port_forward elliott2 elliott2-lnx7-dev.devlnk.net $port $local_port
+  do_port_forward devlnk elliott2-lnx7-dev.devlnk.net $port $local_port
 }
 
 function devlnk_port_forward() {
@@ -77,7 +77,7 @@ function devlnk_port_forward() {
   ip=$1
   port=$2
 
-  do_port_forward elliott2 $ip $port
+  do_port_forward devlnk $ip $port
 }
 
 function port_forward() {
