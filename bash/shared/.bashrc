@@ -89,16 +89,21 @@ alias ecl='gogit ecl'
 ## shell ##
 #################################################
 alias ll='ls -l'
+function llbs() {
+  ll --block-size=$1
+}
 #function cd () {
 #  bash -lic "/bin/cd $1 && ls"
 #}
 
 function mytop() {
-  if [ "$#" == 1 ]; then
-    cp $1 $CL_TOP
+  if [ "$#" -ge 1 ]; then
+    echo "cp $1 $CL_TOP"
+    cp $@ $CL_TOP
   fi
   MYTOP='ls -lrst '$CL_TOP
   echo $MYTOP; $MYTOP
+  date
 }
 
 alias dotar='tar -czf'
@@ -122,7 +127,7 @@ function mountdevlnk() {
 ANSIBLETOP='-e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
 ANSIBLELOCAL='--connection=local'
 ANSIBLE_DEV=$ANSIBLETOP' '$ANSIBLELOCAL
-APCL='ansible-playbook -v -bK --connection=local'
+APCL='ansible-playbook -vv -bK --connection=local'
 alias apcl='echo $APCL; $APCL'
 function apcldevlocal () {
   ansible-playbook -v -bK --connection=local $1 -e "{service_config_info : { staging_directory : $CL_TOP }}"
