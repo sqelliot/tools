@@ -115,6 +115,10 @@ function devlnkhome () {
   cd $MYDEVLNK
 }
 
+
+## systemctl
+alias sysstop='sudo systemctl stop '
+
 function mountdevlnk() {
   sudo umount /project/NCL_SYS
   sudo umount /project/geoint-2240a
