@@ -59,12 +59,15 @@ function jenkins_port_forward() {
 }
 
 function devlnk_self_port_forward() {
-  if [ "$#" -ne 2 ] ; then
-    echo "Usage: ${FUNCNAME[0]} <port> <local_port>" 
+  if [ "$#" -lt 1 ] ; then
+    echo "Usage: ${FUNCNAME[0]} <port> [local_port]" 
     return 0
   fi
   port=$1
-  local_port=$2
+  local_port=$port
+  if [ "$#" == 2 ] ; then
+    local_port=$2
+  fi
 
   do_port_forward devlnk elliott2-lnx7-dev.devlnk.net $port $local_port
 }
