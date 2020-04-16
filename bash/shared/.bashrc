@@ -433,6 +433,11 @@ function gorigindefault() {
   gitreset origin/$branch
 }
 
+
+function eclssh(){
+  ssh ecl-corefulltest${1}-lnx7-dev.devlnk.net
+}
+
 #######################
 ## Utility functions ##
 #######################
