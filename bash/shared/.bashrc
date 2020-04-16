@@ -131,9 +131,11 @@ function mountdevlnk() {
 ANSIBLETOP='-e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
 ANSIBLELOCAL='--connection=local'
 ANSIBLE_DEV=$ANSIBLETOP' '$ANSIBLELOCAL
-APCL='ansible-playbook -vv -bK --connection=local'
+APCL='ansible-playbook -vv -bK '
 alias apcl='echo $APCL; $APCL'
-function apcldevlocal () {
+APCLLOCAL='ansible-playbook -vv -bK --connection=local'
+alias apcllocal='echo $APCLLOCAL; $APCLLOCAL'
+function apcllocaldev () {
   ansible-playbook -v -bK --connection=local $1 -e "{service_config_info : { staging_directory : $CL_TOP }}"
 }
 
