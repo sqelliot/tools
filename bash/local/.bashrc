@@ -63,6 +63,7 @@ function devlnk_self_port_forward() {
     echo "Usage: ${FUNCNAME[0]} <port> [local_port]" 
     return 0
   fi
+  echo "$@"
   port=$1
   local_port=$port
   if [ "$#" == 2 ] ; then
