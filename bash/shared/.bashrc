@@ -121,7 +121,14 @@ function devlnkhome () {
 
 
 ## systemctl
-alias sysstop='sudo systemctl stop '
+function sysstop() {
+  for system in $@
+  do
+    sudo systemctl stop "$system"
+  done
+}
+alias sysstatus='sudo systemctl status '
+alias sysrestart='sudo systemctl restart '
 
 function mountdevlnk() {
   sudo umount /project/NCL_SYS
