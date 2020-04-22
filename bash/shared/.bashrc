@@ -412,9 +412,9 @@ function gitguijira() {
 }
 
 function gchgrep() {
-  gfo
   branch=$(gbragrep  $1)
   if [ ! "$branch" ];then
+    gfo
     branch=$(gbraremotegrep  $1)
     if [ ! "$branch" ];then
       echo "No branch found"
@@ -438,6 +438,11 @@ function gorigindefault() {
   if [ "$#" == 1 ];then
     branch=$1
   fi 
+
+  if [ "$branch" == "master" ];then
+    echo "Default branch [$branch] "
+    return
+  fi
  
   echo "Checking out $branch and reseting to remote..."
   gfo -p
