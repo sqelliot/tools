@@ -32,6 +32,10 @@ function sourceBash() {
 source ${localBash}
 source ${awsBash}
 
+function editBashrc() {
+  vim ~/.bashrc; source ~/.bashrc
+}
+
 function editSharedBash() {
   vim ${sharedBash}; sourceBash ${sharedBash}
 }
