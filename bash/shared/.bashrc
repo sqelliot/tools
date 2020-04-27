@@ -110,6 +110,8 @@ function mytop() {
   date
 }
 
+alias grep='grep --color'
+
 alias dotar='tar -czf'
 alias undotar='tar -xzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
