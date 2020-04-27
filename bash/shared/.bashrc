@@ -60,7 +60,8 @@ function functions() {
 }
 
 function updatetools() {
-  bash -lic "tools && grebase" && sourceSharedBash
+  bash -lic "tools && grebase" 
+  sourceSharedBash
 }
 
 function toolssta() {
