@@ -122,7 +122,6 @@ function devlnkhome () {
   cd $MYDEVLNK
 }
 
-export PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\] $(git_branch || echo "") {$(date)} \[\033[0m\]\nπ'
 
 ## systemctl
 function sysstop() {
