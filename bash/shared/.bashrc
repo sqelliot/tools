@@ -5,6 +5,12 @@ reposPath=~/repos/
 if [ $(hostname) == "GLDLBAE496014" ]; then
   reposPath=/c/dev/repos/
 fi
+if [ $(whoami) == "root" ]; then
+  reposPath=~selliott/repos/
+fi
+if [ "$GIT_BRANCH_NAME" == "" ]; then
+  GIT_BRANCH_NAME=selliott
+fi
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
@@ -124,14 +130,19 @@ function devlnkhome () {
 
 
 ## systemctl
-function sysstop() {
-  for system in $@
+function sys() {
+  action=$1
+  for system in ${@:2}
   do
-    sudo systemctl stop "$system"
+    sudo systemctl $action "$system" 
   done
 }
-alias sysstatus='sudo systemctl status '
-alias sysrestart='sudo systemctl restart '
+alias sysstatus='systemctl status '
+alias sysrestart='sys restart '
+alias sysstop='sys stop'
+function jrnl(){
+  sudo journalctl -u $@
+}
 
 function mountdevlnk() {
   sudo umount /project/NCL_SYS
@@ -167,6 +178,7 @@ function apcltop() {
 alias gpsha='git push --all'
 alias gpsho='git push origin'
 alias gd='git diff'
+alias gdc='git diff --cached '
 alias gdifforigin='git diff origin/$(git_branch)'
 alias gpsh='git push'
 alias    gadd='git add'
@@ -176,7 +188,6 @@ alias gdev='git checkout dev'
 alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
 alias gbraremotegrep="gfo; git branch -r | grep"
-alias   gbram='git branch -m'
 alias    gch='git checkout'
 alias    gco='git commit'
 alias   gcom='git commit -m'
@@ -197,6 +208,11 @@ alias   gka='gitk --all'
 alias gd='git diff'
 alias grc='git rebase --continue'
 alias gra='git rebase --abort'
+
+
+function gbrame() {
+  git branch | grep $GIT_BRANCH_NAME
+}
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -272,8 +288,6 @@ function gitreset() {
   gfo && git reset --hard ${branch}
 }
 
-# Create a new branch off remote origin/dev
-personal_branch_name=selliott
 function gitfeaturebranch() {
   if [ "$#" -lt 1 ]; then
     echo "Usage: gitfeaturebranch <jira number>[-<info>] [target branch]"
@@ -288,7 +302,7 @@ function gitfeaturebranch() {
   fi
 
   gfo
-  git checkout -b feature/${target_branch}/${personal_branch_name}/${name} origin/$target_branch
+  git checkout -b feature/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
 }
 
 function gitbugfixbranch() {
@@ -305,7 +319,7 @@ function gitbugfixbranch() {
   fi
 
   gfo
-  git checkout -b drfix/${target_branch}/${personal_branch_name}/${name} origin/$target_branch
+  git checkout -b drfix/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
 }
 
 # Create the two branches necessary for a DR
