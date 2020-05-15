@@ -164,7 +164,7 @@ alias apcl='echo $APCL; $APCL'
 APCLLOCAL='ansible-playbook -vv -bK --connection=local'
 alias apcllocal='echo $APCLLOCAL; $APCLLOCAL'
 function apcllocaldev () {
-  ansible-playbook -v -bK --connection=local $1 -e "{service_config_info : { staging_directory : $CL_TOP }}"
+  ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}"
 }
 
 function apclsqslocal() {
