@@ -512,6 +512,10 @@ function pathjump () {
 function searchsystemctl() {
   sudo systemctl | grep -i -E "$1" | awk '{print $1}'
 }
+
+function eclservices() {
+  searchsystemctl "front|library|rlc"
+}
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
   ll -rst | tail -n 1 | awk '{print $NF}'
