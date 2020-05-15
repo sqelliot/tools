@@ -62,7 +62,7 @@ alias tools="gogit tools"
 
 
 function functions() {
-  grep -hr "function .*().*{" ${toolsPath} | sort
+  grep -hr -e "function [a-zA-Z0-9_-]*() {" ${toolsPath} | sort
 }
 
 function updatetools() {
