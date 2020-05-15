@@ -347,12 +347,13 @@ function gitDr() {
 function goup() {
   num=$1
 
-  for i in $(seq 1 ${num})
+  for i in $(seq 1 ${num});
   do
     #echo "Went up ${i} dirs"
     pwd
     cd ..
   done
+
   ls
 }
 
@@ -363,7 +364,7 @@ function goto() {
   fi
 
   delimiter=$1
-  new_path=$(pwd | awk -F${delimiter} '{print $1}' )$delimiter
+  new_path=$(pwd | awk -F ${delimiter} '{print $1}' )$delimiter
 
   cd $new_path
 }
