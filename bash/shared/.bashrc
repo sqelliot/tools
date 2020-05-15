@@ -525,6 +525,13 @@ function findname() {
   find . -name $@
 }
 
+function findfile() {
+  find $@ -type f
+}
+
+function finddir() {
+  find $@ -type d
+}
 ##########################################################
 ################ Shared docker commands ##################
 ##########################################################
