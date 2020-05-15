@@ -140,7 +140,9 @@ function sys() {
 }
 alias sysstatus='systemctl status '
 alias sysrestart='sys restart '
-alias sysstop='sys stop'
+alias sysstop='sys stop '
+alias sysdisable='sys disable '
+alias sysend='sudo systemctl disable --now '
 function jrnl(){
   sudo journalctl -u $@
 }
