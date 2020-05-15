@@ -175,6 +175,8 @@ function apcltop() {
   ansible-playbook -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" ${@:2}
 }
 
+alias baelog='cd /var/log/baesystems/ '
+alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
