@@ -96,6 +96,7 @@ function toolspush() {
 
 alias conlib='gogit conlib'
 alias ecl='gogit ecl'
+alias fg='gogit conlib/cl-frontgate'
 
 ## shell ##
 #################################################
