@@ -31,6 +31,17 @@ alias gov='ssh gov'
 alias cint='ssh cint'
 alias dev='ssh dev'
 
+function ecl_port_forward() {
+  cl_port=11443
+  rlc_query=36000
+  rlc_order=36100
+  cl_opers=37000
+  cl_query=36050
+  ip=elliott2-lnx7-dev.devlnk.net
+
+  ssh devlnk  -L ${cl_port}:${ip}:${cl_port} ${rlc_query}:${ip}:${rlc_query} ${rlc_order}:${ip}:${rlc_order} ${cl_opers}:${ip}:${cl_opers} ${cl_query}:${ip}:${cl_query} 
+}
+
 function do_port_forward() {
   if [ "$#" -lt 3 ] ; then
     echo "Usage: ${FUNCNAME[0]} <node> <ip> <port> <local_port>" 

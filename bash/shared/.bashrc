@@ -142,7 +142,9 @@ alias sysstatus='systemctl status '
 alias sysrestart='sys restart '
 alias sysstop='sys stop '
 alias sysdisable='sys disable '
-alias sysend='sudo systemctl disable --now '
+function sysend() {
+  sys "disable --now" $@
+}
 function jrnl(){
   sudo journalctl -u $@
 }
@@ -235,8 +237,8 @@ alias   mci='echo $MCI; $MCI'
 alias  mciskip='echo $MCISKIP && $MCISKIP'
 alias mvntree='mvn dependency:tree'
 alias micl='echo $MICL && $MICL'
-alias mcicl='echo $MCICL && $MCICL ; mytop'
-alias mciclskip='echo $MCICLSKIP && $MCICLSKIP ; mytop'
+alias mcicl='echo $MCICL && $MCICL && mytop'
+alias mciclskip='echo $MCICLSKIP && $MCICLSKIP && mytop'
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
@@ -304,6 +306,11 @@ function gitfeaturebranch() {
 
   if [ "$#" = 2 ]; then
     target_branch=$2
+  fi
+
+  if [ "$target_branch" = "master" ]; then
+    echo "sorry! [$target_branch] "
+    return 0
   fi
 
   gfo
@@ -510,11 +517,11 @@ function pathjump () {
 }
 
 function searchsystemctl() {
-  sudo systemctl | grep -i -E "$1" | awk '{print $1}'
+  sudo systemctl | grep  -E "$1" | awk '{print $1}'
 }
 
 function eclservices() {
-  searchsystemctl "front|library|rlc"
+  searchsystemctl "Front|Library|RLC"
 }
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
