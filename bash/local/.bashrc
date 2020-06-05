@@ -65,7 +65,7 @@ function do_port_forward() {
     local_port=$4
   fi
 
-  ssh ${node} -L ${local_port}:${ip}:${port}
+  ssh -t ${node} -L ${local_port}:${ip}:${port} "watch  echo 'Congratulations\!\!\! You are port forwarding to [${node}] on port [${port}]. Please use [localhost:${local_port}] to access your remote service'"
 }
 
 function nexus_port_forward() {
