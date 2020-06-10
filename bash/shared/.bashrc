@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # self-references
-reposPath=~/repos/
+if [ "$reposPath" == "" ]; then
+  reposPath=~/repos/
+fi
 if [ $(hostname) == "GLDLBAE496014" ]; then
   reposPath=/c/dev/repos/
 fi
@@ -11,6 +13,7 @@ fi
 if [ "$GIT_BRANCH_NAME" == "" ]; then
   GIT_BRANCH_NAME=selliott
 fi
+CL_TOP=${reposPath}/conlib/top
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
@@ -58,7 +61,9 @@ function sourceSharedBash() {
 }
 
 # go to tools
-alias tools="gogit tools"
+function tools() {
+  gogit tools
+}
 
 
 function functions() {
@@ -94,13 +99,15 @@ function toolspush() {
   git push origin master
 }
 
-alias conlib='gogit conlib'
+alias cl='gogit conlib'
 alias ecl='gogit ecl'
 alias fg='gogit conlib/cl-frontgate'
+alias dissemtest='gogit conlib/cl-dissem/services/apps/dissem/src/main/assembled/examples'
 
 ## shell ##
 #################################################
 alias ll='ls -l'
+alias l1='ls -1'
 function llbs() {
   ll --block-size=$1
 }
@@ -166,7 +173,7 @@ alias apcl='echo $APCL; $APCL'
 APCLLOCAL='ansible-playbook -vv -bK --connection=local'
 alias apcllocal='echo $APCLLOCAL; $APCLLOCAL'
 function apcllocaldev () {
-  ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}"
+  ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}" -e "{ saml : { validation : { enabled : false }}}"
 }
 
 function apclsqslocal() {
@@ -206,8 +213,9 @@ alias grebase='gfo && git rebase'
 alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfo && git rebase origin/$(git_branch)'
 alias gresetorigin='gfo && git reset --hard origin/$(git_branch)'
-alias gresetHEAD='git reset --hard HEAD'
+alias grhs='git reset --soft HEAD'
 alias grhh='git reset --hard HEAD'
+alias gros='git reset --soft origin/$(gitdefaultbranch)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
@@ -226,7 +234,6 @@ function gbrame() {
 
 ##### Maven commands ##### 
 MCI='mvn clean install'
-CL_TOP=~/repos/conlib/top
 MVN_CL_CONFIGS='-P copy-artifacts -Duser.top='$CL_TOP
 MICL='mvn install '$MVN_CL_CONFIGS
 MCICL='mvn clean install '$MVN_CL_CONFIGS
@@ -250,10 +257,6 @@ function gitnew() {
 
 function gogit() {
   cd ${reposPath}/$1
-}
-
-function conlib() {
-  gogit conlib/$1
 }
 
 function git_branch() {
@@ -517,7 +520,7 @@ function pathjump () {
 }
 
 function searchsystemctl() {
-  sudo systemctl | grep  -E "$1" | awk '{print $1}'
+  systemctl | grep  -E "$1" | awk '{print $1}'
 }
 
 function eclservices() {
