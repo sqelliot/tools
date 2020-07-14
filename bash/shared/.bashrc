@@ -507,6 +507,21 @@ function isWholeNumber() {
   echo 0
 }
 
+function mysed() {
+  if [ "$#" -lt 2  ]; then
+    echo "Usage: ${FUNCNAME[0]} <target string> <replacer> <targets...>"
+    return
+  fi
+  
+  cmd="sed -i 's/${1}/${2}/g' $3"
+  echo $cmd
+  bash -lic $cmd
+}
+
+function sd() {
+  sudo $@
+}
+
 function random_file() {
   gigs=$1
   head -c ${gig}G </dev/urandom > ~/randomFile.txt
@@ -527,11 +542,70 @@ function searchsystemctl() {
 function eclservices() {
   searchsystemctl "Front|Library|RLC"
 }
+
+function eclstop() {
+  sysstop $(eclservices)
+}
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
-  ll -rst | tail -n 1 | awk '{print $NF}'
+  string=""
+  num=1
+  _args=1rt
+  while test $# -gt 0; do
+    case "$1" in
+      -n)
+        shift
+        num=$1
+        shift
+        ;;
+      -s)
+        shift
+        string=$1
+        shift
+        ;;
+      -l)
+        shift
+        _args=$_args"l"
+        ;;
+      *)
+        echo "Unrecognized flag: $1"
+        return 1;
+        ;;
+    esac
+done
+ 
+  ls "-$_args" | grep "$string" | tail -n $num
 }
 
+function oldestfile() {
+  string=""
+  num=1
+  _args=1rt
+  while test $# -gt 0; do
+    case "$1" in
+      -n)
+        shift
+        num=$1
+        shift
+        ;;
+      -s)
+        shift
+        string=$1
+        shift
+        ;;
+      -l)
+        shift
+        _args=$_args"l"
+        ;;
+      *)
+        echo "Unrecognized flag: $1"
+        return 1;
+        ;;
+    esac
+done
+ 
+  ls "-$_args" | grep "$string" | head -n $num
+}
 function findname() {
   find . -name $@
 }
