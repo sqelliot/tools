@@ -37,9 +37,10 @@ function ecl_port_forward() {
   rlc_order=36100
   cl_opers=37000
   cl_query=36050
-  ip=elliott2-lnx7-dev.devlnk.net
+  cft3=ecl-corefulltest3-lnx7-dev
+  cft=ecl-corefulltest-lnx7-dev
 
-  ssh devlnk  -L ${cl_port}:ecl-corefulltest-lnx7-dev:${cl_port} -L ${rlc_query}:${ip}:${rlc_query} -L ${rlc_order}:${ip}:${rlc_order} -L ${cl_opers}:${ip}:${cl_opers} -L ${cl_query}:${ip}:${cl_query} 
+  ssh devlnk  -L ${cl_port}:ecl-corefulltest-lnx7-dev:${cl_port} -L ${rlc_query}:${cft3}:${rlc_query} -L ${rlc_order}:${cft3}:${rlc_order} -L ${cl_opers}:${cft}:${cl_opers} -L ${cl_query}:${cft}:${cl_query} 
 }
 function ecl_http_port_forward() {
   cl_port=11443
@@ -47,9 +48,14 @@ function ecl_http_port_forward() {
   rlc_order=36105
   cl_opers=37005
   cl_query=36055
-  ip=elliott2-lnx7-dev.devlnk.net
+  ip=ecl-corefulltest3-lnx7-dev
 
   ssh devlnk  -L ${cl_port}:ecl-corefulltest-lnx7-dev:${cl_port} -L ${rlc_query}:${ip}:${rlc_query} -L ${rlc_order}:${ip}:${rlc_order} -L ${cl_opers}:${ip}:${cl_opers} -L ${cl_query}:${ip}:${cl_query} 
+}
+
+function fg_port_forward() {
+
+  ssh devlnk  -L 34000:elliott2-lnx7-dev:34000
 }
 
 function do_port_forward() {
