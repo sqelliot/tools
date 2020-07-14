@@ -223,6 +223,7 @@ alias   gka='gitk --all'
 alias gd='git diff'
 alias grc='git rebase --continue'
 alias gra='git rebase --abort'
+alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
 
 
 function gbrame() {
@@ -282,7 +283,7 @@ function gitcloneenforma() {
 }
 
 function gpshodefault() {
-  if [[ $(git_branch) == "dev" ]] || [[ $(git_branch) == "master" ]]; then
+  if [[ $(git_branch) == "cl-dev" ]] || [[ $(git_branch) == "dev" ]] || [[ $(git_branch) == "master" ]]; then
     echo "Error: commits cannot be directly pushed to this branch"
     return 0
   fi
