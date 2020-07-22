@@ -210,7 +210,7 @@ alias gpsha='git push --all'
 alias gpsho='git push origin'
 alias gd='git diff'
 alias gdc='git diff --cached '
-alias gdifforigin='git diff origin/$(git_branch)'
+alias gdorigin='git diff origin/$(gitbranch)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias  gpatch='git add --patch'
@@ -225,11 +225,11 @@ alias   gcom='git commit -m'
 alias   gfo='git fetch origin -p'
 alias  gtfo='gfo'
 alias    glog='git log --oneline --graph --all --decorate'     
-alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent $(git_branch)'     
+alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent $(gitbranch)'     
 alias grebase='gfo && git rebase'
 alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
-alias grebaseorigin='gfo && git rebase origin/$(git_branch)'
-alias gresetorigin='gfo && git reset --hard origin/$(git_branch)'
+alias grebaseorigin='gfo && git rebase origin/$(gitbranch)'
+alias gresetorigin='gfo && git reset --hard origin/$(gitbranch)'
 alias grhs='git reset --soft HEAD'
 alias grhh='git reset --hard HEAD'
 alias gros='git reset --soft origin/$(gitdefaultbranch)'
@@ -277,7 +277,7 @@ function gogit() {
   cd ${reposPath}/$1
 }
 
-function git_branch() {
+function gitbranch() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ""
 }
 
@@ -300,11 +300,11 @@ function gitcloneenforma() {
 }
 
 function gpshodefault() {
-  if [[ $(git_branch) == "cl-dev" ]] || [[ $(git_branch) == "dev" ]] || [[ $(git_branch) == "master" ]]; then
+  if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
     echo "Error: commits cannot be directly pushed to this branch"
     return 0
   fi
-  gpsho -u $(git_branch) $@
+  gpsho -u $(gitbranch) $@
 }
 
 function gitreset() {
@@ -401,14 +401,14 @@ function goto() {
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 function git_jira_issue() {
   prefixes="(FCMS|FES|WOOD|ECLDEV|CLDEV).*"
-  echo $(git_branch ) | grep -oE ${prefixes} | awk -F'[-]' '{printf "%s-%s", $1,$2}'
+  echo $(gitbranch ) | grep -oE ${prefixes} | awk -F'[-]' '{printf "%s-%s", $1,$2}'
 }
 
 # update a branch
 # default to remote if no arg given
 function gupdate() {
   if [ "$#" -ne 1 ]; then
-    gfo; git rebase origin/$(git_branch)
+    gfo; git rebase origin/$(gitbranch)
     return 0
   fi
 
