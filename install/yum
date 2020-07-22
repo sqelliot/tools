@@ -1,0 +1,1 @@
+yum install openldap-clients
