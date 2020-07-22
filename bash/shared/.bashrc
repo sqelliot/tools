@@ -132,6 +132,20 @@ alias dotar='tar -czf'
 alias undotar='tar -xzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
 
+function export_to_env() {
+  if [ "$#" != 1  ]; then
+    echo "Usage: ${FUNCNAME[0]} <var_name>"
+    return
+  fi
+  var_name=$1
+
+  echo -n "Secret: "
+  read -s secret
+  echo
+
+  export $var_name=$secret
+}
+
 MYDEVLNK='/project/geoint-2240a/vol/git1/selliott'
 function devlnkhome () {
   cd $MYDEVLNK
