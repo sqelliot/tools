@@ -132,6 +132,8 @@ alias dotar='tar -czf'
 alias undotar='tar -xzf '
 #alias aws='/usr/local/bin/aws --no-verify-ssl'
 
+alias randomString="head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''"
+
 function export_to_env() {
   if [ "$#" != 1  ]; then
     echo "Usage: ${FUNCNAME[0]} <var_name>"
