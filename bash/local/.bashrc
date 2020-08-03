@@ -27,6 +27,11 @@ function scphoptoeuc (){
   scptoeuc $filepath  && ssh dev "scptoinstance ${ip} ${filename} ${dstPath}; rm ${filename}"
 }
 
+function scpmytop() {
+  
+  scp $1 devlnk:~/repos/conlib/top
+}
+
 alias gov='ssh gov' 
 alias cint='ssh cint'
 alias dev='ssh dev'
@@ -96,7 +101,7 @@ function devlnk_self_port_forward() {
     local_port=$2
   fi
 
-  do_port_forward devlnk elliott2-lnx7-dev.devlnk.net $port $local_port
+  do_port_forward devlnk $DEVLNK $port $local_port
 }
 
 function devlnk_port_forward() {
