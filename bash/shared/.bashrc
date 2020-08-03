@@ -116,6 +116,10 @@ function llbs() {
 #  bash -lic "/bin/cd $1 && ls"
 #}
 
+function epoch() {
+  date +'%s'
+}
+
 function mytop() {
   if [ "$#" -ge 1 ]; then
     echo "cp $1 $CL_TOP"
@@ -264,7 +268,10 @@ alias  mciskip='echo $MCISKIP && $MCISKIP'
 alias mvntree='mvn dependency:tree'
 alias micl='echo $MICL && $MICL'
 alias mcicl='echo $MCICL && $MCICL && mytop'
-alias mciclskip='echo $MCICLSKIP && $MCICLSKIP && mytop'
+
+function mciclskip() {
+  echo $MCICLSKIP && $MCICLSKIP $@ && mytop
+}
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
@@ -491,10 +498,6 @@ function gorigindefault() {
     branch=$1
   fi 
 
-  if [ "$branch" == "master" ];then
-    echo "Default branch [$branch] "
-    return
-  fi
  
   echo "Checking out $branch and reseting to remote..."
   gfo -p
@@ -540,9 +543,54 @@ function sd() {
   sudo $@
 }
 
-function random_file() {
-  gigs=$1
-  head -c ${gig}G </dev/urandom > ~/randomFile.txt
+function randomfile() {
+  units=M
+  size=1
+  append=false
+  while test $# -gt 0; do
+    case "$1" in
+      -u)
+        shift
+        units=$1
+        shift
+        ;;
+      -s)
+        shift
+        size=$1
+        shift
+        ;;
+      -d)
+        shift
+        dest=$1
+        shift
+        ;;
+      -a)
+        shift
+        append=true
+        ;;
+      *)
+        echo "Unrecognized flag: $1"
+        return 1;
+        ;;
+    esac
+  done
+
+  if [[ $(isWholeNumber $size) != 0 ]]; then
+    echo "Size must be a whole number"
+    return 1;
+  fi
+
+  if [ -z $dest ]; then
+    echo "Destination undefined"
+    return 1;
+  fi
+
+  if [ "$append" == false ]; then
+    head -c ${size}${units} </dev/urandom > $dest
+  else
+    head -c ${size}${units} </dev/urandom >> $dest
+  fi
+  
 }
 
 function pathjump () {
@@ -592,7 +640,7 @@ function newestfile() {
     esac
 done
  
-  ls "-$_args" | grep "$string" | tail -n $num
+  ls "-$_args" | grep "$string" | tail -n $num 
 }
 
 function oldestfile() {
