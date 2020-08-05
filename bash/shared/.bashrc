@@ -104,6 +104,7 @@ alias ecl='gogit ecl'
 alias fg='gogit conlib/cl-frontgate'
 alias fgansible='fg && cd deployment/ansible'
 alias dissemtest='gogit conlib/cl-dissem/services/apps/dissem/src/main/assembled/examples'
+alias eclansible='ecl && cd ecl-rlc-deployment/ansible'
 
 ## shell ##
 #################################################
@@ -170,6 +171,7 @@ alias sysstatus='systemctl status '
 alias sysrestart='sys restart '
 alias sysstop='sys stop '
 alias sysdisable='sys disable '
+alias sysstate='systemctl show --property "ActiveState" --property "Description"'
 function sysend() {
   sys "disable --now" $@
 }
@@ -197,6 +199,10 @@ function apcllocaldev () {
   ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}" -e "{ saml : { validation : { enabled : false }}}"
 }
 
+function apcllocalsamldev () {
+  ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}" 
+}
+
 function apclsqslocal() {
   ansible-playbook --connection=local -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" -e "{receiver : { sqs : { name : SELLIOTT-FG-CLOUD-POP-COMPLETE }}}" -e "{ site : { modify : { destination : SELLIOTT-FG-SITE-FLOW-CONTROL }}}" -e "{ preprocessing : { sqs : { name : SELLIOTT-PP-FRONT-GATE-COMPLETE }}}"
 }
@@ -204,6 +210,8 @@ function apclsqslocal() {
 function apcltop() {
   ansible-playbook -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" ${@:2}
 }
+
+alias layerlog='sudo docker-compose --file /opt/api-gateway/docker-compose.yml logs -t -f --tail 200 api-gateway'
 
 alias baelog='cd /var/log/baesystems/ '
 alias baeopt='cd /opt/baesystems/ '
@@ -233,11 +241,11 @@ alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent 
 alias grebase='gfo && git rebase'
 alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfo && git rebase origin/$(gitbranch)'
-alias gresetorigin='gfo && git reset --hard origin/$(gitbranch)'
-alias gresetsoftdefault='gfo && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
-alias grhs='git reset --soft HEAD'
-alias grhh='git reset --hard HEAD'
-alias gros='git reset --soft origin/$(gitdefaultbranch)'
+alias gresetdefaultsoft='gfo && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
+alias gresetheadsoft='git reset --soft HEAD'
+alias gresetheadhard='git reset --hard HEAD'
+alias gresetoriginhard='gfo && git reset --hard origin/$(gitbranch)'
+alias gresetdefaultsoft='git reset --soft origin/$(gitdefaultbranch)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
