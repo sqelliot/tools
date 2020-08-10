@@ -171,7 +171,7 @@ alias sysstatus='systemctl status '
 alias sysrestart='sys restart '
 alias sysstop='sys stop '
 alias sysdisable='sys disable '
-alias sysstate='systemctl show --property "ActiveState" --property "Description"'
+alias sysstate='systemctl show --property "ActiveState" --property "Id" --property "ExecMainStartTimestamp" --property "Description"'
 function sysend() {
   sys "disable --now" $@
 }
@@ -542,9 +542,9 @@ function mysed() {
     return
   fi
   
-  cmd="sed -i 's/${1}/${2}/g' $3"
-  echo $cmd
-  bash -lic $cmd
+  sudo sed -i 's/${1}/${2}/g' ${@:3}
+  #echo $cmd
+  #bash -lic $cmd
 }
 
 function sd() {
