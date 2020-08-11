@@ -131,17 +131,6 @@ function port_forward() {
   do_port_forward $node $ip $port $local_port
 }
 
-function ml_forward() {
-  if [ "$#" -ne 1 ]; then
-    echo "Usage: ml_forward <ip>" 
-    return 0
-  fi
-  ip=$1
-  port=8000
-
-  port_forward $ip $port
-}
-
 function runremote() {
   if [ "$#" -lt 2 ]; then
     echo "Usage: run_remote <node> <command>" 

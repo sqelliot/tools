@@ -41,16 +41,6 @@ function ec2prevssh() {
   ec2ssh $last_ip
 }
 
-function curl_auth_instance(){
-  curl -vk --cert /home/users/sean.elliott3/certs/valid.user.crt --key /home/users/sean.elliott3/certs/valid.user.key "https://$1:16539/fcms-admin/console/#/headers/"
-}
-
-
-#function ec2lookupsubsystem(){
-#  subsystem=$1
-#  aws ec2 describe-instances --filter "Name=tag:Name,Values=fcms-*-99-${subsystem}*" --query 'Reservations[*].Instances[*].Tags[?Key==`Name`].Value[]' --output text
-#}
-
 ## cl: command lineup
 function ec2lookup(){
   name=$1
@@ -79,10 +69,6 @@ function elb(){
 
 function ec2terminate(){
   aws ec2 terminate-instances --instance-ids $@
-}
-
-function ec2terminatebyquery(){
-  aws ec2 terminate-instances --instance-ids $(ec2instanceIds $1)
 }
 
 function ec2terminatebyquery() {

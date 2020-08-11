@@ -153,12 +153,6 @@ function export_to_env() {
   export $var_name=$secret
 }
 
-MYDEVLNK='/project/geoint-2240a/vol/git1/selliott'
-function devlnkhome () {
-  cd $MYDEVLNK
-}
-
-
 ## systemctl
 function sys() {
   action=$1
