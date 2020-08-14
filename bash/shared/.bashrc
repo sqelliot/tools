@@ -236,6 +236,7 @@ alias grebase='gfo && git rebase'
 alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfo && git rebase origin/$(gitbranch)'
 alias gresetdefaultsoft='gfo && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
+alias gresetdefaulthard='gfo && git reset --hard origin/$(gitdefaultbranch)'
 alias gresetheadsoft='git reset --soft HEAD'
 alias gresetheadhard='git reset --hard HEAD'
 alias gresetoriginhard='gfo && git reset --hard origin/$(gitbranch)'
@@ -337,11 +338,6 @@ function gitfeaturebranch() {
 
   if [ "$#" = 2 ]; then
     target_branch=$2
-  fi
-
-  if [ "$target_branch" = "master" ]; then
-    echo "sorry! [$target_branch] "
-    return 0
   fi
 
   gfo
