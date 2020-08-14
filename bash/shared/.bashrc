@@ -384,7 +384,7 @@ function goup() {
   for i in $(seq 1 ${num});
   do
     #echo "Went up ${i} dirs"
-    pwd
+    #pwd
     cd ..
   done
 
