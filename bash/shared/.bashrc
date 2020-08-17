@@ -17,6 +17,8 @@ CL_TOP=${reposPath}/conlib/top
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
+programPath=${toolsPath}/bash/program/
+programBash=${programPath}/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
 updateFileMessage=$'
 
@@ -40,9 +42,10 @@ function sourceBash() {
 ## Source other bash files
 source ${localBash}
 source ${awsBash}
+source ${programBash}
 
 function editBashrc() {
-  vim ~/.bashrc; source ~/.bashrc
+  vim ~/.bashrc; sourceBash ~/.bashrc
 }
 
 function editSharedBash() {
@@ -54,6 +57,10 @@ function editLocalBash() {
 
 function editAwsBash() {
   vim ${awsBash}; sourceBash ${awsBash}
+}
+
+function editProgramBash() {
+  vim ${programBash}; sourceBash ${programBash}
 }
 
 function sourceSharedBash() {

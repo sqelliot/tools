@@ -150,7 +150,3 @@ function euca() {
   
   runremote dev $@
 }
-
-function lexi_jenkins_port_forward() {
-  devlnk_port_forward 10.93.23.63 8080
-}
