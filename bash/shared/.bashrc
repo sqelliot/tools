@@ -318,10 +318,10 @@ function gitcloneenforma() {
 }
 
 function gpshodefault() {
-  if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
-    echo "Error: commits cannot be directly pushed to this branch"
-    return 0
-  fi
+  #if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
+  #  echo "Error: commits cannot be directly pushed to this branch"
+  #  return 0
+  #fi
   gpsho -u $(gitbranch) $@
 }
 
