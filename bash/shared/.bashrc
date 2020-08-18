@@ -10,6 +10,9 @@ fi
 if [ $(whoami) == "root" ]; then
   reposPath=~selliott/repos/
 fi
+if [ $(whoami) == "ec2-user" ]; then
+  reposPath=~/sean.elliott3/
+fi
 if [ "$GIT_BRANCH_NAME" == "" ]; then
   GIT_BRANCH_NAME=selliott
 fi
