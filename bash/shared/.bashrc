@@ -245,6 +245,7 @@ alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent 
 alias grebase='gfo && git rebase'
 alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfo && git rebase origin/$(gitbranch)'
+alias grebasegitlab='gfo && git rebase gitlab/$(gitbranch)'
 alias gresetdefaultsoft='gfo && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
 alias gresetdefaulthard='gfo && git reset --hard origin/$(gitdefaultbranch)'
 alias gresetheadsoft='git reset --soft HEAD'
