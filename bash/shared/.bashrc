@@ -239,24 +239,24 @@ alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
-alias gbraremotegrep="gfo; git branch -r | grep"
+alias gbraremotegrep="gfa; git branch -r | grep"
 alias    gch='git checkout'
 alias    gco='git commit'
 alias   gcom='git commit -m'
 alias   gfo='git fetch origin -p'
-alias   gfa='git fetch -p'
+alias   gfa='git fetch --all -p'
 alias  gtfo='gfo'
 alias    glog='git log --oneline --graph --all --decorate'     
 alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent $(gitbranch)'     
-alias grebase='gfo && git rebase'
-alias grebasedefault='gfo && git rebase origin/$(gitdefaultbranch)'
-alias grebaseorigin='gfo && git rebase origin/$(gitbranch)'
+alias grebase='gfa && git rebase'
+alias grebasedefault='gfa && git rebase origin/$(gitdefaultbranch)'
+alias grebaseorigin='gfa && git rebase origin/$(gitbranch)'
 alias grebasegitlab='gfa && git rebase gitlab/$(gitbranch)'
-alias gresetdefaultsoft='gfo && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
-alias gresetdefaulthard='gfo && git reset --hard origin/$(gitdefaultbranch)'
+alias gresetdefaultsoft='gfa && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
+alias gresetdefaulthard='gfa && git reset --hard origin/$(gitdefaultbranch)'
 alias gresetheadsoft='git reset --soft HEAD'
 alias gresetheadhard='git reset --hard HEAD'
-alias gresetoriginhard='gfo && git reset --hard origin/$(gitbranch)'
+alias gresetoriginhard='gfa && git reset --hard origin/$(gitbranch)'
 alias gresetdefaultsoft='git reset --soft origin/$(gitdefaultbranch)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
@@ -487,7 +487,7 @@ function gitguijira() {
 function gchgrep() {
   branch=$(gbragrep  $1)
   if [ ! "$branch" ];then
-    gfo
+    gfa
     branch=$(gbraremotegrep  $1)
     if [ ! "$branch" ];then
       echo "No branch found"
@@ -514,7 +514,7 @@ function gorigindefault() {
 
  
   echo "Checking out $branch and reseting to remote..."
-  gfo -p
+  gfa -p
   git stash
   git checkout $branch
   gitreset origin/$branch
