@@ -185,7 +185,7 @@ function ec2go() {
       read -p "ssh to instance? (y/n): " response
       if [ "$response" == "y" ]; then
         echo "Going to (${instanceNames[$response]})"
-        ec2ssh ${instanceIps[$response]}
+        ssh ${instanceIps[$response]}
       fi
   else
     index=$(($count-1))
