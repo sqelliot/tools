@@ -198,7 +198,8 @@ function ec2go() {
     if [ $response -ge 0 ] && [ $response -le $count ];then
       echo
       echo "Going to (${instanceNames[$response]})"
-      ec2ssh ${instanceIps[$response]}
+      ##ec2ssh ${instanceIps[$response]}
+      ssh ${instanceIps[$response]}
     fi
   fi
 

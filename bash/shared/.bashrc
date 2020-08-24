@@ -16,6 +16,7 @@ fi
 if [ "$GIT_BRANCH_NAME" == "" ]; then
   GIT_BRANCH_NAME=selliott
 fi
+export PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\] $(gitbranch || echo "") {$(date)} \[\033[0m\]\nπ '
 CL_TOP=${reposPath}/conlib/top
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
@@ -23,6 +24,7 @@ localBash=${toolsPath}/bash/local/.bashrc
 programPath=${toolsPath}/bash/program/
 programBash=${programPath}/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
+vimPath=${toolsPath}/vim/.vimrc
 updateFileMessage=$'
 
 #########################################
@@ -46,6 +48,9 @@ function sourceBash() {
 source ${localBash}
 source ${awsBash}
 source ${programBash}
+
+## source vim file
+source $vimPath
 
 function editBashrc() {
   vim ~/.bashrc; sourceBash ~/.bashrc
@@ -511,6 +516,7 @@ function gorigindefault() {
  
   echo "Checking out $branch and reseting to remote..."
   gfo -p
+  git stash
   git checkout $branch
   gitreset origin/$branch
 }
