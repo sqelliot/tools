@@ -91,7 +91,11 @@ function ec2instanceIps() {
 
 function ec2instanceInfo() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" "Name=instance-state-name,Values=running" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,PrivateIpAddress]' --output text
+  profile='default'
+  if [ "$#" == 2 ]; then
+    profile=$2
+  fi
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" "Name=instance-state-name,Values=running" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,PrivateIpAddress]' --output text --profile "$profile"
 }
 
 function volume_usage(){
@@ -152,15 +156,16 @@ function getEucaKey() {
 }
 
 function ec2go() {
-  if [ "$#" -ne 1 ]; then
+  if [ "$#" -lt 1 ]; then
     echo "Usage: ${FUNCNAME[0]} <name>"
     return 0
   fi
   name=$1
+  profile=$2
   declare -a instanceNames=()
   declare -a instanceIps=()
 
-  info=$(ec2instanceInfo "$name*" )
+  info=$(ec2instanceInfo "$name*" "$profile" )
   while IFS= read -r line; 
   do  
     count=$(($count+1))
