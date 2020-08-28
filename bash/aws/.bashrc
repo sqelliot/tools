@@ -30,15 +30,23 @@ function hspsqlconnect() {
 function previous_ssh() {
   echo $1 > $ssh_prev
 }
+
+function last_ssh_ip() {
+  last_ip=$(head -n 1 ${ssh_prev})
+
+  echo $last_ip
+}
+
+function last_ssh_host(){
+  echo $(nslookup $(last_ssh_ip))
+}
 function ec2ssh() {
   previous_ssh $1
-  key=$(getEucaKey)
-  ssh -i $key cloud-user@$1 ${@:2}
+  ssh $1 ${@:2}
 }
 
 function ec2prevssh() {
-  last_ip=$(head -n 1 ${ssh_prev})
-  ec2ssh $last_ip
+  ec2ssh $(last_ssh_ip)
 }
 
 ## cl: command lineup
@@ -188,9 +196,9 @@ function ec2go() {
 
   if [ $count == 1 ]; then
       read -p "ssh to instance? (y/n): " response
-      if [ "$response" == "y" ]; then
+      if [[ "${response,,}" == "y" || $response == 0 ]]; then
         echo "Going to (${instanceNames[$response]})"
-        ssh ${instanceIps[$response]}
+        ec2ssh ${instanceIps[$response]}
       fi
   else
     index=$(($count-1))
@@ -204,7 +212,7 @@ function ec2go() {
       echo
       echo "Going to (${instanceNames[$response]})"
       ##ec2ssh ${instanceIps[$response]}
-      ssh ${instanceIps[$response]}
+      ec2ssh ${instanceIps[$response]}
     fi
   fi
 

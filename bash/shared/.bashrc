@@ -67,10 +67,6 @@ function editAwsBash() {
   vim ${awsBash}; sourceBash ${awsBash}
 }
 
-function editProgramBash() {
-  vim ${programBash}; sourceBash ${programBash}
-}
-
 function sourceSharedBash() {
   sourceBash ${sharedBash}
 }
@@ -232,6 +228,7 @@ alias gpsho='git push origin'
 alias gd='git diff --color-words'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
+alias gddefault='git diff origin/$(gitdefaultbranch)'
 alias gpsh='git push'
 alias    gadd='git add'
 alias  gpatch='git add --patch'
@@ -239,7 +236,7 @@ alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
-alias gbraremotegrep="gfa; git branch -r | grep"
+alias gbraremotegrep="gfo ; git branch -r | grep"
 alias    gch='git checkout'
 alias    gco='git commit'
 alias   gcom='git commit -m'
@@ -485,8 +482,8 @@ function gitguijira() {
 
 function gchgrep() {
   branch=$(gbragrep  $1)
-  if [ ! "$branch" ];then
-    gfa
+  if [ ! "$branch" ];then 
+    gfo
     branch=$(gbraremotegrep  $1)
     if [ ! "$branch" ];then
       echo "No branch found"

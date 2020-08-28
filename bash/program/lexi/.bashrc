@@ -10,7 +10,17 @@ function lexi_jenkins_port_forward() {
 }
 
 function aplexi() {
+  inventory=./env/$1
+  if [ ! -d "$inventory" ]; then
+    echo "$inventory is not an inventory directory"
+    return
+  fi
+
   echo "ansible-playbook -i env/shared -i env/$1 ${@:2}"
   ansible-playbook -i env/shared -i env/$1 ${@:2}
 
+}
+
+function lexifeaturebranch() {
+  gitfeaturebranch BNCD1-$@
 }
