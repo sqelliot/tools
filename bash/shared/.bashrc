@@ -256,6 +256,8 @@ alias grc='git rebase --continue'
 alias gra='git rebase --abort'
 alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
 alias gcp='git cherry-pick '
+alias gcf='git clean -f'
+alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 
 
 function gbrame() {
