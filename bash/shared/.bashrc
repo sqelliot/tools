@@ -496,6 +496,15 @@ function gitdefaultbranch() {
   git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
 }
 
+
+function git-common-ancestor-with-default-branch(){
+  git merge-base $(gitbranch) $(gitdefaultbranch ) 
+}
+
+function git-rebase-to-ancestor-branch(){
+  git rebase -i $(git-common-ancestor-with-default-branch)
+}
+
 function gorigindefault() {
   branch=$(gitdefaultbranch)
   if [ "$#" == 1 ];then

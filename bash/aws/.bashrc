@@ -52,7 +52,15 @@ function ec2prevssh() {
 ## cl: command lineup
 function ec2lookup(){
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=running,stopped" --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' --output table
+  profile='default'
+  if [ "$#" == 2 ]; then
+    profile=$2
+  fi
+  aws ec2 describe-instances \
+    --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=running,stopped" \
+    --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' \
+    --output table \
+    --profile $profile
 }
 
 function ec2me() {

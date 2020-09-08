@@ -24,3 +24,7 @@ function aplexi() {
 function lexifeaturebranch() {
   gitfeaturebranch BNCD1-$@
 }
+
+function dcgsa-ssh() {
+  ec2go $@ dcgs-a
+}
