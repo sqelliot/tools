@@ -110,13 +110,6 @@ function toolspush() {
   git push origin master
 }
 
-alias cl='gogit conlib'
-alias ecl='gogit ecl'
-alias fg='gogit conlib/cl-frontgate'
-alias fgansible='fg && cd deployment/ansible'
-alias dissemtest='gogit conlib/cl-dissem/services/apps/dissem/src/main/assembled/examples'
-alias eclansible='ecl && cd ecl-rlc-deployment/ansible'
-
 ## shell ##
 #################################################
 alias ll='ls -l'
