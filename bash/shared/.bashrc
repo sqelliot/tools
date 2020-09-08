@@ -262,6 +262,7 @@ alias   gka='gitk --all'
 alias grc='git rebase --continue'
 alias gra='git rebase --abort'
 alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
+alias gcp='git cherry-pick '
 
 
 function gbrame() {
