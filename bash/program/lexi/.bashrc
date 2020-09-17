@@ -28,3 +28,7 @@ function lexifeaturebranch() {
 function dcgsa-ssh() {
   ec2go $@ dcgs-a
 }
+
+function lexi-remote-gitlab() {
+  git remote add gitlab https://sean.elliott@git.proposal01.com/development/${PWD##*/}.git
+}

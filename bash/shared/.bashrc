@@ -258,6 +258,7 @@ alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
 alias gcp='git cherry-pick '
 alias gcf='git clean -f'
 alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
+alias grestore='git restore --staged .'
 
 
 function gbrame() {
@@ -313,12 +314,6 @@ function gitclone() {
 }
 
 
-function gitcloneenforma() {
-  base_url=https://git.space.enforma.io
-  echo "Cloning ${base_url}/${1} ..."
-  git clone ${base_url}/$1
-}
-
 function gpshodefault() {
   #if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
   #  echo "Error: commits cannot be directly pushed to this branch"
@@ -334,6 +329,24 @@ function gitreset() {
   fi
   branch=$1
   gfo && git reset --hard ${branch}
+}
+
+function gitnewbranch() {
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <name> [target branch]"
+    return 0
+  fi
+  
+  name=$1
+  target_branch=$(gitdefaultbranch)
+
+  if [ "$#" = 2 ]; then
+    target_branch=$2
+  fi
+
+  gfo
+  git checkout -b ${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
+
 }
 
 function gitfeaturebranch() {
