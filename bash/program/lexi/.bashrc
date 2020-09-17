@@ -1,6 +1,9 @@
 
 alias lexi='gogit lexi'
 alias lexiansible='gogit lexi/ansible'
+
+lexi_strings=(dev training large test1 test2 test3)
+
 function lexissh() {
   ssh -i ~/.ssh/lexi-admin-devlnk lexi-admin@$1
 }
@@ -16,7 +19,7 @@ function aplexi() {
     return
   fi
 
-  echo "ansible-playbook -i env/shared -i env/$1 ${@:2}"
+  echo "ansible-playbook -i env/shared -i env/$1 ${@:2} -e 'log_path=./ansible.log'"
   ansible-playbook -i env/shared -i env/$1 ${@:2}
 
 }
@@ -31,4 +34,7 @@ function dcgsa-ssh() {
 
 function lexi-remote-gitlab() {
   git remote add gitlab https://sean.elliott@git.proposal01.com/development/${PWD##*/}.git
+
+function bahgo() {
+  ec2go $@ bah
 }
