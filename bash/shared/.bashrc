@@ -218,6 +218,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 alias gpsha='git push --all'
 alias gpsho='git push origin'
+alias gpshgitlab='git push gitlab'
 alias gd='git diff --color-words'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
@@ -320,6 +321,14 @@ function gpshodefault() {
   #  return 0
   #fi
   gpsho -u $(gitbranch) $@
+}
+
+function gpshgitlabdefault() {
+  #if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
+  #  echo "Error: commits cannot be directly pushed to this branch"
+  #  return 0
+  #fi
+  gpshgitlab -u $(gitbranch) $@
 }
 
 function gitreset() {

@@ -34,6 +34,7 @@ function dcgsa-ssh() {
 
 function lexi-remote-gitlab() {
   git remote add gitlab https://sean.elliott@git.proposal01.com/development/${PWD##*/}.git
+}
 
 function bahgo() {
   ec2go $@ bah
