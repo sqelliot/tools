@@ -39,3 +39,8 @@ function lexi-remote-gitlab() {
 function bahgo() {
   ec2go $@ bah
 }
+
+function dcgsalookup() {
+  ec2lookup $@ "dcgs-a"
+}
+
