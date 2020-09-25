@@ -357,7 +357,7 @@ function gitnewbranch() {
   fi
 
   gfo
-  git checkout -b ${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
+  git checkout -b dev/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
 
 }
 
@@ -732,6 +732,29 @@ function zipdate() {
   name=$1
   
   zip -r $name-$(epoch).zip $name
+}
+
+function just-notes-date() {
+  header='======================================================================='
+
+  echo -e $header'\n'`date '+%Y-%m-%d, %A'`'\n'$header >> /c/dev/notes/just-notes.txt
+}
+
+
+function perform-in-dirs() {
+  if [ "$#" != 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <action>"
+  fi
+  action=$1
+  echo "The action: $action"
+
+  for dir in `ls`; 
+  do
+    echo "$dir"
+    cd $dir;
+    bash -c "$action";
+    cd ..;
+  done
 }
 
 ##########################################################
