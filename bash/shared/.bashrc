@@ -17,7 +17,6 @@ if [ "$GIT_BRANCH_NAME" == "" ]; then
   GIT_BRANCH_NAME=selliott
 fi
 export PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\] `gitbranch || echo ""` {`date`} \[\033[0m\]\nπ '
-CL_TOP=${reposPath}/conlib/top
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
@@ -25,6 +24,7 @@ programPath=${toolsPath}/bash/program/
 programBash=${programPath}/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
 vimPath=${toolsPath}/vim/.vimrc
+tmuxPath=${toolsPath}/tmux/.tmux.config
 updateFileMessage=$'
 
 #########################################
@@ -34,6 +34,9 @@ updateFileMessage=$'
 #########################################
 
 '
+
+## create tmux config symlink
+ln -s $tmuxPath ~/.tmux.conf
 
 ######################
 ## tools management ##
@@ -721,6 +724,16 @@ function findfile() {
 function finddir() {
   find $@ -type d
 }
+
+function zipdate() {
+  if [ "$#" != 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <file>"
+  fi
+  name=$1
+  
+  zip -r $name-$(epoch).zip $name
+}
+
 ##########################################################
 ################ Shared docker commands ##################
 ##########################################################
