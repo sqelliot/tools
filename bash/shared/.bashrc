@@ -36,7 +36,7 @@ updateFileMessage=$'
 '
 
 ## create tmux config symlink
-ln -s $tmuxPath ~/.tmux.conf
+[ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
 
 ######################
 ## tools management ##
