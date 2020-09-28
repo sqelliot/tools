@@ -171,7 +171,7 @@ function getEucaKey() {
   fi
 }
 
-function ec2go() {
+function ec2ssh() {
   noprompt=false
   while true ; do
     case "$1" in
@@ -243,4 +243,8 @@ function ec2go() {
   echo
   echo "${FUNCNAME[0]} done..."
 
+}
+
+function ec2go () {
+  ec2ssh -n $@
 }
