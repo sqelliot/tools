@@ -172,6 +172,19 @@ function getEucaKey() {
 }
 
 function ec2go() {
+  noprompt=false
+  while true ; do
+    case "$1" in
+      -n)
+        noprompt=true
+        shift
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
   if [ "$#" -lt 1 ]; then
     echo "Usage: ${FUNCNAME[0]} <name>"
     return 0
@@ -203,7 +216,10 @@ function ec2go() {
   done
 
   if [ $count == 1 ]; then
-      read -p "ssh to instance? (y/n): " response
+      response="y"
+      if [ ! $noprompt ]; then
+        read -p "ssh to instance? (y/n): " response
+      fi
       if [[ "${response,,}" == "y" || $response == 0 ]]; then
         echo "Going to (${instanceNames[$response]})"
         ec2ssh ${instanceIps[$response]}
