@@ -34,7 +34,7 @@ function lexifeaturebranch() {
 }
 
 function dcgsa-ssh() {
-  ec2ssh $@ dcgs-a
+  ec2go $@ dcgs-a
 }
 
 function lexi-remote-gitlab() {
@@ -42,7 +42,7 @@ function lexi-remote-gitlab() {
 }
 
 function bahgo() {
-  ec2ssh $@ bah
+  ec2go $@ bah
 }
 
 function dcgsalookup() {

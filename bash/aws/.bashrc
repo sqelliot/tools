@@ -40,13 +40,13 @@ function last_ssh_ip() {
 function last_ssh_host(){
   echo $(nslookup $(last_ssh_ip))
 }
-function ec2ssh() {
+function myssh() {
   previous_ssh $1
   ssh $1 ${@:2}
 }
 
 function ec2prevssh() {
-  ec2ssh $(last_ssh_ip)
+  myssh $(last_ssh_ip)
 }
 
 ## cl: command lineup
@@ -137,7 +137,7 @@ function scptoinstance() {
   ip=$2
   file=$1
   echo "here"
-  scp -q -i $key  $file cloud-user@${ip}:~ && ec2ssh ${ip} "sudo  mv ${file} ${dstPath}"
+  scp -q -i $key  $file cloud-user@${ip}:~ && myssh ${ip} "sudo  mv ${file} ${dstPath}"
 }
 
 function ec2enilookup() {
@@ -222,7 +222,7 @@ function ec2ssh() {
       fi
       if [[ "${response,,}" == "y" || $response == 0 ]]; then
         echo "Going to (${instanceNames[$response]})"
-        ec2ssh ${instanceIps[$response]}
+        myssh ${instanceIps[$response]}
       fi
   else
     index=$(($count-1))
@@ -235,8 +235,8 @@ function ec2ssh() {
     if [ $response -ge 0 ] && [ $response -le $count ];then
       echo
       echo "Going to (${instanceNames[$response]})"
-      ##ec2ssh ${instanceIps[$response]}
-      ec2ssh ${instanceIps[$response]}
+      ##myssh ${instanceIps[$response]}
+      myssh ${instanceIps[$response]}
     fi
   fi
 
