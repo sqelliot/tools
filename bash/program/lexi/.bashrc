@@ -1,6 +1,7 @@
 
 alias lexi='gogit lexi'
 alias lexiansible='gogit lexi/ansible'
+[ $goldlnk ] && alias lexiansible='gogit lexi/devops/ansible'
 
 lexi_strings=(dev training large test1 test2 test3)
 
@@ -22,6 +23,10 @@ function aplexi() {
   echo "ansible-playbook -i env/shared -i env/$1 ${@:2} -e 'log_path=./ansible.log'"
   ansible-playbook -i env/shared -i env/$1 ${@:2}
 
+}
+
+function lexiclone() {
+  gitclone e2eisr $1
 }
 
 function lexifeaturebranch() {

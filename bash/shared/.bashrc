@@ -1,4 +1,5 @@
 #!/bin/bash
+goldlnk=false
 
 # self-references
 if [ "$reposPath" == "" ]; then
@@ -6,6 +7,7 @@ if [ "$reposPath" == "" ]; then
 fi
 if [ $(hostname) == "GLDLBAE496014" ]; then
   reposPath=/c/dev/repos/
+  goldlnk=true
 fi
 if [ $(whoami) == "root" ]; then
   reposPath=~selliott/repos/
