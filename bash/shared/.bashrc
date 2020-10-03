@@ -221,7 +221,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
-alias gpsha='git push --all'
+alias gpsha='gpshodefault; gpshgitlab'
 alias gpsho='git push origin'
 alias gpshgitlab='git push gitlab'
 alias gd='git diff --color-words'
@@ -316,7 +316,7 @@ function gitclone() {
   proj=$1
   repo=$2
 
-  git clone ssh://git@git.goldlnk.rootlnka.net/$1/$2
+  git clone ssh://git@git.devlnk.net/$1/$2
 }
 
 
@@ -736,11 +736,31 @@ function zipdate() {
   zip -r $name-$(epoch).zip $name
 }
 
+function tardate() {
+  if [ "$#" != 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <file>"
+  fi
+  name=$1
+  tar -cf $name-$(epoch).zip $name
+}
+
+just_notes_location="/c/dev/notes/just-notes.txt"
+## just-notes
 function just-notes-date() {
   header='======================================================================='
 
-  echo -e $header'\n'`date '+%Y-%m-%d, %A'`'\n'$header >> /c/dev/notes/just-notes.txt
+  echo -e '\n'$header'\n'`date '+%Y-%m-%d, %A'`'\n'$header >> $just_notes_location
 }
+
+function just-notes-open() {
+  grep "\[\]" $just_notes_location
+}
+
+function just-notes-not-open() {
+  grep -E "\[.+\]" $just_notes_location
+}
+
+## just-notes
 
 
 function perform-in-dirs() {
