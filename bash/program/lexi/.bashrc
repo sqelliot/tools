@@ -48,4 +48,3 @@ function bahgo() {
 function dcgsalookup() {
   ec2lookup $@ "dcgs-a"
 }
-

@@ -37,6 +37,12 @@ updateFileMessage=$'
 
 '
 
+##########
+## vars ##
+##########
+bitbucket_url='git@git.devlnk.net'
+bitbucket_ssh_clone='ssh://$bitbucket_url'
+
 ## create tmux config symlink
 [ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
 
@@ -316,7 +322,7 @@ function gitclone() {
   proj=$1
   repo=$2
 
-  git clone ssh://git@git.devlnk.net/$1/$2
+  git clone $bitbucket_ssh_clone/$1/$2
 }
 
 
