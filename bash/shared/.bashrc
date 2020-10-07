@@ -755,18 +755,23 @@ just_notes_location="/c/dev/notes/just-notes.txt"
 function just-notes-date() {
   header='======================================================================='
 
-  echo -e '\n'$header'\n'`date '+%Y-%m-%d, %A'`'\n'$header >> $just_notes_location
+  echo -e '\n\n'$header'\n'`date '+%Y-%m-%d, %A'`'\n'$header >> $just_notes_location
 }
 
 function just-notes-open() {
-  grep "\[\]" $just_notes_location
+  grep "\[\[\]\]" $just_notes_location | wc -l
+  grep "\[\[\]\]" $just_notes_location
 }
 
 function just-notes-not-open() {
-  grep -E "\[.+\]" $just_notes_location
+  grep -E "\[\[.+\]\]" $just_notes_location
 }
 
 ## just-notes
+
+function just-notes-edit() {
+  vim $just_notes_location
+}
 
 
 function perform-in-dirs() {
