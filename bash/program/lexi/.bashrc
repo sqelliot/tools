@@ -45,6 +45,6 @@ function bahgo() {
   ec2go $@ bah
 }
 
-function dcgsalookup() {
+function dcgsa-lookup() {
   ec2lookup $@ "dcgs-a"
 }
