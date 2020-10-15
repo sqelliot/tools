@@ -20,8 +20,8 @@ function aplexi() {
     return
   fi
 
-  echo "ansible-playbook -i env/shared -i env/$1 ${@:2} -e 'log_path=./ansible.log'"
-  ansible-playbook -i env/shared -i env/$1 ${@:2}
+  echo "ansible-playbook -v -i env/shared -i env/$1 ${@:2} -e 'log_path=./ansible.log'"
+  ansible-playbook -v -i env/shared -i env/$1 ${@:2}
 
 }
 

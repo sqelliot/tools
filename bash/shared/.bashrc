@@ -739,7 +739,7 @@ function zipdate() {
   fi
   name=$1
   
-  zip -r $name-$(epoch).zip $name
+  zip -q -r $name-$(epoch).zip $name
 }
 
 function tardate() {
