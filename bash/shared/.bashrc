@@ -41,7 +41,7 @@ updateFileMessage=$'
 ## vars ##
 ##########
 bitbucket_url='git@git.devlnk.net'
-bitbucket_ssh_clone='ssh://$bitbucket_url'
+bitbucket_ssh_clone='ssh://'$bitbucket_url
 
 ## create tmux config symlink
 [ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
@@ -750,7 +750,9 @@ function tardate() {
   tar -cf $name-$(epoch).zip $name
 }
 
-just_notes_location="/c/dev/notes/just-notes.txt"
+just_notes_dir="/c/dev/notes/"
+just_notes_location=${just_notes_dir}"just-notes.txt"
+alias notes="cd $just_notes_dir"
 ## just-notes
 function just-notes-date() {
   header='======================================================================='
