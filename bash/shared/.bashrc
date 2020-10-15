@@ -136,6 +136,10 @@ function epoch() {
   date +'%s'
 }
 
+function date-time(){
+  date +'%Y-%m-%d-%H%M%S'
+}
+
 function mytop() {
   if [ "$#" -ge 1 ]; then
     echo "cp $1 $CL_TOP"

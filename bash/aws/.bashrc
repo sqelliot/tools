@@ -75,7 +75,11 @@ function ec2count(){
 
 function ec2filter(){
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" 
+  profile='default'
+  if [ "$#" == 2 ]; then
+    profile=$2
+  fi
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --profile $profile
 }
 
 function elb(){

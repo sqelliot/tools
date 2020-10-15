@@ -1,7 +1,10 @@
 
 alias lexi='gogit lexi'
 alias lexiansible='gogit lexi/ansible'
-[ $goldlnk ] && alias lexiansible='gogit lexi/devops/ansible'
+if [ "$goldlnk"  == true ];
+then
+  alias lexiansible='gogit lexi/devops/ansible'
+fi
 
 lexi_strings=(dev training large test1 test2 test3)
 
