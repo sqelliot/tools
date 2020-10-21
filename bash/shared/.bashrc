@@ -101,8 +101,10 @@ function functions() {
 }
 
 function updatetools() {
-  bash -lic "tools && grebase" 
+  pushd $toolspath
+  grebase
   sourceSharedBash
+  popd 
 }
 
 function toolssta() {
