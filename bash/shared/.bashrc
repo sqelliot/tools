@@ -233,7 +233,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 alias gpsha='gpshodefault; gpshgitlab'
 alias gpsho='git push origin'
-alias gpshgitlab='git push gitlab'
+alias gpshgitlab='git push gitlab $(gitdefaultbranch)'
 alias gd='git diff --color-words'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
