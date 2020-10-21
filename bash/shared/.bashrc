@@ -136,7 +136,7 @@ function epoch() {
   date +'%s'
 }
 
-function date-time(){
+function datetimestamp(){
   date +'%Y-%m-%d-%H%M%S'
 }
 
@@ -743,7 +743,7 @@ function zipdate() {
   fi
   name=$1
   
-  zip -q -r $name-$(epoch).zip $name
+  zip -q -r $name-$(datetimestamp).zip $name
 }
 
 function tardate() {
@@ -751,7 +751,7 @@ function tardate() {
     echo "Usage: ${FUNCNAME[0]} <file>"
   fi
   name=$1
-  tar -cf $name-$(epoch).zip $name
+  tar -cf $name-$(datetimestamp).zip $name
 }
 
 just_notes_dir="/c/dev/notes/"
