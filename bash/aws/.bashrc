@@ -236,7 +236,7 @@ function ec2ssh() {
       echo "Exiting ${FUNCNAME[0]}..."
       return
     fi
-    if [ $response -ge 0 ] && [ $response -le $count ];then
+    if [ $response -ge 0 ] && [ $response -lt $count ];then
       echo
       echo "Going to (${instanceNames[$response]})"
       ##myssh ${instanceIps[$response]}
