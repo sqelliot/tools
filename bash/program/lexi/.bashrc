@@ -28,7 +28,7 @@ function aplexi() {
   fi
 
   ANSIBLE_LOG_DATE=$(date +'%Y-%m-%d-%H%M')
-  export ANSIBLE_LOG_PATH="/tmp/ansible-${ANSIBLE_LOG_DATE}.log"
+  export ANSIBLE_LOG_PATH="/tmp/ansible-sean-${ANSIBLE_LOG_DATE}.log"
 
   echo "ansible-playbook -v -i env/shared -i env/$1 ${@:2} "
   ansible-playbook -v -i env/shared -i env/$1 ${@:2}
