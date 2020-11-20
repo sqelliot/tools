@@ -56,3 +56,7 @@ function dcgsa-lookup() {
 }
 
 alias gitlab='ssh ec2-user@10.24.2.28'
+
+lexi-script-chmod(){
+   git update-index --chmod=+x deploy/cd2_findAndUploadApps.sh
+}
