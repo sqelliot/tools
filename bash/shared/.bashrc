@@ -786,13 +786,13 @@ function perform-in-dirs() {
   fi
   action=$1
   echo "The action: $action"
+  dirs=$(ls)
 
-  for dir in `ls`; 
+  for dir in ${dirs}; 
   do
-    echo "$dir"
-    cd $dir;
-    bash -c "$action";
-    cd ..;
+    pushd $dir;
+    bash -ic "$action";
+    popd
   done
 }
 
