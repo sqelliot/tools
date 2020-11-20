@@ -12,6 +12,10 @@ function lexissh() {
   ssh -i ~/.ssh/lexi-admin-devlnk lexi-admin@$1
 }
 
+lexigo() {
+  lexissh lexi-$1-20200701
+}
+
 function lexi_jenkins_port_forward() {
   devlnk_port_forward 10.93.23.63 8080
 }
@@ -60,3 +64,5 @@ alias gitlab='ssh ec2-user@10.24.2.28'
 lexi-script-chmod(){
    git update-index --chmod=+x deploy/cd2_findAndUploadApps.sh
 }
+
+softwares3='proposal1gov-devops1-software-20180730'
