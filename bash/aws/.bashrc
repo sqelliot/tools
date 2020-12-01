@@ -51,21 +51,45 @@ function ec2prevssh() {
 
 ## cl: command lineup
 function ec2lookup(){
-  name=$1
+  name="*"
   profile='default'
+  if [ "$#" == 1 ]; then
+    name=$1
+  fi
   if [ "$#" == 2 ]; then
+    name=$1
     profile=$2
   fi
+  while true ; do
+    case "$1" in
+      -n)
+        shift
+        name=$1
+        shift
+        ;;
+      -p)
+        shift
+        profile=$1
+        shift
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
+  echo "ec2lookup -n $name -p $profile"
+
   aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=running,stopped" \
-    --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone] | sort_by(@,&[4])' \
+    --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[4])' \
     --output table \
     --profile $profile
 }
 
 function ec2me() {
   user=$(whoami | sed 's/[^A-Za-z0-9\_-]/_/g')
-  ec2lookup $user
+  ec2lookup -n $user
 }
 
 function ec2count(){

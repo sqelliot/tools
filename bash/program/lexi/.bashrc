@@ -57,7 +57,8 @@ function bahgo() {
 }
 
 function dcgsa-lookup() {
-  ec2lookup $@ "dcgs-a"
+  name=$1
+  ec2lookup -n $name -p "dcgs-a"
 }
 
 alias gitlab='ssh ec2-user@10.24.2.28'
