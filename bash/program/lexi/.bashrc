@@ -1,6 +1,7 @@
 
 alias lexi='gogit lexi'
 alias lexiansible='gogit lexi/ansible'
+alias lexidev='gogit lexi/development'
 if [ "$goldlnk"  == true ];
 then
   alias lexiansible='gogit lexi/devops/ansible'

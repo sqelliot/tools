@@ -796,7 +796,7 @@ function perform-in-dirs() {
   fi
   action=$1
   echo "The action: $action"
-  dirs=$(ls)
+  dirs=$(ls -d */)
 
   for dir in ${dirs}; 
   do
