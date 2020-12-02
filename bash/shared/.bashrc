@@ -51,7 +51,10 @@ bitbucket_ssh_clone='ssh://'$bitbucket_url
 [ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
 
 cd() {
-  builtin cd $@ && ls
+  builtin cd $@ 
+  if [ $(ls -1 | wc -l) -lt 20 ]; then
+    ls
+  fi
 }
 
 ######################
