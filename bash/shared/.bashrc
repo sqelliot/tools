@@ -9,6 +9,9 @@ goldlnk=false
 if [ "$reposPath" == "" ]; then
   reposPath=~/repos/
 fi
+if [ "$bash_env" == "HOME" ]; then
+  reposPath=~/dev/repos/
+fi
 if [ $(hostname) == "GLDLBAE496014" ]; then
   reposPath=/c/dev/repos/
   goldlnk=true
@@ -69,7 +72,10 @@ function sourceBash() {
 ## Source other bash files
 source ${localBash}
 source ${awsBash}
-source ${programBash}
+# no program logic at home
+if [ "$bash_env" != "HOME" ]; then
+  source ${programBash}
+fi
 
 ## source vim file
 source $vimPath
