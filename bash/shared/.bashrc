@@ -34,6 +34,7 @@ programBash=${programPath}/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
 vimPath=${toolsPath}/vim/.vimrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
+aptPath=${toolsPath}/install/apt
 updateFileMessage=$'
 
 #########################################
@@ -189,6 +190,10 @@ function export_to_env() {
   echo
 
   export $var_name=$secret
+}
+
+myapt(){
+  sudo apt install $@ && echo $@ >> ${aptPath}
 }
 
 ## systemctl
