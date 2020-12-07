@@ -53,13 +53,7 @@ function ec2prevssh() {
 function ec2lookup(){
   name="*"
   profile='default'
-  if [ "$#" == 1 ]; then
-    name=$1
-  fi
-  if [ "$#" == 2 ]; then
-    name=$1
-    profile=$2
-  fi
+  states="running,stopped,stopping"
   while true ; do
     case "$1" in
       -n)
@@ -72,17 +66,22 @@ function ec2lookup(){
         profile=$1
         shift
         ;;
+      -s)
+        shift
+        states=$1
+        shift
+        ;;
       *)
         break
         ;;
     esac
   done
 
-  echo "ec2lookup -n $name -p $profile"
+  echo "ec2lookup -n $name -p $profile -s $states"
 
   aws ec2 describe-instances \
-    --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=running,stopped" \
-    --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[4])' \
+    --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=${states}" \
+    --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[0])' \
     --output table \
     --profile $profile
 }
