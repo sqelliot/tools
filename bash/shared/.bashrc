@@ -1,14 +1,8 @@
 #!/bin/bash
 
-## Only use tools when in interactive mode
-[ -z "$PS1" ] && return
-
 goldlnk=false
 
 # self-references
-if [ "$reposPath" == "" ]; then
-  reposPath=~/repos/
-fi
 if [ "$bash_env" == "HOME" ]; then
   reposPath=~/dev/repos/
 fi
@@ -25,7 +19,9 @@ fi
 if [ "$GIT_BRANCH_NAME" == "" ]; then
   GIT_BRANCH_NAME=selliott
 fi
-export PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\] `gitbranch || echo ""` {`date -u`} \[\033[0m\]\nπ '
+if [ "$reposPath" == "" ]; then
+  reposPath=~/repos/
+fi
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
