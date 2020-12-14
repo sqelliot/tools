@@ -53,7 +53,7 @@ function ec2prevssh() {
 function ec2lookup(){
   name="*"
   profile='default'
-  states="running,stopped,stopping"
+  states="running,stopped,stopping,starting"
   while true ; do
     case "$1" in
       -n)

@@ -63,7 +63,7 @@ function dcgsa-lookup() {
     name=$1
     _args="${@:1}"
   fi
-  ec2lookup -n "$name" -p "dcgs-a" ${_args}
+  ec2lookup -n "$name" -p "dcgs-a" "${_args}"
 }
 
 alias gitlab='ssh ec2-user@10.24.2.28'
