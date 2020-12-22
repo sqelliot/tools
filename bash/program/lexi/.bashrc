@@ -28,6 +28,9 @@ function aplexi() {
     return
   fi
 
+  # remove old ansible logs
+  rm $(find /tmp -maxdepth 1 -name "ansible-sean*.log"  -type f -mtime +5)
+
   ANSIBLE_LOG_DATE=$(date +'%Y-%m-%d-%H%M')
   export ANSIBLE_LOG_PATH="/tmp/ansible-sean-${ANSIBLE_LOG_DATE}.log"
 
@@ -57,13 +60,7 @@ function bahgo() {
 }
 
 function dcgsa-lookup() {
-  name="*"
-  _args="$@"
-  if [ $# -ge 1 ]; then
-    name=$1
-    _args="${@:1}"
-  fi
-  ec2lookup -n "$name" -p "dcgs-a" "${_args}"
+  ec2lookup -p "dcgs-a" "$@"
 }
 
 alias gitlab='ssh ec2-user@10.24.2.28'

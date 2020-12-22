@@ -54,6 +54,7 @@ function ec2lookup(){
   name="*"
   profile='default'
   states="running,stopped,stopping,starting"
+  sort_column=0
   while true ; do
     case "$1" in
       -n)
@@ -71,6 +72,11 @@ function ec2lookup(){
         states=$1
         shift
         ;;
+      --sort)
+        shift
+        sort_column=$1
+        shift
+        ;;
       *)
         break
         ;;
@@ -81,7 +87,7 @@ function ec2lookup(){
 
   aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=${states}" \
-    --query 'Reservations[].Instances[].[Tags[?Key==`Name`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[0])' \
+    --query "Reservations[].Instances[].[Tags[?Key==\`Name\`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[${sort_column}])" \
     --output table \
     --profile $profile
 }
@@ -124,7 +130,7 @@ function ec2terminatebyquery() {
 
 function ec2instanceIds() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[InstanceId]' --output text
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[InstanceId]' --output text 
 }
 
 function ec2instanceIps() {

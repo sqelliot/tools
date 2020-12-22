@@ -129,7 +129,7 @@ function toolsgcom() {
   tools && gcom '$@'
 }
 
-function toolsgpshodefault() {
+function toolsgpshobranch() {
   tools && git push origin master
 }
 
@@ -251,7 +251,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
-alias gpsha='gpshodefault; gpshgitlab'
+alias gpsha='gpshobranch; gpshgitlab'
 alias gpsho='git push origin'
 alias gpshgitlab='git push gitlab $(gitdefaultbranch)'
 alias gd='git diff --color-words'
@@ -350,7 +350,7 @@ function gitclone() {
 }
 
 
-function gpshodefault() {
+function gpshobranch() {
   #if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
   #  echo "Error: commits cannot be directly pushed to this branch"
   #  return 0
@@ -505,7 +505,7 @@ function gitjiracommitandpush () {
   msg=$1
   files=${@:2}
 
-  gadd $files &&  gjiracommit $msg && gpshodefault
+  gadd $files &&  gjiracommit $msg && gpshobranch
 }
 
 function is_repo_path() {
