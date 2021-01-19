@@ -39,8 +39,12 @@ function aplexi() {
 
 }
 
-function lexiclone() {
-  gitclone e2eisr $1
+function lexiclonebackend() {
+  git clone git@gitlab.devlnk.net:ike/backend/$1.git
+}
+
+function lexiclonefrontend() {
+  git clone git@gitlab.devlnk.net:ike/frontend/$1.git
 }
 
 function lexifeaturebranch() {
@@ -53,6 +57,7 @@ function dcgsa-ssh() {
 
 function lexi-remote-gitlab() {
   git remote add gitlab https://sean.elliott@git.proposal01.com/development/${PWD##*/}.git
+  git remote -v
 }
 
 function bahgo() {
