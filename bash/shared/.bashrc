@@ -751,6 +751,10 @@ function tardate() {
   tar -cf $name-$(datetimestamp).zip $name
 }
 
+function dir_sizes(){
+  du -d 1 -h | sort -h
+}
+
 just_notes_dir="/c/dev/notes/"
 just_notes_location=${just_notes_dir}"just-notes.txt"
 alias notes="cd $just_notes_dir"
