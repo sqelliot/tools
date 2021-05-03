@@ -255,12 +255,11 @@ alias grebase='gfa && git rebase'
 alias grebasedefault='gfa && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfa && git rebase origin/$(gitbranch)'
 alias grebasegitlab='gfa && git rebase gitlab/$(gitbranch)'
-alias gresetdefaultsoft='gfa && grebasedefault && git reset --soft origin/$(gitdefaultbranch)'
+alias gresetdefaultsoft='gfo && git reset --soft origin/$(gitdefaultbranch) && git restore --staged . && gsta'
 alias gresetdefaulthard='gfa && git reset --hard origin/$(gitdefaultbranch)'
 alias gresetheadsoft='git reset --soft HEAD'
 alias gresetheadhard='git reset --hard HEAD'
 alias gresetoriginhard='gfa && git reset --hard origin/$(gitbranch)'
-alias gresetdefaultsoft='git reset --soft origin/$(gitdefaultbranch)'
 alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
@@ -272,6 +271,7 @@ alias gcp='git cherry-pick '
 alias gcf='git clean -f'
 alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 alias grestore='git restore --staged .'
+alias git-chmod-exec='git update-index --chmod=+x '
 
 
 function gbrame() {
@@ -366,7 +366,7 @@ function gitnewbranch() {
   fi
 
   gfo
-  git checkout -b dev/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
+  git checkout -b feature/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
 
 }
 
@@ -522,7 +522,7 @@ function gchgrep() {
   fi
 
   printf '%s\n' "$branch"
-  branch=$(echo $branch | awk '{print $1}' |  sed -e 's/^origin\///')
+  branch=$(echo $branch | awk '{print $1}' |  sed -e 's/^[a-z]\///')
   printf '%s\n' "$branch"
 
   gch $branch
