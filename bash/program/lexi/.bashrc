@@ -13,7 +13,11 @@ function lexissh() {
   ssh -i ~/.ssh/lexi-admin-devlnk lexi-admin@$1
 }
 
-lexigo() {
+lexi-dev(){
+  lexissh lexi-dev-$1
+}
+
+lexiop() {
   lexissh lexi-$1-20200701
 }
 
@@ -29,13 +33,13 @@ function aplexi() {
   fi
 
   # remove old ansible logs
-  rm $(find /tmp -maxdepth 1 -name "ansible-sean*.log"  -type f -mtime +5)
+  find /tmp -maxdepth 1 -name "ansible-sean*.log"  -type f -mtime +5 -delete
 
   ANSIBLE_LOG_DATE=$(date +'%Y-%m-%d-%H%M')
   export ANSIBLE_LOG_PATH="/tmp/ansible-sean-${ANSIBLE_LOG_DATE}.log"
 
   echo "ansible-playbook -v -i env/shared -i env/$1 ${@:2} "
-  ansible-playbook -v -i env/shared -i env/$1 ${@:2}
+  ansible-playbook -vv -i env/shared -i env/$1 ${@:2}
 
 }
 
@@ -74,4 +78,4 @@ lexi-script-chmod(){
    git update-index --chmod=+x deploy/cd2_findAndUploadApps.sh
 }
 
-softwares3='proposal1gov-devops1-software-20180730'
+lexi_bucket='proposal1gov-devops1-software-20180730'
