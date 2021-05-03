@@ -2,6 +2,7 @@
 alias lexi='gogit lexi'
 alias lexiansible='gogit lexi/ansible'
 alias lexidev='gogit lexi/development'
+alias cicd='gogit lexi/devops/cicd-orchestration'
 if [ "$goldlnk"  == true ];
 then
   alias lexiansible='gogit lexi/devops/ansible'
@@ -43,6 +44,9 @@ function aplexi() {
 
 }
 
+lexiclone() {
+  git clone git@gitlab.devlnk.net:ike/$1.git
+}
 function lexiclonebackend() {
   git clone git@gitlab.devlnk.net:ike/backend/$1.git
 }
