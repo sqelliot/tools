@@ -221,29 +221,6 @@ function mountdevlnk() {
 }
 
 
-ANSIBLETOP='-e "{ service_config_info : { staging_directory : /home/users/selliott/repos/conlib/top }}"'
-ANSIBLELOCAL='--connection=local'
-ANSIBLE_DEV=$ANSIBLETOP' '$ANSIBLELOCAL
-APCL='ansible-playbook -vv -bK '
-alias apcl='echo $APCL; $APCL'
-APCLLOCAL='ansible-playbook -vv -bK --connection=local'
-alias apcllocal='echo $APCLLOCAL; $APCLLOCAL'
-function apcllocaldev () {
-  ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}" -e "{ saml : { validation : { enabled : false }}}"
-}
-
-function apcllocalsamldev () {
-  ansible-playbook -v -bK --connection=local $@ -e "{service_config_info : { staging_directory : $CL_TOP }}" 
-}
-
-function apclsqslocal() {
-  ansible-playbook --connection=local -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" -e "{receiver : { sqs : { name : SELLIOTT-FG-CLOUD-POP-COMPLETE }}}" -e "{ site : { modify : { destination : SELLIOTT-FG-SITE-FLOW-CONTROL }}}" -e "{ preprocessing : { sqs : { name : SELLIOTT-PP-FRONT-GATE-COMPLETE }}}"
-}
-
-function apcltop() {
-  ansible-playbook -v -bK $1 -e "{service_config_info : { staging_directory : $CL_TOP }}" ${@:2}
-}
-
 alias layerlog='sudo docker-compose --file /opt/api-gateway/docker-compose.yml logs -t -f --tail 200 api-gateway'
 
 alias baelog='cd /var/log/baesystems/ '
