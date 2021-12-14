@@ -10,6 +10,9 @@ if [ $(hostname) == "GLDLBAE496014" ]; then
   reposPath=/c/dev/repos/
   goldlnk=true
 fi
+if [ $(hostname) == "WIN1050LH8G3" ]; then
+  reposPath=~/dev/repos/
+fi
 if [ $(whoami) == "root" ]; then
   reposPath=~selliott/repos/
 fi
