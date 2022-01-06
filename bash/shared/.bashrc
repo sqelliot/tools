@@ -311,7 +311,7 @@ function gitnew() {
 }
 
 function gogit() {
-  cd ${reposPath}/$1
+  pushd ${reposPath}/$1
 }
 
 function gitbranch() {
