@@ -329,6 +329,9 @@ function gitclone() {
   git clone $bitbucket_ssh_clone/$1/$2
 }
 
+function toolspush() {
+  gpsho -u $(gitbranch) $@
+}
 
 function gpshobranch() {
   if [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
