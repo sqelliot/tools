@@ -13,6 +13,9 @@ fi
 if [ $(hostname) == "WIN1050LH8G3" ]; then
   reposPath=~/dev/repos/
 fi
+if [ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]; then
+  reposPath=~/dev/repos/
+fi
 if [ $(whoami) == "root" ]; then
   reposPath=~selliott/repos/
 fi
@@ -28,8 +31,6 @@ fi
 toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
-programPath=${toolsPath}/bash/program/
-programBash=${programPath}/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
 vimPath=${toolsPath}/vim/.vimrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
@@ -72,10 +73,6 @@ function sourceBash() {
 ## Source other bash files
 source ${localBash}
 source ${awsBash}
-# no program logic at home
-if [ "$bash_env" != "HOME" ]; then
-  source ${programBash}
-fi
 
 ## source vim file
 source $vimPath
