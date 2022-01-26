@@ -1,6 +1,7 @@
 #!/bin/bash
 
 goldlnk=false
+reposPath=~/dev/repos/
 
 # self-references
 if [ "$bash_env" == "HOME" ]; then
@@ -53,6 +54,8 @@ bitbucket_ssh_clone='ssh://'$bitbucket_url
 
 ## create tmux config symlink
 [ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
+## vimrc symlink
+[ ! -f ~/.vimrc ] && ln -s $vimPath ~/.vimrc
 
 #cd() {
 #  builtin cd $@ 
@@ -74,8 +77,6 @@ function sourceBash() {
 source ${localBash}
 source ${awsBash}
 
-## source vim file
-source $vimPath
 
 function editBashrc() {
   vim ~/.bashrc; sourceBash ~/.bashrc
