@@ -1,2 +1,7 @@
+aptitude
 curl
-sendmail sendmail-bin
+docker.io
+git
+python3-pip
+tmux
+vim
