@@ -252,6 +252,7 @@ alias   gfa='git fetch --all -p'
 alias  gtfo='gfo'
 alias    glog='git log --oneline --graph --all --decorate'     
 alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent $(gitbranch)'     
+alias    gitlogone='git log --pretty=oneline'
 alias grebase='gfa && git rebase'
 alias grebasedefault='gfa && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfa && git rebase origin/$(gitbranch)'
@@ -273,6 +274,7 @@ alias gcf='git clean -f'
 alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 alias grestore='git restore --staged .'
 alias git-chmod-exec='git update-index --chmod=+x '
+alias gstash='git stash'
 
 
 function gbrame() {
