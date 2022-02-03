@@ -16,6 +16,7 @@ if [ $(hostname) == "WIN1050LH8G3" ]; then
 fi
 if [ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]; then
   reposPath=~/dev/repos/
+  source ${reposPath}/tools/bash/corp/resmed/.bashrc
 fi
 if [ $(whoami) == "root" ]; then
   reposPath=~selliott/repos/
@@ -49,8 +50,6 @@ updateFileMessage=$'
 ##########
 ## vars ##
 ##########
-bitbucket_url='git@git.devlnk.net'
-bitbucket_ssh_clone='ssh://'$bitbucket_url
 
 ## create tmux config symlink
 [ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
@@ -276,6 +275,8 @@ alias grestore='git restore --staged .'
 alias git-chmod-exec='git update-index --chmod=+x '
 alias gstash='git stash'
 
+export GIT_EDITOR=vim
+
 
 function gbrame() {
   git branch | grep $GIT_BRANCH_NAME
@@ -295,12 +296,6 @@ MCICLSKIP=$MCISKIP' '$MVN_CL_CONFIGS
 alias   mci='echo $MCI; $MCI'
 alias  mciskip='echo $MCISKIP && $MCISKIP'
 alias mvntree='mvn dependency:tree'
-alias micl='echo $MICL && $MICL'
-alias mcicl='echo $MCICL && $MCICL && mytop'
-
-function mciclskip() {
-  echo $MCICLSKIP && $MCICLSKIP $@ && mytop
-}
 
 ##### Gradle commands ##### 
 alias gradlefast='${reposPath}/fast/gradlew'
@@ -339,14 +334,6 @@ function gpshobranch() {
     return 0
   fi
   gpsho -u $(gitbranch) $@
-}
-
-function gpshgitlabdefault() {
-  #if [[ $(gitbranch) == "cl-dev" ]] || [[ $(gitbranch) == "dev" ]] || [[ $(gitbranch) == "master" ]]; then
-  #  echo "Error: commits cannot be directly pushed to this branch"
-  #  return 0
-  #fi
-  gpshgitlab -u $(gitbranch) $@
 }
 
 function gitreset() {
@@ -562,10 +549,6 @@ function gorigindefault() {
 }
 
 
-function eclssh(){
-  ssh ecl-corefulltest${1}-lnx7-dev.devlnk.net
-}
-
 #######################
 ## Utility functions ##
 #######################
@@ -661,13 +644,7 @@ function searchsystemctl() {
   systemctl | grep  -E "$1" | awk '{print $1}'
 }
 
-function eclservices() {
-  searchsystemctl "Front|Library|RLC"
-}
 
-function eclstop() {
-  sysstop $(eclservices)
-}
 #alias newestfile="ll -rst | tail -n 1 | awk '{print $NF}'"
 function newestfile() {
   string=""
