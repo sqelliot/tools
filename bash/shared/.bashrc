@@ -2,6 +2,7 @@
 
 goldlnk=false
 reposPath=~/dev/repos/
+bashrcPath=~/.bashrc
 
 # self-references
 if [ "$bash_env" == "HOME" ]; then
@@ -70,6 +71,10 @@ updateFileMessage=$'
 function sourceBash() {
   echo "Sourcing $1..."
   source $1 ; echo "$updateFileMessage"
+}
+
+refreshBash() {
+  sourceBash ${bashrcPath}
 }
 
 ## Source other bash files
