@@ -525,7 +525,8 @@ function gchgrep() {
   fi
 
   printf '%s\n' "$branch"
-  branch=$(echo $branch | awk '{print $1}' |  sed -e 's/^[a-z]\///')
+  # strip remotes and origin
+  branch=$(echo $branch | sed 's/remotes\///g' | sed 's/origin\///g')
   printf '%s\n' "$branch"
 
   gch $branch
