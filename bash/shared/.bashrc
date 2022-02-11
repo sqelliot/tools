@@ -15,7 +15,7 @@ fi
 if [ $(hostname) == "WIN1050LH8G3" ]; then
   reposPath=~/dev/repos/
 fi
-if [ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]; then
+if [[ $(hostname) =~ "^WIN1050LH8G3" ]]; then
   reposPath=~/dev/repos/
   source ${reposPath}/tools/bash/corp/resmed/.bashrc
 fi
