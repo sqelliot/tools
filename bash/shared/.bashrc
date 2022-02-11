@@ -35,6 +35,7 @@ toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
+corpPath=${toolsPath}/bash/corp
 vimPath=${toolsPath}/vim/.vimrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
 aptPath=${toolsPath}/install/apt
@@ -95,6 +96,10 @@ function editLocalBash() {
 
 function editAwsBash() {
   vim ${awsBash}; sourceBash ${awsBash}
+}
+
+editCorpBash() {
+  vim ${corpPath}/$1/.bashrc; sourceBash ${corpPath}/$1/.bashrc
 }
 
 function sourceSharedBash() {
