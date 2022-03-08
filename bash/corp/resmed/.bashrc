@@ -9,11 +9,17 @@ stashclone() {
 }
 
 resclone(){
-  region=$(pwd | awk -F '/' '{print $(NF-1)}')
+  bb_identifier=$(pwd | awk -F '/' '{print $(NF-1)}')
   proj=$(basename `pwd`)
   repo=$1
 
-  git clone ssh://git@bitbucket.prod.${region}.live/${proj}/${repo}
+  if [ "${bb_identifier}" == "stash" ]; then
+    res_url=ssh://git@stash.ec2.local:7999/${proj}/${repo}.git
+  else
+    res_url=ssh://git@bitbucket.prod.${bb_identifier}.live/${proj}/${repo}
+  fi
+
+  git clone --depth 1 --no-single-branch ${res_url}
 }
 
 #dhtclone(){
@@ -27,4 +33,16 @@ resclone(){
 resmed() {
 
   pushd ${reposPath}/resmed
+}
+
+dht(){
+  pushd ${reposPath}/resmed/dht
+}
+
+rmdeu(){
+  pushd ${reposPath}/resmed/rmdeu
+}
+
+restash(){
+  pushd ${reposPath}/resmed/stash
 }
