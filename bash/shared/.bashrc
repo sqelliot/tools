@@ -17,16 +17,15 @@ if [ $(hostname) == "WIN1050LH8G3" ]; then
 fi
 if [[ $(hostname) =~ "^WIN1050LH8G3" ]]; then
   reposPath=~/dev/repos/
+  bashrcPath=~/.bash_aliases
   source ${reposPath}/tools/bash/corp/resmed/.bashrc
+  git_branch_author_name=sean.elliott
 fi
 if [ $(whoami) == "root" ]; then
   reposPath=~selliott/repos/
 fi
 if [ $(whoami) == "ec2-user" ]; then
   reposPath=~/sean.elliott3/
-fi
-if [ "$GIT_BRANCH_NAME" == "" ]; then
-  GIT_BRANCH_NAME=selliott
 fi
 if [ "$reposPath" == "" ]; then
   reposPath=~/repos/
@@ -84,7 +83,7 @@ source ${awsBash}
 
 
 function editBashrc() {
-  vim ~/.bashrc; sourceBash ~/.bashrc
+  vim ${bashrcPath}; sourceBash ${bashrcPath} 
 }
 
 function editSharedBash() {
@@ -241,7 +240,7 @@ alias baeopt='cd /opt/baesystems/ '
 alias gpsha='gpshobranch; gpshgitlab'
 alias gpsho='git push origin'
 alias gpshgitlab='git push gitlab $(gitdefaultbranch)'
-alias gd='git diff --color-words'
+alias gd='git diff --color'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
 alias gddefault='git diff origin/$(gitdefaultbranch)'
@@ -289,7 +288,7 @@ export GIT_EDITOR=vim
 
 
 function gbrame() {
-  git branch | grep $GIT_BRANCH_NAME
+  git branch | grep $git_branch_author_name
 }
 ##########################################################
 ################# Shared git commands ####################
@@ -356,7 +355,7 @@ function gitreset() {
 }
 
 function gitnewbranch() {
-  if [ "$#" -lt 1 ]; then
+  if [ "$#" -ne 2 ]; then
     echo "Usage: ${FUNCNAME[0]} <name> [target branch]"
     return 0
   fi
@@ -369,7 +368,7 @@ function gitnewbranch() {
   fi
 
   gfo
-  git checkout -b feature/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
+  git checkout -b feature/${target_branch}/${git_branch_author_name}/${name} origin/$target_branch
 
 }
 
@@ -386,8 +385,19 @@ function gitfeaturebranch() {
     target_branch=$2
   fi
 
+  feature_branch_name_prefix="feature"
+  use_author_name="false"
+  use_target_branch_name="false"
+
+  new_branch_name=""
+  new_branch_name+="${feature_branch_name_prefix}/"
+  new_branch_name+=$( [ "$use_target_branch_name" = true ] && echo "${target_branch}/")
+  new_branch_name+=$( [ "$use_author_name" = true ] && echo "${git_branch_author_name}/")
+  new_branch_name+="${name}"
+  
+
   gfo
-  git checkout -b feature/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
+  git checkout -b ${new_branch_name} origin/$target_branch
 }
 
 function gitbugfixbranch() {
@@ -404,7 +414,7 @@ function gitbugfixbranch() {
   fi
 
   gfo
-  git checkout -b drfix/${target_branch}/${GIT_BRANCH_NAME}/${name} origin/$target_branch
+  git checkout -b drfix/${target_branch}/${git_branch_author_name}/${name} origin/$target_branch
 }
 
 # Create the two branches necessary for a DR
