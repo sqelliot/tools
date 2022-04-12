@@ -237,9 +237,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
-alias gpsha='gpshobranch; gpshgitlab'
 alias gpsho='git push origin'
-alias gpshgitlab='git push gitlab $(gitdefaultbranch)'
 alias gd='git diff --color'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
@@ -264,7 +262,6 @@ alias    gitlogone='git log --pretty=oneline'
 alias grebase='gfa && git rebase'
 alias grebasedefault='gfa && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfa && git rebase origin/$(gitbranch)'
-alias grebasegitlab='gfa && git rebase gitlab/$(gitbranch)'
 alias gresetdefaultsoft='gfo && git reset --soft origin/$(gitdefaultbranch) && git restore --staged . && gsta'
 alias gresetdefaulthard='gfa && git reset --hard origin/$(gitdefaultbranch)'
 alias gresetheadsoft='git reset --soft HEAD'
@@ -400,6 +397,11 @@ function gitfeaturebranch() {
   git checkout -b ${new_branch_name} origin/$target_branch
 }
 
+function gitbackupbranch() {
+  git branch --copy $(gitbranch)-$(datetimestamp)
+
+}
+
 function gitbugfixbranch() {
   if [ "$#" -lt 1 ]; then
     echo "Usage: ${FUNCNAME[0]} <jira number>[-<info>] [target branch]"
@@ -474,6 +476,11 @@ function gupdate() {
   fi
 
   gfo; git rebase origin/$1
+}
+
+function grih(){
+  ## interactive rebase to X commits back
+  git rebase -i HEAD~$1
 }
 
 # Commit with message starting with the current jira issue 
@@ -801,7 +808,25 @@ function perform-in-dirs() {
   done
 }
 
-##########################################################
-################ Shared docker commands ##################
-##########################################################
 alias dpsa='docker ps -a'
+
+extract_host_ca(){
+  if [ "$#" != 2 ]; then
+    echo "Usage: ${FUNCNAME[0]} <host> <port>"
+  fi
+  host=$1
+  port=$2
+  work_dir=${host}${port}
+
+  mkdir -p $work_dir
+  pushd $work_dir
+  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{ if(/BEGIN/){a++}; out="cert"a".pem"; print >out}';
+  for cert in *.pem;
+  do
+    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').pem;
+    echo "${newname}";
+    mv "${cert}" "${newname}";
+  done
+}
+
+export CA_CERT_PATH=/usr/local/share/ca-certificates
