@@ -46,3 +46,15 @@ rmdeu(){
 restash(){
   pushd ${reposPath}/resmed/stash
 }
+
+resmed_tree(){
+  resmed
+  tree -d -L 3
+  popd
+}
+
+resmed_find(){
+  resmed >/dev/null
+  find . -maxdepth 3 -mindepth 3 -type d -name "[!.]*"
+  popd >/dev/null
+}
