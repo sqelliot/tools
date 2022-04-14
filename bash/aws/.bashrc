@@ -1,31 +1,8 @@
 #!/bin/bash
 # .bashrc
 
-# keys
-cint=/etc/ansible/keypairs/fcms-cint-99.pem
-dev=/etc/ansible/keypairs/fcms-dev-99.pem
-
-export PGPASSWORD=fcms_pass
-
 # ssh history path
 ssh_prev=~/.ssh_previous
-
-function ap() {
-  dt=$(date '+%d%m%Y-%H:%M:%S');
-  ansible-playbook -vv $@
-}
-
-function psqlconnect() {
-  ip=$1
-  echo 'Connecting to ${ip}'
-  source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_admin --dbname=user_profile_db
-}
-
-function hspsqlconnect() {
-  ip=$1
-  echo 'Connecting to ${ip}'
-  source /opt/rh/rh-postgresql96/enable && psql --host=$1 --port=5432 --username=fcms_hs_db --dbname=hs_db --password
-}
 
 function previous_ssh() {
   echo $1 > $ssh_prev
@@ -194,14 +171,6 @@ function ec2deleteenis() {
       echo ${i}
       aws ec2 delete-network-interface --network-interface-id ${i};
   done
-}
-
-function getEucaKey() {
-  if [[ -f "$dev" ]];then
-      echo $dev
-  else
-      echo $cint
-  fi
 }
 
 function ec2ssh() {
