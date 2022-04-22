@@ -14,6 +14,8 @@ if [ $(hostname) == "GLDLBAE496014" ]; then
 fi
 if [ $(hostname) == "WIN1050LH8G3" ]; then
   reposPath=~/dev/repos/
+  source ${reposPath}/tools/bash/corp/resmed/.bashrc
+  git_branch_author_name=sean.elliott
 fi
 if [[ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]]; then
   reposPath=~/dev/repos/
