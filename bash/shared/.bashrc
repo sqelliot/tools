@@ -832,3 +832,5 @@ extract_host_ca(){
 }
 
 export CA_CERT_PATH=/usr/local/share/ca-certificates
+
+alias start-ssh-agent='eval `ssh-agent`'
