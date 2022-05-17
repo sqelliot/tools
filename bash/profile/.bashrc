@@ -33,5 +33,5 @@ bakcyn='\e[46m'   # Cyan
 bakwht='\e[47m'   # White
 txtrst='\e[0m'    # Text Reset
 
-export PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\033[38;5;250m\]{`date -u "+%Y-%m-%d, W%U, D%j, %H:%M:%S UTC"`} \[\033[33m\]\w\[\033[36m\] `gitbranch || echo ""` \[\033[0m\]\nπ '
+export PS1='[\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\033[38;5;250m\]{`date -u "+%Y-%m-%d, W%U, D%j, %H:%M:%S UTC"`} \[\033[33m\]\w\[\033[36m\] `gitbranch || echo ""`\[\033[0m\]]\nπ '
 #export PS1='\[\033]0${PWD//[^[:ascii:]]/?}\007\]\[\033[32m\]\u@\h \[\e[1;37m{`date -u`} \[\033[33m\]\w\[\033[36m\] `gitbranch || echo ""` \[\033[0m\]\nπ '

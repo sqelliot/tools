@@ -167,6 +167,10 @@ function datetimestamp(){
   date +'%Y-%m-%d-%H%M%S'
 }
 
+function full_date(){
+  date +'%FT%T'
+}
+
 function mytop() {
   if [ "$#" -ge 1 ]; then
     echo "cp $1 $CL_TOP"
@@ -834,3 +838,47 @@ extract_host_ca(){
 export CA_CERT_PATH=/usr/local/share/ca-certificates
 
 alias start-ssh-agent='eval `ssh-agent`'
+
+git-commit-diff() {
+  git diff ${1}~1 ${1}
+}
+
+
+get-current-bash-options(){
+  echo "$-"
+}
+
+is-bash-vi-mode-enabled(){
+  if [[ `set -o | grep "\<vi\>" | awk '{print $2}'` == "on" ]];
+  then
+    echo "true"
+  else
+    echo "false"
+  fi
+
+}
+
+
+mytrash(){
+  Trash_Path=~/.local/share/Trash
+  Trash_Files_Path=${Trash_Path}/files
+  Trash_Info_Path=${Trash_Path}/info
+
+  input_path=$1
+  input_file_name=$(basename ${input_path})
+
+  timestamp=$(full_date)
+  origin_full_path=$(realpath $input_path)
+
+  trash_new_file_path=${Trash_Files_Path}/${input_file_name}
+  trash_new_info_path=${Trash_Info_Path}/${input_file_name}.trashinfo
+
+  
+  mv ${input_path} ${trash_new_file_path}
+
+  printf "Path=${origin_full_path}\nDeletionDate=${timestamp}\n" > ${trash_new_info_path}
+  
+}
+
+alias ls1='ls -1'
+>>>>>>> stuff
