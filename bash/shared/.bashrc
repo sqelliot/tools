@@ -866,15 +866,13 @@ pem-subject(){
 
 export CA_CERT_PATH=/usr/local/share/ca-certificates
 
-<<<<<<< HEAD
 alias start-ssh-agent='eval `ssh-agent`'
-=======
+
 add-to-ca-certs(){
   cp $1 ${CA_CERT_PATH}/
   sudo update-ca-certificates
 }
 
->>>>>>> aws cli stuff; saml2aws stuff; openssl stuff; git stuff;
 
 git-commit-diff() {
   git diff ${1}~1 ${1}
