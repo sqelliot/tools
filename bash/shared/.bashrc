@@ -284,7 +284,7 @@ alias gcp='git cherry-pick '
 alias gcf='git clean -f'
 alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 alias grestore='git restore --staged .'
-alias git-chmod-exec='git update-index --chmod=+x '
+alias git-chmod-exec='git update-index --chmod=+x --add '
 alias gstash='git stash'
 
 export GIT_EDITOR=vim
@@ -307,6 +307,7 @@ MCICLSKIP=$MCISKIP' '$MVN_CL_CONFIGS
 
 alias   mci='echo $MCI; $MCI'
 alias  mciskip='echo $MCISKIP && $MCISKIP'
+alias  mvnwciskip='./mvnw clean install -Dmaven.test.skip=true'
 alias mvntree='mvn dependency:tree'
 
 ##### Gradle commands ##### 
@@ -400,7 +401,7 @@ function gitfeaturebranch() {
   
 
   gfo
-  git checkout -b ${new_branch_name} origin/$target_branch
+  git checkout -b ${new_branch_name} origin/$target_branch || git rebase origin/$target_branch
 }
 
 function gitbackupbranch() {
@@ -444,14 +445,20 @@ function gitDr() {
 
 function goup() {
   num=$1
+  up_path=()
 
   for i in $(seq 1 ${num});
   do
-    #echo "Went up ${i} dirs"
-    #pwd
-    cd ..
+    up_path+='../'
   done
 
+  full=""
+  for d in  "${up_path[@]}";
+  do
+    full+=${d};
+  done
+
+  pushd ${full}
   ls
 }
 
@@ -816,9 +823,23 @@ function perform-in-dirs() {
 
 alias dpsa='docker ps -a'
 
+extract_host_ca_chain(){
+  if [ "$#" != 2 ]; then
+    echo "Usage: ${FUNCNAME[0]} <host> <port>"
+    return
+  fi
+  host=$1
+  port=$2
+  name=${host}${port}
+
+  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{  out="cert.pem"; print >out}';
+
+}
+
 extract_host_ca(){
   if [ "$#" != 2 ]; then
     echo "Usage: ${FUNCNAME[0]} <host> <port>"
+    return
   fi
   host=$1
   port=$2
@@ -829,15 +850,31 @@ extract_host_ca(){
   openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{ if(/BEGIN/){a++}; out="cert"a".pem"; print >out}';
   for cert in *.pem;
   do
-    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').pem;
+    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').crt;
     echo "${newname}";
     mv "${cert}" "${newname}";
   done
 }
 
+read-pem(){
+  openssl x509 -in $1 -noout -text
+}
+
+pem-subject(){
+  openssl x509 -noout -subject -in $1 | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]'
+}
+
 export CA_CERT_PATH=/usr/local/share/ca-certificates
 
+<<<<<<< HEAD
 alias start-ssh-agent='eval `ssh-agent`'
+=======
+add-to-ca-certs(){
+  cp $1 ${CA_CERT_PATH}/
+  sudo update-ca-certificates
+}
+
+>>>>>>> aws cli stuff; saml2aws stuff; openssl stuff; git stuff;
 
 git-commit-diff() {
   git diff ${1}~1 ${1}
@@ -881,4 +918,30 @@ mytrash(){
 }
 
 alias ls1='ls -1'
->>>>>>> stuff
+
+alias tree2='tree -L 2'
+
+## saml2aws
+alias saml2console='saml2aws console'
+alias saml2link='saml2aws console --link'
+alias s2alogin='saml2aws login '
+alias rmd-mcs-dev='s2alogin -a rmd-amr-nonprod --role=arn:aws:iam::668994236368:role/tlz_admin; set-aws-env-profile rmd-amr-nonprod'
+alias rmd-amr-prod='s2alogin -a rmd-amr-prod'
+alias rmd-airview-prd='s2alogin -a rmd-amr-prod --role=arn:aws:iam::077995606180:role/tlz_developer'
+alias rmd-amr-nonprod='s2alogin -a rmd-amr-nonprod'
+alias rmd-amr-nonprod-link='saml2link -a rmd-amr-nonprod'
+alias rmd-amr-prod-link='saml2link -a rmd-amr-prod'
+
+AWS_PROFILE_FILE_PATH=~/.aws/profile
+set-aws-env-profile(){
+  profile_name=$1
+
+
+  truncate -s 0 $AWS_PROFILE_FILE_PATH
+  echo "AWS_PROFILE=${profile_name}" >> $AWS_PROFILE_FILE_PATH
+  source $AWS_PROFILE_FILE_PATH
+}
+
+get-aws-env-profile(){
+  echo $AWS_PROFILE
+}

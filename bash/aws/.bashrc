@@ -29,7 +29,7 @@ function ec2prevssh() {
 ## cl: command lineup
 function ec2lookup(){
   name="*"
-  profile='default'
+  profile="${AWS_PROFILE:-default}"
   states="running,stopped,stopping,starting"
   sort_column=0
   while true ; do
@@ -66,6 +66,7 @@ function ec2lookup(){
     --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=${states}" \
     --query "Reservations[].Instances[].[Tags[?Key==\`Name\`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[${sort_column}])" \
     --output table \
+    --region "us-west-2" \
     --profile $profile
 }
 
@@ -107,7 +108,7 @@ function ec2terminatebyquery() {
 
 function ec2instanceIds() {
   name=$1
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[InstanceId]' --output text 
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=*${name}" --query 'Reservations[].Instances[].[InstanceId]' --output text --profile "${AWS_PROFILE:-default}"
 }
 
 function ec2instanceIps() {

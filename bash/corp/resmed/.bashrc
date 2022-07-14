@@ -58,3 +58,15 @@ resmed_find(){
   find . -maxdepth 3 -mindepth 3 -type d -name "[!.]*"
   popd >/dev/null
 }
+
+
+fly-login(){
+  fly -t $1 login -b
+}
+
+alias fly-login-sparrow-dev='fly -t sparrow_dev login -b'
+alias fly-sparrow-dev='fly -t sparrow_dev '
+
+cf-login(){
+  cf login --sso -o sparrow -s $1
+}
