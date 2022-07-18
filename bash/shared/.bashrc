@@ -834,29 +834,34 @@ extract_host_ca_chain(){
   port=$2
   name=${host}${port}
 
-  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{  out="cert.pem"; print >out}';
+  tmp_dir=$(mktemp -d --quiet)
+  pushd $tmp_dir > /dev/null
 
+  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null 2> /dev/null | awk '/BEGIN/,/END/{  out="cert.pem"; print >out}'
+
+  popd > /dev/null
+  echo ${tmp_dir}/cert.pem
 }
 
-extract_host_ca(){
-  if [ "$#" != 2 ]; then
-    echo "Usage: ${FUNCNAME[0]} <host> <port>"
-    return
-  fi
-  host=$1
-  port=$2
-  work_dir=${host}${port}
-
-  mkdir -p $work_dir
-  pushd $work_dir
-  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{ if(/BEGIN/){a++}; out="cert"a".pem"; print >out}';
-  for cert in *.pem;
-  do
-    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').crt;
-    echo "${newname}";
-    mv "${cert}" "${newname}";
-  done
-}
+#extract_host_ca(){
+#  if [ "$#" != 2 ]; then
+#    echo "Usage: ${FUNCNAME[0]} <host> <port>"
+#    return
+#  fi
+#  host=$1
+#  port=$2
+#  work_dir=${host}${port}
+#
+#  mkdir -p $work_dir
+#  pushd $work_dir
+#  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{ if(/BEGIN/){a++}; out="cert"a".pem"; print >out}';
+#  for cert in *.pem;
+#  do
+#    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').crt;
+#    echo "${newname}";
+#    mv "${cert}" "${newname}";
+#  done
+#}
 
 read-pem(){
   openssl x509 -in $1 -noout -text
@@ -916,6 +921,10 @@ mytrash(){
   printf "Path=${origin_full_path}\nDeletionDate=${timestamp}\n" > ${trash_new_info_path}
   
 }
+
+## gio shortcuts
+alias gio-trash='gio trash '
+alias gio-list-trash='gio list trash://'
 
 alias ls1='ls -1'
 
