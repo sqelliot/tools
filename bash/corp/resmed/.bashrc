@@ -22,6 +22,27 @@ resclone(){
   git clone --depth 1 --no-single-branch ${res_url}
 }
 
+res-repos(){
+  find ~/dev/repos/resmed -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
+}
+
+select-res-repo(){
+  select repo in $(res-repos) exit; do
+    case $repo in
+      exit)
+        break ;;
+      *)
+        echo $repo;
+    esac;
+  done
+}
+
+res-idea(){
+  repo=$(select-res-repo)
+
+  idea ${reposPath}/resmed/${repo}
+}
+
 #dhtclone(){
 #  rmclone dht $1 $2
 #}

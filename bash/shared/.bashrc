@@ -40,6 +40,7 @@ corpPath=${toolsPath}/bash/corp
 vimPath=${toolsPath}/vim/.vimrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
 aptPath=${toolsPath}/install/apt
+export PATH=$PATH:${toolsPath}/bin
 updateFileMessage=$'
 
 #########################################
@@ -822,6 +823,7 @@ function perform-in-dirs() {
 }
 
 alias dpsa='docker ps -a'
+
 
 extract_host_ca_chain(){
   if [ "$#" != 2 ]; then
