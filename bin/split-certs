@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set +C -e
+
+cert_file_path=$1
+tmp_dir=`mktemp -d` 
+
+cp $cert_file_path ${tmp_dir}/cert
+pushd $tmp_dir > /dev/null
+
+awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "cert." c ".crt"}' < cert
+
+
+for cert in `ls *crt`; do
+  cert_cn=$(openssl x509 -noout -subject -nameopt multiline -in ${cert} | sed -n 's/\s*commonName\s*=\s//p')
+  mv $cert ${cert_cn}.crt
+done
+
+popd > /dev/null
+echo $tmp_dir

@@ -1,0 +1,12 @@
+---
+- name: certificate playbook
+  hosts: localhost
+  tasks:
+  - name: Get certificate file
+    openssl_certificate_info:
+      path: /home/seane1/dev/repos/tools/ansible/ca-certificates.crt
+    register: certs_result
+  
+  - name: display certs result
+    debug:
+      var: certs_result
