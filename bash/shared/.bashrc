@@ -931,16 +931,21 @@ alias ls1='ls -1'
 alias tree2='tree -L 2'
 
 ## saml2aws
-alias saml2console='saml2aws console'
-alias saml2link='saml2aws console --link'
-alias s2alogin='saml2aws login '
-alias rmd-mcs-dev='s2alogin -a rmd-amr-nonprod --role=arn:aws:iam::668994236368:role/tlz_admin; set-aws-env-profile rmd-amr-nonprod'
-alias rmd-amr-prod='s2alogin -a rmd-amr-prod'
-alias rmd-airview-prd='s2alogin -a rmd-amr-prod --role=arn:aws:iam::077995606180:role/tlz_developer'
-alias rmd-amr-nonprod='s2alogin -a rmd-amr-nonprod'
-alias rmd-amr-nonprod-link='saml2link -a rmd-amr-nonprod'
-alias rmd-amr-prod-link='saml2link -a rmd-amr-prod'
+export rmd_amr_nonprod_profile='rmd-amr-nonprod'
+export rmd_amr_prod_profile='rmd-amr-prod'
 
+alias s2a='saml2aws -a ${SAML2AWS_PROFILE}'
+alias saml2console='s2a console'
+alias saml2link='s2a console --link'
+alias s2alogin='s2a login '
+alias rmd-mcs-dev='set-aws-env-profile ${rmd_amr_nonprod_profile}; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
+alias rmd-amr-prod='set-aws-env-profile ${rmd_amr_prod_profile}; s2alogin '
+alias rmd-airview-prd='set-aws-env-profile ${rmd_amr_prod_profile}; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
+alias rmd-amr-nonprod='set-aws-env-profile ${rmd_amr_nonprod_profile}; s2alogin '
+alias rmd-amr-nonprod-link='set-aws-env-profile ${rmd_amr_nonprod_profile}; saml2link '
+alias rmd-amr-prod-link='set-aws-env-profile ${rmd_amr_prod_profile}; saml2link '
+
+SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
 set-aws-env-profile(){
   profile_name=$1
@@ -949,8 +954,20 @@ set-aws-env-profile(){
   truncate -s 0 $AWS_PROFILE_FILE_PATH
   echo "AWS_PROFILE=${profile_name}" >> $AWS_PROFILE_FILE_PATH
   source $AWS_PROFILE_FILE_PATH
+
+  truncate -s 0 $SAML2AWS_FILE_PATH
+  echo "SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
+  source $SAML2AWS_FILE_PATH
 }
 
 get-aws-env-profile(){
   echo $AWS_PROFILE
+}
+
+set-saml2aws-profile(){
+  profile_name$1
+
+  truncate -s 0 $SAML2AWS_FILE_PATH
+  echo "SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
+  source $SAML2AWS_FILE_PATH
 }
