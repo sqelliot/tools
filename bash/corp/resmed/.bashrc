@@ -1,7 +1,21 @@
+#!/bin/bash
 
-bitbucket_ssh_clone=ssh://git@bitbucket.prod.dht.live
+export STASH_BB_HOST='stash.ec2.local'
+export STASH_BB_PORT=7999
+export STASH_BB_HOST_PORT="${STASH_BB_HOST}:${STASH_BB_PORT}"
+export RMDEU_BB_IDENTIFIER='rmdeu'
+export DHT_BB_IDENTIFIER='dht'
+export GIT_CLONE_SSH_PREFIX='ssh://git@'
+
+export DHT_SHON_TOKEN_PATH='~/dev/bitbucket/dht-shon-token'
+export STASH_SHON_TOKEN_PATH='~/dev/bitbucket/stash-shon-token'
 
 rmdReposPath=${reposPath}/resmed
+
+bb_host(){
+  bb_identifier=$1
+  echo "bitbucket.prod.${bb_identifier}.live"
+}
 
 stashclone() {
   project=$1
@@ -10,16 +24,56 @@ stashclone() {
   git clone ssh://git@stash.ec2.local:7999/${project}/${repo}.git
 }
 
+bb-get-projects(){
+  site_identifier=$1
+  token=$(cat ~/dev/bitbucket/${site_identifier}-shon-token)
+  host=$(bb-site-identifier-host ${site_identifier})
+  curl --silent \
+       -H "Accept: application/json" \
+       -H "Authorization: Bearer ${token}" \
+       https://${host}/rest/api/1.0/projects
+}
+
+bb-projects(){
+  site_identifier=$1
+  response_json=$(bb-get-projects ${site_identifier})
+  echo ${response_json} | jq -r '.values[] | [.key, .name] | @tsv'  |
+    while IFS=$'\t' read -r key name; do
+      printf "%-8s%-20s\n" "${key}" "${name}";
+    done
+}
+
+
+bb-site-identifier-host(){
+  site_identifier=$1
+  case $site_identifier in
+    stash)
+      host=${STASH_BB_HOST}
+      ;;
+    dht|rmdeu)
+      host=$(bb_host ${site_identifier})
+      ;;
+    *)
+      echo "no matching site identifier"
+      ;;
+  esac
+  echo $host
+}
+
+## TODO: make this generic. just add hosting sites.
+## use a case statement
 resclone(){
   bb_identifier=$(pwd | awk -F '/' '{print $(NF-1)}')
   proj=$(basename `pwd`)
   repo=$1
 
   if [ "${bb_identifier}" == "stash" ]; then
-    res_url=ssh://git@stash.ec2.local:7999/${proj}/${repo}.git
+    host="${STASH_BB_HOST_PORT}"
   else
-    res_url=ssh://git@bitbucket.prod.${bb_identifier}.live/${proj}/${repo}
+    host=$(bb_host ${bb_identifier})
   fi
+
+  res_url="${GIT_CLONE_SSH_PREFIX}${host}/${proj}/${repo}"
 
   git clone --depth 1 --no-single-branch ${res_url}
 }
