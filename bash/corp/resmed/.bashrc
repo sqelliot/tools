@@ -1,6 +1,8 @@
 
 bitbucket_ssh_clone=ssh://git@bitbucket.prod.dht.live
 
+rmdReposPath=${reposPath}/resmed
+
 stashclone() {
   project=$1
   repo=$2
@@ -23,24 +25,37 @@ resclone(){
 }
 
 res-repos(){
-  find ~/dev/repos/resmed -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
+  name="*"
+  if [ -n "$1" ]; then
+    name="*$1*"
+  fi
+  find ~/dev/repos/resmed -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
 }
 
 select-res-repo(){
-  select repo in $(res-repos) exit; do
+  name_includes=$1
+  select repo in $(res-repos $name_includes) exit; do
     case $repo in
       exit)
         break ;;
       *)
         echo $repo;
+        break ;;
     esac;
   done
 }
 
 res-idea(){
-  repo=$(select-res-repo)
+  repo=$(select-res-repo $1)
+  repo_path=${rmdReposPath}/${repo}
 
-  idea ${reposPath}/resmed/${repo}
+  stat $repo_path 2>/dev/null >/dev/null
+  if [ ! $? -eq 0 ]; then
+    echo "No repo returned..."
+    return
+  fi
+
+  idea $repo_path
 }
 
 #dhtclone(){
