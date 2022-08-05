@@ -10,7 +10,7 @@ export GIT_CLONE_SSH_PREFIX='ssh://git@'
 export DHT_SHON_TOKEN_PATH='~/dev/bitbucket/dht-shon-token'
 export STASH_SHON_TOKEN_PATH='~/dev/bitbucket/stash-shon-token'
 
-rmdReposPath=${reposPath}/resmed
+rmdReposPath=${reposPath}/rmd
 
 bb_host(){
   bb_identifier=$1
@@ -22,6 +22,20 @@ stashclone() {
   repo=$2
 
   git clone ssh://git@stash.ec2.local:7999/${project}/${repo}.git
+}
+
+repo-link-from-path(){
+  current_dir=`pwd`
+  repo_path=${current_dir}
+
+  repo_name=$(basename ${repo_path})
+  project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
+  bb_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
+
+  host=$(bb-site-identifier-host ${bb_identifier})
+
+  echo "https://${host}/projects/${project_name}/repos/${repo_name}"
+  echo "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces/${repo_name}"
 }
 
 bb-get-projects(){
@@ -78,16 +92,33 @@ resclone(){
   git clone --depth 1 --no-single-branch ${res_url}
 }
 
+## GENERIC
+repos(){
+  name="*"
+  if [ -n "$1" ]; then
+    name="*$1*"
+  fi
+  find ${reposPath} -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
+}
+
 res-repos(){
   name="*"
   if [ -n "$1" ]; then
     name="*$1*"
   fi
-  find ~/dev/repos/resmed -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
+  find ${rmdReposPath} -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
 }
 
 select-res-repo(){
   name_includes=$1
+  
+  ## easiesr to do the res-repos call twice than store
+  count=$(res-repos $name_includes | wc -l)
+  if [ $count -eq 1 ]; then
+    echo $(res-repos $name_includes)
+    return
+  fi
+
   select repo in $(res-repos $name_includes) exit; do
     case $repo in
       exit)
@@ -103,7 +134,7 @@ res-idea(){
   repo=$(select-res-repo $1)
   repo_path=${rmdReposPath}/${repo}
 
-  stat $repo_path 2>/dev/null >/dev/null
+  stat -c "%n" $repo_path 
   if [ ! $? -eq 0 ]; then
     echo "No repo returned..."
     return
@@ -120,31 +151,31 @@ res-idea(){
 #  rmclone rmdeu $1 $2
 #}
 
-resmed() {
+rmd() {
 
-  pushd ${reposPath}/resmed
+  pushd ${rmdReposPath}
 }
 
 dht(){
-  pushd ${reposPath}/resmed/dht
+  pushd ${rmdReposPath}/dht
 }
 
 rmdeu(){
-  pushd ${reposPath}/resmed/rmdeu
+  pushd ${rmdReposPath}/rmdeu
 }
 
 restash(){
-  pushd ${reposPath}/resmed/stash
+  pushd ${rmdReposPath}/stash
 }
 
-resmed_tree(){
-  resmed
+rmd_tree(){
+  rmd
   tree -d -L 3
   popd
 }
 
-resmed_find(){
-  resmed >/dev/null
+rmd_find(){
+  rmd >/dev/null
   find . -maxdepth 3 -mindepth 3 -type d -name "[!.]*"
   popd >/dev/null
 }

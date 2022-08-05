@@ -62,12 +62,10 @@ function ec2lookup(){
 
   echo "ec2lookup -n $name -p $profile -s $states"
 
-    #--query "Reservations[].Instances[].[Tags[?Key==\`Name\`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[${sort_column}])" \
   aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=${states}" \
-    --query "Reservations[].Instances[].[Tags[?Key==\`Name\`]|[0].Value,State.Name] | sort_by(@,&[${sort_column}])" \
+    --query "Reservations[].Instances[].[Tags[?Key==\`Name\`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[${sort_column}])" \
     --output table \
-    --region "us-west-2" \
     --profile $profile
 }
 

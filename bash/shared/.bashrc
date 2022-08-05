@@ -1,8 +1,14 @@
 #!/bin/bash
 
 goldlnk=false
-reposPath=~/dev/repos/
+reposPath=~/dev/repos
 bashrcPath=~/.bashrc
+auxilary_repos_path=${reposPath}/aux
+github_site_repos_path=${auxilary_repos_path}/github
+sqelliot_projects_path=${github_site_repos_path}/sqelliot
+toolsPath=${sqelliot_projects_path}/tools
+tools_bash_path=${toolsPath}/bash
+tools_profile_bash_path=${tools_bash_path}/profile/.bashrc
 
 # self-references
 if [ "$bash_env" == "HOME" ]; then
@@ -14,13 +20,12 @@ if [ $(hostname) == "GLDLBAE496014" ]; then
 fi
 if [ $(hostname) == "WIN1050LH8G3" ]; then
   reposPath=~/dev/repos/
-  source ${reposPath}/tools/bash/corp/resmed/.bashrc
+  source ${toolsPath}/bash/corp/rmd/.bashrc
   git_branch_author_name=sean.elliott
 fi
 if [[ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]]; then
-  reposPath=~/dev/repos/
   bashrcPath=~/.bash_aliases
-  source ${reposPath}/tools/bash/corp/resmed/.bashrc
+  source ${toolsPath}/bash/corp/rmd/.bashrc
   git_branch_author_name=sean.elliott
 fi
 if [ $(whoami) == "root" ]; then
@@ -32,7 +37,6 @@ fi
 if [ "$reposPath" == "" ]; then
   reposPath=~/repos/
 fi
-toolsPath=${reposPath}/tools/
 sharedBash=${toolsPath}/bash/shared/.bashrc
 localBash=${toolsPath}/bash/local/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
@@ -56,9 +60,15 @@ updateFileMessage=$'
 ##########
 
 ## create tmux config symlink
-[ ! -f ~/.tmux.conf ] && ln -s $tmuxPath ~/.tmux.conf
+if [ ! -e "~/.tmux.conf" ]; then
+  rm ~/.tmux.conf
+  ln -s $tmuxPath ~/.tmux.conf
+fi
 ## vimrc symlink
-[ ! -f ~/.vimrc ] && ln -s $vimPath ~/.vimrc
+if [ ! -e "~/.vimrc" ]; then
+  rm ~/.vimrc
+  ln -s $vimPath ~/.vimrc
+fi
 
 #cd() {
 #  builtin cd $@ 
@@ -83,6 +93,7 @@ refreshBash() {
 ## Source other bash files
 source ${localBash}
 source ${awsBash}
+source ${tools_profile_bash_path}
 
 
 function editBashrc() {
@@ -101,7 +112,19 @@ function editAwsBash() {
 }
 
 editCorpBash() {
-  vim ${corpPath}/$1/.bashrc; sourceBash ${corpPath}/$1/.bashrc
+  corp_bash=$1
+  if [ -z "$corp_bash" ]; then
+    select corp in `ls ${corpPath}` exit; do
+      case $corp in
+        exit)
+          break ;;
+      *)
+        corp_bash=$corp
+        break ;;
+      esac
+    done
+  fi
+  vim ${corpPath}/$corp_bash/.bashrc; sourceBash ${corpPath}/$corp_bash/.bashrc
 }
 
 function sourceSharedBash() {
@@ -110,7 +133,11 @@ function sourceSharedBash() {
 
 # go to tools
 function tools() {
-  gogit tools
+  pushd ${toolsPath}
+}
+
+function tools-search(){
+  printf "%s\n%s" `alias` `functions`
 }
 
 
@@ -843,25 +870,25 @@ extract_host_ca_chain(){
   echo ${tmp_dir}/cert.pem
 }
 
-#extract_host_ca(){
-#  if [ "$#" != 2 ]; then
-#    echo "Usage: ${FUNCNAME[0]} <host> <port>"
-#    return
-#  fi
-#  host=$1
-#  port=$2
-#  work_dir=${host}${port}
-#
-#  mkdir -p $work_dir
-#  pushd $work_dir
-#  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{ if(/BEGIN/){a++}; out="cert"a".pem"; print >out}';
-#  for cert in *.pem;
-#  do
-#    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').crt;
-#    echo "${newname}";
-#    mv "${cert}" "${newname}";
-#  done
-#}
+extract_host_ca(){
+  if [ "$#" != 2 ]; then
+    echo "Usage: ${FUNCNAME[0]} <host> <port>"
+    return
+  fi
+  host=$1
+  port=$2
+  work_dir=${host}${port}
+
+  mkdir -p $work_dir
+  pushd $work_dir
+  openssl s_client -showcerts -verify 5 -connect ${host}:${port} < /dev/null | awk '/BEGIN/,/END/{ if(/BEGIN/){a++}; out="cert"a".pem"; print >out}';
+  for cert in *.pem;
+  do
+    newname=$(openssl x509 -noout -subject -in $cert | sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | tr '[:upper:]' '[:lower:]').crt;
+    echo "${newname}";
+    mv "${cert}" "${newname}";
+  done
+}
 
 read-pem(){
   openssl x509 -in $1 -noout -text
@@ -943,7 +970,8 @@ alias rmd-amr-prod='set-aws-env-profile ${rmd_amr_prod_profile}; s2alogin '
 alias rmd-airview-prd='set-aws-env-profile ${rmd_amr_prod_profile}; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
 alias rmd-amr-nonprod='set-aws-env-profile ${rmd_amr_nonprod_profile}; s2alogin '
 alias rmd-amr-nonprod-link='set-aws-env-profile ${rmd_amr_nonprod_profile}; saml2link '
-alias rmd-amr-prod-link='set-aws-env-profile ${rmd_amr_prod_profile}; saml2link '
+alias ranlink='rmd-amr-nonprod-link'
+alias rapi='ranlink'
 
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
