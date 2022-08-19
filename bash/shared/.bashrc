@@ -111,20 +111,39 @@ function editAwsBash() {
   vim ${awsBash}; sourceBash ${awsBash}
 }
 
+bash_corp_count(){
+  echo `ls ${corpPath} | wc -l`
+}
+
+bash_corp_dirs(){
+  echo `ls ${corpPath}`
+}
+
 editCorpBash() {
-  corp_bash=$1
-  if [ -z "$corp_bash" ]; then
-    select corp in `ls ${corpPath}` exit; do
-      case $corp in
-        exit)
+  target_corp_bash=$1
+  if [ -z "$target_corp_bash" ]; then
+    if [ $(bash_corp_count) -eq 1 ]; then
+      target_corp_bash=$(bash_corp_dirs)
+    else 
+      select corp in $(bash_corp_dirs) exit; do
+        case $corp in
+          exit)
+            return
+            break ;;
+        *)
+          target_corp_bash=$corp
           break ;;
-      *)
-        corp_bash=$corp
-        break ;;
-      esac
-    done
+        esac
+      done
+    fi
   fi
-  vim ${corpPath}/$corp_bash/.bashrc; sourceBash ${corpPath}/$corp_bash/.bashrc
+
+  stat -c "%n" ${corpPath}/$target_corp_bash
+  if [ ! $? -eq 0 ]; then
+    echo "Can't access ${target_corp_bash}..."
+    return
+  fi 
+  vim ${corpPath}/$target_corp_bash/.bashrc; sourceBash ${corpPath}/$target_corp_bash/.bashrc
 }
 
 function sourceSharedBash() {
@@ -338,10 +357,6 @@ alias  mciskip='echo $MCISKIP && $MCISKIP'
 alias  mvnwciskip='./mvnw clean install -Dmaven.test.skip=true'
 alias mvntree='mvn dependency:tree'
 
-##### Gradle commands ##### 
-alias gradlefast='${reposPath}/fast/gradlew'
-
-
 function gitnew() {
   git checkout -b $1 origin/dev
 }
@@ -490,17 +505,17 @@ function goup() {
   ls
 }
 
-function goto() {
-  if [ "$#" -ne 1 ]; then
-    echo "Usage: ${FUNCNAME[0]} <delimiter>"
-    return 0
-  fi
-
-  delimiter=$1
-  new_path=$(pwd | awk -F ${delimiter} '{print $1}' )$delimiter
-
-  cd $new_path
-}
+#function goto() {
+#  if [ "$#" -ne 1 ]; then
+#    echo "Usage: ${FUNCNAME[0]} <delimiter>"
+#    return 0
+#  fi
+#
+#  delimiter=$1
+#  new_path=$(pwd | awk -F ${delimiter} '{print $1}' )$delimiter
+#
+#  cd $new_path
+#}
 
 # Grabs only the jira number from the current git branch
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
@@ -980,11 +995,11 @@ set-aws-env-profile(){
 
 
   truncate -s 0 $AWS_PROFILE_FILE_PATH
-  echo "AWS_PROFILE=${profile_name}" >> $AWS_PROFILE_FILE_PATH
+  echo "export AWS_PROFILE=${profile_name}" >> $AWS_PROFILE_FILE_PATH
   source $AWS_PROFILE_FILE_PATH
 
   truncate -s 0 $SAML2AWS_FILE_PATH
-  echo "SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
+  echo "export SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
   source $SAML2AWS_FILE_PATH
 }
 
@@ -998,4 +1013,15 @@ set-saml2aws-profile(){
   truncate -s 0 $SAML2AWS_FILE_PATH
   echo "SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
   source $SAML2AWS_FILE_PATH
+}
+
+
+do_prompt(){
+    while true; do
+        read -p "$* [y/n]: " yn
+        case $yn in
+            [Yy]*) return 0  ;;  
+            [Nn]*) echo "Aborted" ; return  1 ;;
+        esac
+    done
 }

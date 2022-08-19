@@ -24,9 +24,23 @@ stashclone() {
   git clone ssh://git@stash.ec2.local:7999/${project}/${repo}.git
 }
 
+workspace-link-from-path(){
+  repo_path=`pwd`
+  if [ -n "$1" ]; then
+    repo_path=$1
+  fi
+
+  repo_name=$(basename ${repo_path})
+  project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
+  bb_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
+
+  host=$(bb-site-identifier-host ${bb_identifier})
+
+  echo "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces/${repo_name}"
+}
+
 repo-link-from-path(){
-  current_dir=`pwd`
-  repo_path=${current_dir}
+  repo_path=`pwd`
 
   repo_name=$(basename ${repo_path})
   project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
@@ -35,7 +49,6 @@ repo-link-from-path(){
   host=$(bb-site-identifier-host ${bb_identifier})
 
   echo "https://${host}/projects/${project_name}/repos/${repo_name}"
-  echo "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces/${repo_name}"
 }
 
 bb-get-projects(){
@@ -98,7 +111,7 @@ repos(){
   if [ -n "$1" ]; then
     name="*$1*"
   fi
-  find ${reposPath} -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
+  find ${reposPath} -maxdepth 4 -mindepth 4 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-3)"'/'"$(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
 }
 
 res-repos(){
@@ -130,6 +143,45 @@ select-res-repo(){
   done
 }
 
+select-repo(){
+  name_includes=$1
+  
+  ## easiesr to do the res-repos call twice than store
+  count=$(repos $name_includes | wc -l)
+  if [ $count -eq 1 ]; then
+    echo $(repos $name_includes)
+    return
+  fi
+
+  select repo in $(repos $name_includes) exit; do
+    case $repo in
+      exit)
+        break ;;
+      *)
+        echo $repo;
+        break ;;
+    esac;
+  done
+}
+
+goto-repo(){
+  repo=$(select-repo $1)
+  echo $repo
+  if [ ! -n "${repo}" ]; then
+    echo "Exit"
+    return 
+  fi
+  repo_path=${reposPath}/${repo}
+
+  stat -c "%n" $repo_path 
+  if [ ! $? -eq 0 ]; then
+    echo "No repo returned..."
+    return
+  fi
+
+  pushd $repo_path
+}
+
 res-idea(){
   repo=$(select-res-repo $1)
   repo_path=${rmdReposPath}/${repo}
@@ -143,13 +195,6 @@ res-idea(){
   idea $repo_path
 }
 
-#dhtclone(){
-#  rmclone dht $1 $2
-#}
-#
-#rmdeuclone(){
-#  rmclone rmdeu $1 $2
-#}
 
 rmd() {
 
