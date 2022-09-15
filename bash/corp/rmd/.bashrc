@@ -39,6 +39,35 @@ workspace-link-from-path(){
   echo "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces/${repo_name}"
 }
 
+browse-workspace(){
+  browse $(workspace-link-from-path)
+}
+
+browse-repo(){
+  browse $(repo-link-from-path)
+
+}
+
+browse-branch(){
+  source_branch="refs/heads/$(gitbranch)"
+  browse "$(repo-link-from-path)/compare/diff?sourceBranch=$(echo $source_branch | sed 's/\//%2F/g')"
+}
+
+search-workspace(){
+  repo_path=`pwd`
+  if [ -n "$1" ]; then
+    repo_path=$1
+  fi
+
+  repo_name=$(basename ${repo_path})
+  project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
+  bb_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
+
+  host=$(bb-site-identifier-host ${bb_identifier})
+
+  browse "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces?search=${repo_name}"
+}
+
 repo-link-from-path(){
   repo_path=`pwd`
 
@@ -101,6 +130,7 @@ resclone(){
   fi
 
   res_url="${GIT_CLONE_SSH_PREFIX}${host}/${proj}/${repo}"
+  echo "Cloning from ${res_url}"
 
   git clone --depth 1 --no-single-branch ${res_url}
 }
@@ -166,14 +196,14 @@ select-repo(){
 
 goto-repo(){
   repo=$(select-repo $1)
-  echo $repo
+  #echo "select-repo: <$repo>"
   if [ ! -n "${repo}" ]; then
     echo "Exit"
     return 
   fi
   repo_path=${reposPath}/${repo}
 
-  stat -c "%n" $repo_path 
+  stat -c "%n" $repo_path  > /dev/null
   if [ ! $? -eq 0 ]; then
     echo "No repo returned..."
     return
@@ -182,9 +212,13 @@ goto-repo(){
   pushd $repo_path
 }
 
-res-idea(){
-  repo=$(select-res-repo $1)
-  repo_path=${rmdReposPath}/${repo}
+code(){
+  repo=$(select-repo $1)
+  if [ ! -n "${repo}" ]; then
+    echo "Exit"
+    return 
+  fi
+  repo_path=${reposPath}/${repo}
 
   stat -c "%n" $repo_path 
   if [ ! $? -eq 0 ]; then
