@@ -1032,3 +1032,10 @@ do_prompt(){
         esac
     done
 }
+
+
+
+## browser/firefox
+search(){
+  firefox -search "$@"
+}
