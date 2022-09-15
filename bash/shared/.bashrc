@@ -306,6 +306,7 @@ alias gbraremotegrep="gfo ; git branch -r | grep"
 alias    gch='git checkout'
 alias    gco='git commit'
 alias   gcom='git commit -m'
+alias   gca='git commit --amend'
 alias   gfo='git fetch origin -p'
 alias   gfa='git fetch --all -p'
 alias  gtfo='gfo'
@@ -433,7 +434,7 @@ function gitfeaturebranch() {
   fi
 
   feature_branch_name_prefix="feature"
-  use_author_name="false"
+  use_author_name="true"
   use_target_branch_name="false"
 
   new_branch_name=""
@@ -799,6 +800,10 @@ function findfile() {
 
 function finddir() {
   find $@ -type d
+}
+
+easyfind(){
+  find . -type f -iname "*$1*"
 }
 
 function zipdate() {
