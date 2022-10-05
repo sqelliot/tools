@@ -562,6 +562,16 @@ function gitjiracommitandpush () {
   gadd $files &&  gjiracommit $msg && gpshobranch
 }
 
+gitpushall(){
+  git add .
+  
+  echo "git commit message: "
+  read
+
+  gjiracommit "$REPLY"
+  gpshobranch
+}
+
 function is_repo_path() {
   path=$(pwd)
   if [[ $path != *"repos"* ]]; then
@@ -985,20 +995,25 @@ alias s2a='saml2aws -a ${SAML2AWS_PROFILE}'
 alias saml2console='firefox -private -new-window $(s2a console --link)'
 alias saml2link='printf $(s2a console --link) | xclip -sel clip '
 alias s2alogin='s2a login --skip-prompt '
-alias rmd-mcs-dev='set-aws-env-profile ${rmd_amr_nonprod_profile}; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
-alias rmd-amr-prod='set-aws-env-profile ${rmd_amr_prod_profile}; s2alogin '
+alias rmd-mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
+alias rmd-amr-prod='set_prod_profile; s2alogin '
 alias rap='rmd-amr-prod'
-alias rmd-airview-prd='set-aws-env-profile ${rmd_amr_prod_profile}; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
-alias rmd-amr-nonprod='set-aws-env-profile ${rmd_amr_nonprod_profile}; s2alogin '
+alias rmd-airview-prd='set_prod_profile; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
+alias rmd-amr-nonprod='set_nonprod_profile; s2alogin '
 alias ran='rmd-amr-nonprod'
-alias rmd-amr-nonprod-link='set-aws-env-profile ${rmd_amr_nonprod_profile}; saml2link '
+alias rmd-amr-nonprod-link='set_nonprod_profile; saml2link '
 alias ranlink='rmd-amr-nonprod-link'
 alias rapi='ranlink'
 
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
+
+alias set_nonprod_profile='set-aws-env-profile ${rmd_amr_nonprod_profile}'
+alias set_prod_profile='set-aws-env-profile ${rmd_amr_prod_profile}'
+
 set-aws-env-profile(){
   profile_name=$1
+  echo "Setting $profile_name profile..."
 
 
   truncate -s 0 $AWS_PROFILE_FILE_PATH
@@ -1008,6 +1023,9 @@ set-aws-env-profile(){
   truncate -s 0 $SAML2AWS_FILE_PATH
   echo "export SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
   source $SAML2AWS_FILE_PATH
+
+  echo "SAML2AWS_PROFILE=${SAML2AWS_PROFILE}"
+  echo "AWS_PROFILE=${AWS_PROFILE}"
 }
 
 get-aws-env-profile(){
