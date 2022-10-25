@@ -1069,3 +1069,28 @@ do_prompt(){
 search(){
   firefox -search "$@"
 }
+
+backup(){
+  file=$1
+  mv ${file} ${file}.old
+}
+
+
+
+## terraform
+tf_get(){
+  tmp_file=`mktemp`
+  
+  echo "terraform get"
+  echo "Temporarily replacing all localterraform.com hostnames for module sources"
+  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
+
+  terraform get 2>&1 | tee ${tmp_file}
+  if [[ -n `cat ${tmp_file} | grep localterraform.com` ]]; then
+    echo "need to run again"
+    tf_get
+  else
+    echo "terraform get succeeded"
+    find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
+  fi
+}
