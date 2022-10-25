@@ -992,8 +992,8 @@ export rmd_amr_nonprod_profile='rmd-amr-nonprod'
 export rmd_amr_prod_profile='rmd-amr-prod'
 
 alias s2a='saml2aws -a ${SAML2AWS_PROFILE}'
-alias saml2console='firefox -private -new-window $(s2a console --link)'
-alias saml2link='printf $(s2a console --link) | xclip -sel clip '
+alias saml2console='firefox -new-window $(s2a console --link)'
+alias saml2link='s2a console --link | tr -d "\n" | xclip -selection clipboard'
 alias s2alogin='s2a login --skip-prompt '
 alias rmd-mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
 alias rmd-amr-prod='set_prod_profile; s2alogin '
@@ -1008,6 +1008,14 @@ alias rapi='ranlink'
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
 
+source_saml_aws_env(){
+  source $AWS_PROFILE_FILE_PATH
+  source $SAML2AWS_FILE_PATH
+}
+
+source_saml_aws_env
+
+
 alias set_nonprod_profile='set-aws-env-profile ${rmd_amr_nonprod_profile}'
 alias set_prod_profile='set-aws-env-profile ${rmd_amr_prod_profile}'
 
@@ -1018,10 +1026,14 @@ set-aws-env-profile(){
 
   truncate -s 0 $AWS_PROFILE_FILE_PATH
   echo "export AWS_PROFILE=${profile_name}" >> $AWS_PROFILE_FILE_PATH
-  source $AWS_PROFILE_FILE_PATH
 
   truncate -s 0 $SAML2AWS_FILE_PATH
   echo "export SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
+
+  echo "SAML2AWS_PROFILE=${SAML2AWS_PROFILE}"
+  echo "AWS_PROFILE=${AWS_PROFILE}"
+
+  source $AWS_PROFILE_FILE_PATH
   source $SAML2AWS_FILE_PATH
 
   echo "SAML2AWS_PROFILE=${SAML2AWS_PROFILE}"

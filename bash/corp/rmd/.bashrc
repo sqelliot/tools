@@ -133,6 +133,8 @@ resclone(){
   echo "Cloning from ${res_url}"
 
   git clone --depth 1 --no-single-branch ${res_url}
+  
+  export REPO_CLONE_CONTEXT=${repo}
 }
 
 ## GENERIC
@@ -227,6 +229,10 @@ code(){
   fi
 
   idea $repo_path
+}
+
+context-code(){
+  code ${REPO_CLONE_CONTEXT}
 }
 
 
