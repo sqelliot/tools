@@ -210,9 +210,8 @@ function epoch() {
   date +'%s'
 }
 
-function datetimestamp(){
-  date +'%Y-%m-%d-%H%M%S'
-}
+alias datetimestamp="date +'%Y-%m-%d-%H%M%S'"
+alias timestamp="date +'%Y%m%d%H%M%S'"
 
 function full_date(){
   date +'%FT%T'
@@ -304,9 +303,10 @@ alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
 alias gbraremotegrep="gfo ; git branch -r | grep"
 alias    gch='git checkout'
-alias    gco='git commit'
-alias   gcom='git commit -m'
-alias   gca='git commit --amend'
+alias gcommit='git commit -S '
+alias    gco='gcommit'
+alias   gcom='gcommit -m'
+alias   gca='gcommit --amend'
 alias   gfo='git fetch origin -p'
 alias   gfa='git fetch --all -p'
 alias  gtfo='gfo'
@@ -334,6 +334,7 @@ alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 alias grestore='git restore --staged .'
 alias git-chmod-exec='git update-index --chmod=+x --add '
 alias gstash='git stash'
+alias isgit='git -C . rev-parse'
 
 export GIT_EDITOR=vim
 
@@ -347,16 +348,22 @@ function gbrame() {
 
 ##### Maven commands ##### 
 MCI='mvn clean install'
-MVN_CL_CONFIGS='-P copy-artifacts -Duser.top='$CL_TOP
-MICL='mvn install '$MVN_CL_CONFIGS
-MCICL='mvn clean install '$MVN_CL_CONFIGS
-MCISKIP='mvn clean install -Dmaven.test.skip=true '
-MCICLSKIP=$MCISKIP' '$MVN_CL_CONFIGS
 
-alias   mci='echo $MCI; $MCI'
-alias  mciskip='echo $MCISKIP && $MCISKIP'
-alias  mvnwciskip='./mvnw clean install -Dmaven.test.skip=true'
+
+mvn(){
+  stat ./mvnw > /dev/null
+  if [ $? == 0 ]; then
+    ./mvnw $@
+  else
+    /usr/bin/mvn $@
+  fi
+}
+alias   mci='mvn clean install'
+alias  mciskip='type mciskip && mci -Dmaven.test.skip=true'
 alias mvntree='mvn dependency:tree'
+alias mcirun='type mcirun; mci spring-boot:run'
+
+
 
 function gitnew() {
   git checkout -b $1 origin/dev
@@ -435,13 +442,13 @@ function gitfeaturebranch() {
 
   feature_branch_name_prefix="feature"
   use_author_name="true"
-  use_target_branch_name="false"
+  use_target_branch_name="true"
 
   new_branch_name=""
-  new_branch_name+="${feature_branch_name_prefix}/"
-  new_branch_name+=$( [ "$use_target_branch_name" = true ] && echo "${target_branch}/")
-  new_branch_name+=$( [ "$use_author_name" = true ] && echo "${git_branch_author_name}/")
-  new_branch_name+="${name}"
+  new_branch_name+="${feature_branch_name_prefix}"
+  new_branch_name+=$( [ "$use_target_branch_name" = true ] && echo "/${target_branch}")
+  new_branch_name+="/${name}"
+  new_branch_name+=$( [ "$use_author_name" = true ] && echo "-${git_branch_author_name}")
   
 
   gfo
@@ -449,7 +456,7 @@ function gitfeaturebranch() {
 }
 
 function gitbackupbranch() {
-  git branch --copy $(gitbranch)-$(datetimestamp)
+  git branch --copy $(gitbranch)-$(timestamp)
 
 }
 
@@ -537,8 +544,10 @@ function gupdate() {
 
 function grih(){
   ## interactive rebase to X commits back
+  head_diff=${1:-1}
   git rebase -i HEAD~$1
 }
+
 
 # Commit with message starting with the current jira issue 
 function gjiracommit(){
@@ -547,7 +556,7 @@ function gjiracommit(){
     return 0
   fi
   msg=$@
-  git commit -m "$(git_jira_issue): ${msg}"
+  gcommit -m "$(git_jira_issue): ${msg}"
 }
 
 function gitjiracommitandpush () {
@@ -565,7 +574,7 @@ function gitjiracommitandpush () {
 gitpushall(){
   git add .
   
-  echo "git commit message: "
+  echo "gcommit message: "
   read
 
   gjiracommit "$REPLY"
@@ -598,22 +607,33 @@ function gitguijira() {
 }
 
 function gchgrep() {
-  branch=$(gbragrep  $1)
-  if [ ! "$branch" ];then 
-    gfo
-    branch=$(gbraremotegrep  $1)
-    if [ ! "$branch" ];then
-      echo "No branch found"
-      return
-    fi
-  fi
+  #branch=$(gbragrep  $1)
+  #if [ ! "$branch" ];then 
+  #  gfo
+  #  branch=$(gbraremotegrep  $1)
+  #  if [ ! "$branch" ];then
+  #    echo "No branch found"
+  #    return
+  #  fi
+  #fi
 
-  printf '%s\n' "$branch"
+  gfo
+  select branch in $(gbraremotegrep  $1) exit; do
+    case $branch in
+      exit)
+        break ;;
+    *)
+      the_branch=$branch
+      break ;;
+    esac
+  done
+
+  printf '%s\n' "$the_branch"
   # strip remotes and origin
-  branch=$(echo $branch | sed 's/remotes\///g' | sed 's/origin\///g')
-  printf '%s\n' "$branch"
+  the_branch=$(echo $the_branch | sed 's/remotes\///g' | sed 's/origin\///g')
+  printf '%s\n' "$the_branch"
 
-  gch $branch
+  gch $the_branch
 }
 
 function gitdefaultbranch() {
@@ -833,7 +853,7 @@ function tardate() {
   tar -cf $name-$(datetimestamp).zip $name
 }
 
-function dir_sizes(){
+function dir-sizes(){
   du -d 1 -h | sort -h
 }
 
@@ -881,6 +901,30 @@ function perform-in-dirs() {
 
 alias dpsa='docker ps -a'
 
+convert-pem-to-crt(){
+  source_pem=$1
+
+
+  openssl x509 \
+    -outform der \
+    -in $source_pem \
+    -out $source_pem.crt
+}
+
+add-pem-to-keystore(){
+  source_pem=$1
+  target_keystore=$2
+
+  source_host=$(echo ${source_pem} | awk -F '.' '{print $1}')
+
+  convert-pem-to-crt $source_pem
+
+  keytool -import \
+          -keystore $JAVA_HOME/lib/security/cacerts \
+          -file ${source_pem}.crt \
+          -alias $source_host
+  trash ${source_pem}.crt
+}
 
 extract_host_ca_chain(){
   if [ "$#" != 2 ]; then
@@ -979,6 +1023,10 @@ mytrash(){
   
 }
 
+alias clipboard='xclip -selection clipboard'
+alias clear-clipboard='echo | clipboard'
+
+## gio shortcuts
 ## gio shortcuts
 alias gio-trash='gio trash '
 alias gio-list-trash='gio list trash://'
@@ -988,22 +1036,26 @@ alias ls1='ls -1'
 alias tree2='tree -L 2'
 
 ## saml2aws
-export rmd_amr_nonprod_profile='rmd-amr-nonprod'
-export rmd_amr_prod_profile='rmd-amr-prod'
+export amr_nonprod_profile='rmd-amr-nonprod'
+export amr_prod_profile='rmd-amr-prod'
+export eu_prod_profile='rmd-eu-prod'
+export eu_nonprod_profile='rmd-eu-nonprod'
 
 alias s2a='saml2aws -a ${SAML2AWS_PROFILE}'
 alias saml2console='firefox -new-window $(s2a console --link)'
 alias saml2link='s2a console --link | tr -d "\n" | xclip -selection clipboard'
 alias s2alogin='s2a login --skip-prompt '
-alias rmd-mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
-alias rmd-amr-prod='set_prod_profile; s2alogin '
-alias rap='rmd-amr-prod'
-alias rmd-airview-prd='set_prod_profile; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
-alias rmd-amr-nonprod='set_nonprod_profile; s2alogin '
-alias ran='rmd-amr-nonprod'
-alias rmd-amr-nonprod-link='set_nonprod_profile; saml2link '
-alias ranlink='rmd-amr-nonprod-link'
+alias mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
+alias mcs-alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
+alias amr-prod='set_prod_profile; s2alogin '
+alias prod='amr-prod'
+alias airview-prd='set_prod_profile; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
+alias amr-nonprod='set_nonprod_profile; s2alogin '
+alias nonprod='amr-nonprod'
+alias amr-nonprod-link='set_nonprod_profile; saml2link '
+alias ranlink='amr-nonprod-link'
 alias rapi='ranlink'
+alias alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
 
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
@@ -1016,8 +1068,10 @@ source_saml_aws_env(){
 source_saml_aws_env
 
 
-alias set_nonprod_profile='set-aws-env-profile ${rmd_amr_nonprod_profile}'
-alias set_prod_profile='set-aws-env-profile ${rmd_amr_prod_profile}'
+alias set_nonprod_profile='set-aws-env-profile ${amr_nonprod_profile}'
+alias set_prod_profile='set-aws-env-profile ${amr_prod_profile}'
+alias set_eu_nonprod_profile='set-aws-env-profile ${eu_nonprod_profile}'
+alias set_eu_prod_profile='set-aws-env-profile ${eu_prod_profile}'
 
 set-aws-env-profile(){
   profile_name=$1
@@ -1030,8 +1084,8 @@ set-aws-env-profile(){
   truncate -s 0 $SAML2AWS_FILE_PATH
   echo "export SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
 
-  echo "SAML2AWS_PROFILE=${SAML2AWS_PROFILE}"
-  echo "AWS_PROFILE=${AWS_PROFILE}"
+#  echo "SAML2AWS_PROFILE=${SAML2AWS_PROFILE}"
+#  echo "AWS_PROFILE=${AWS_PROFILE}"
 
   source $AWS_PROFILE_FILE_PATH
   source $SAML2AWS_FILE_PATH
@@ -1075,6 +1129,19 @@ backup(){
   mv ${file} ${file}.old
 }
 
+tf_dht(){
+
+  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
+}
+
+tf_eu(){
+
+  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.rmdeu.live/g' {} \; 
+}
+
+tf_local(){
+  find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \; 
+}
 
 
 ## terraform
@@ -1082,8 +1149,10 @@ tf_get(){
   tmp_file=`mktemp`
   
   echo "terraform get"
-  echo "Temporarily replacing all localterraform.com hostnames for module sources"
-  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
+#  echo "Temporarily replacing all localterraform.com hostnames for module sources"
+#  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
+#  tf_eu
+  tf_dht
 
   terraform get 2>&1 | tee ${tmp_file}
   if [[ -n `cat ${tmp_file} | grep localterraform.com` ]]; then
@@ -1094,3 +1163,44 @@ tf_get(){
     find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
   fi
 }
+
+
+java_version(){
+  version=$1
+  versions_list=(7 8 11 17) 
+  if [ ! -n "${version}" ]; then
+    select v in "${versions_list[@]}" exit; do
+      case $v in
+        exit)
+          return break ;;
+        *)
+          echo $v
+          version=$v
+          break ;;
+      esac
+    done
+  fi
+    
+  echo $version
+  case $version in
+    7)
+      sudo update-alternatives --set java "${JAVA_7_CONFIG}" && set_java_home "${JAVA_7_HOME}"
+      ;;
+    8)
+      sudo update-alternatives --set java "${JAVA_8_CONFIG}" && set_java_home "${JAVA_8_HOME}"
+      ;;
+    11)
+      sudo update-alternatives --set java "${JAVA_11_CONFIG}" && set_java_home "${JAVA_11_HOME}"
+      ;;
+    17)
+      sudo update-alternatives --set java "${JAVA_17_CONFIG}" && set_java_home "${JAVA_17_HOME}"
+      ;;
+  esac
+}
+
+alias java7='java_version 7'
+alias java8='java_version 8'
+alias java11='java_version 11'
+alias java17='java_version 17'
+
+alias l='ls -CF --group-directories-first'

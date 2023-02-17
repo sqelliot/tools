@@ -133,7 +133,8 @@ resclone(){
   res_url="${GIT_CLONE_SSH_PREFIX}${host}/${proj}/${repo}"
   echo "Cloning from ${res_url}"
 
-  git clone --depth 1 --no-single-branch ${res_url}
+  #git clone --depth 1 --no-single-branch ${res_url}
+  git clone  ${res_url}
   
   export REPO_CLONE_CONTEXT=${repo}
 }
@@ -216,7 +217,7 @@ goto-repo(){
 }
 
 code(){
-  repo=$(select-repo $1)
+  repo=$(select-repo $@)
   if [ ! -n "${repo}" ]; then
     echo "Exit"
     return 
@@ -277,3 +278,5 @@ alias fly-sparrow-dev='fly -t sparrow_dev '
 cf-login(){
   cf login --sso -o sparrow -s $1
 }
+
+alias myokta='firefox https://resmed.okta.com'
