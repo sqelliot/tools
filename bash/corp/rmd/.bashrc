@@ -40,17 +40,18 @@ workspace-link-from-path(){
 }
 
 browse-workspace(){
-  browse $(workspace-link-from-path)
+  firefox $(workspace-link-from-path)
 }
 
 browse-repo(){
-  browse $(repo-link-from-path)
+  firefox $(repo-link-from-path)
 
 }
 
 browse-branch(){
+  isgit || return 1
   source_branch="refs/heads/$(gitbranch)"
-  browse "$(repo-link-from-path)/compare/diff?sourceBranch=$(echo $source_branch | sed 's/\//%2F/g')"
+  firefox "$(repo-link-from-path)/compare/diff?sourceBranch=$(echo $source_branch | sed 's/\//%2F/g')"
 }
 
 search-workspace(){
@@ -65,7 +66,7 @@ search-workspace(){
 
   host=$(bb-site-identifier-host ${bb_identifier})
 
-  browse "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces?search=${repo_name}"
+  firefox "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces?search=${repo_name}"
 }
 
 repo-link-from-path(){
