@@ -1117,6 +1117,17 @@ do_prompt(){
     done
 }
 
+curr_dir(){
+  result=${PWD##*/}          # to assign to a variable
+  result=${result:-/}        # to correct for the case where PWD=/
+  
+ # printf '%s\n' "${PWD##*/}" # to print to stdout
+                             # ...more robust than echo for unusual names
+                             #    (consider a directory named -e or -n)
+  
+  printf '%q\n' "${PWD##*/}"
+}
+
 
 
 ## browser/firefox
@@ -1127,6 +1138,32 @@ search(){
 backup(){
   file=$1
   mv ${file} ${file}.old
+}
+
+tf-backend() {
+  if [ -z "${BACKEND_TEMPLATE_PATH}" ]; then
+    BACKEND_TEMPLATE_PATH="${rmdReposPath}/backend.tf"
+  fi
+
+  # the tf repo name, which is _probably_ the workspace name (usually)
+  tf_repo=`curr_dir`
+
+  regions=(ptfe.prod.dht.live ptfe.prod.rmdeu.live)
+  select region in "${regions[@]}" exit; do
+    case $region in
+      exit) return break;;
+      *)
+        region=$region
+        break;;
+    esac
+  done
+
+  read -p "workspace name [${tf_repo}]: " workspace_name
+  workspace_name=${workspace_name:-$tf_repo}
+
+  cp ${BACKEND_TEMPLATE_PATH} .
+  sed -i "s/HOSTNAME/${region}/g" ${BACKEND_TEMPLATE_PATH} ./backend.tf
+  sed -i "s/WORKSPACE_NAME/${workspace_name}/g" ${BACKEND_TEMPLATE_PATH} ./backend.tf
 }
 
 tf_dht(){
@@ -1154,7 +1191,8 @@ tf_get(){
 #  tf_eu
   tf_dht
 
-  terraform get 2>&1 | tee ${tmp_file}
+  #terraform get 2>&1 | tee ${tmp_file}
+  terraform init 2>&1 | tee ${tmp_file}
   if [[ -n `cat ${tmp_file} | grep localterraform.com` ]]; then
     echo "need to run again"
     tf_get
