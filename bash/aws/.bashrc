@@ -250,3 +250,82 @@ function ec2ssh() {
 function ec2go () {
   ec2ssh -n $@
 }
+
+get_parameter() {
+  local parameter_path="${1:-*}"
+  local parameters=$(aws ssm describe-parameters  --query 'Parameters[*].Name' --output text)
+
+  # Check if there are any parameters in the specified path
+  if [[ -z "${parameters}" ]]; then
+    echo "No parameters found in path ${parameter_path}"
+    return 1
+  fi
+
+  # Display a list of parameters and prompt the user to select one
+  PS3="Select a parameter to view: "
+  select parameter_name in ${parameters}; do
+    if [[ -n "${parameter_name}" ]]; then
+      break
+    else
+      echo "Invalid selection. Please choose a number from 1 to $(echo "${parameters}" | wc -w)."
+    fi
+  done
+
+  # Get the value of the selected parameter
+  local parameter_value=$(aws ssm get-parameter --name "${parameter_name}" --query 'Parameter.Value' --output text)
+
+  echo "Parameter ${parameter_name} has the following value: ${parameter_value}"
+}
+
+function get_ssm_parameter_metadata() {
+  # Get a list of all SSM parameters
+  parameter_list=$(aws ssm describe-parameters --query "Parameters[*].Name" --output text)
+
+  # Prompt the user to select a parameter
+  echo "Select a parameter to view its metadata:"
+  select parameter_name in ${parameter_list}; do
+    # Get the metadata for the selected parameter
+    metadata=$(aws ssm describe-parameters --query "Parameters[?Name=='${parameter_name}']" --output json)
+
+    # Print the metadata
+    echo "Metadata for parameter ${parameter_name}:"
+    echo ${metadata} | jq .
+    break
+  done
+}
+
+ecslist(){
+  aws ecs list-clusters
+}
+ecsselect(){
+  clusters=`ecslist  | jq -r ".clusterArns[]" | sort `
+  while true ; do
+    case "$1" in
+      -a)
+        shift
+        echo $clusters
+        return
+        shift
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+  select cluster in exit "${clusters[@]}"; do
+    case $cluster in
+      *)
+      echo $cluster
+      break;;
+    "exit")
+      return
+      break;;
+    esac
+  done
+}
+
+ecslistservices(){
+  for cluster in `ecsselect $@`;do
+   aws ecs list-services --cluster $cluster
+  done
+}
