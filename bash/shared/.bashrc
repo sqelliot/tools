@@ -100,7 +100,7 @@ function editBashrc() {
   vim ${bashrcPath}; sourceBash ${bashrcPath} 
 }
 
-function editSharedBash() {
+function e() {
   vim ${sharedBash}; sourceBash ${sharedBash}
 }
 function editLocalBash() {
