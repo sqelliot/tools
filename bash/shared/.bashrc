@@ -229,9 +229,27 @@ function mytop() {
 
 alias grep='grep --color'
 
-alias dotar='tar -czf'
+
+doTar() {
+  target=$1
+  archive_name=$2
+
+  # If archive_name is empty, set it to "${target}.tar.gz"
+  if [ -z "$archive_name" ]; then
+    # Strip out symbols like '/'
+    archive_name="${target//\//_}.tar.gz"
+  fi
+
+  # Rest of the function code...
+  # Add your logic to create the tar archive using target and archive_name
+  # For example:
+  tar -czf "$archive_name" "$target"
+  
+  echo "Archive created: $archive_name"
+}
+
 alias undotar='tar -xzf '
-#alias aws='/usr/local/bin/aws --no-verify-ssl'
+#alias aws='/usr/local/b
 
 alias randomString="head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''"
 
@@ -291,6 +309,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 alias gpsho='git push origin'
 alias gd='git diff --color'
+alias gdhead='gd HEAD'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
 alias gddefault='git diff origin/$(gitdefaultbranch)'
@@ -301,18 +320,17 @@ alias    gbra='git branch'
 alias gdev='git checkout dev'
 alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
-alias gbraremotegrep="gfo ; git branch -r | grep"
 alias    gch='git checkout'
-alias gcommit='git commit -S '
 alias    gco='gcommit'
 alias   gcom='gcommit -m'
 alias   gca='gcommit --amend'
 alias   gfo='git fetch origin -p'
 alias   gfa='git fetch --all -p'
 alias  gtfo='gfo'
-alias    glog='git log --oneline --graph --all --decorate'     
+alias    glog='git log --oneline --graph --decorate'     
+alias    glogall='git log --oneline --graph --all --decorate'     
 alias    gitcommits='git log --graph --abbrev-commit --decorate  --first-parent $(gitbranch)'     
-alias    gitlogone='git log --pretty=oneline'
+alias    gitlogone='git log --pretty=oneline -n 10'
 alias grebase='gfa && git rebase'
 alias grebasedefault='gfa && git rebase origin/$(gitdefaultbranch)'
 alias grebaseorigin='gfa && git rebase origin/$(gitbranch)'
@@ -329,6 +347,7 @@ alias grc='git rebase --continue'
 alias gra='git rebase --abort'
 alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
 alias gcp='git cherry-pick '
+alias gcpa='gcp --abort'
 alias gcf='git clean -f'
 alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 alias grestore='git restore --staged .'
@@ -336,12 +355,27 @@ alias git-chmod-exec='git update-index --chmod=+x --add '
 alias gstash='git stash'
 alias isgit='git -C . rev-parse'
 
+gcommit(){ 
+  git commit -S "$@"
+}
+
+gbranchlog(){
+  git log $(gitdefaultbranch)..$(gtibranch)
+}
+
 export GIT_EDITOR=vim
 
+function gbraremotegrep(){
+  declare -a branches=()
+  gfo
+  git branch -r | grep $1 | xargs
+}
 
 function gbrame() {
   git branch | grep $git_branch_author_name
 }
+
+alias gshow='git show --color --pretty=format:%b '
 ##########################################################
 ################# Shared git commands ####################
 ##########################################################
@@ -401,7 +435,7 @@ function gpshobranch() {
 }
 
 function gitreset() {
-  if [ "$#" -ne 1 ]; then
+  if [ "$#" -lt 1 ]; then
     echo "Usage: gitreset <branch>"
     return 0
   fi
@@ -410,7 +444,7 @@ function gitreset() {
 }
 
 function gitnewbranch() {
-  if [ "$#" -ne 2 ]; then
+  if [ "$#" -lt 1 ]; then
     echo "Usage: ${FUNCNAME[0]} <name> [target branch]"
     return 0
   fi
@@ -446,13 +480,18 @@ function gitfeaturebranch() {
 
   new_branch_name=""
   new_branch_name+="${feature_branch_name_prefix}"
-  new_branch_name+=$( [ "$use_target_branch_name" = true ] && echo "/${target_branch}")
+  new_branch_name+=$( [ "$use_target_branch_name" = false ] && echo "/${target_branch}")
   new_branch_name+="/${name}"
   new_branch_name+=$( [ "$use_author_name" = true ] && echo "-${git_branch_author_name}")
   
 
   gfo
   git checkout -b ${new_branch_name} origin/$target_branch || git rebase origin/$target_branch
+}
+
+gittmpbranch(){
+  gfo
+  git checkout -b tmp/sean.elliott-`timestamp` origin/$(gitdefaultbranch)
 }
 
 function gitbackupbranch() {
@@ -574,10 +613,9 @@ function gitjiracommitandpush () {
 gitpushall(){
   git add .
   
-  echo "gcommit message: "
-  read
+  
 
-  gjiracommit "$REPLY"
+  gjiracommit fix `timestamp`
   gpshobranch
 }
 
@@ -606,6 +644,10 @@ function gitguijira() {
   git gui
 }
 
+gme(){
+  gchgrep "${git_branch_author_name}" 
+}
+
 function gchgrep() {
   #branch=$(gbragrep  $1)
   #if [ ! "$branch" ];then 
@@ -616,22 +658,30 @@ function gchgrep() {
   #    return
   #  fi
   #fi
+  declare -a branches=()
+  eval branches=("$(gbraremotegrep  $1)")
 
-  gfo
-  select branch in $(gbraremotegrep  $1) exit; do
-    case $branch in
-      exit)
-        break ;;
+  branch_count=${#branches[@]}
+  case $branch_count in
+    0) echo "No branches returned"; return ;;
+    1) echo "Switching to single branch returned"
+       the_branch=${branches[0]} ;;
     *)
-      the_branch=$branch
-      break ;;
-    esac
-  done
+      select branch in ${branches[@]} exit; do
+        case $branch in
+          exit)
+            break ;;
+        *)
+          the_branch=$branch
+          break ;;
+        esac
+      done
+  esac
 
-  printf '%s\n' "$the_branch"
+  printf 'The selected branch: %s\n' "$the_branch"
   # strip remotes and origin
   the_branch=$(echo $the_branch | sed 's/remotes\///g' | sed 's/origin\///g')
-  printf '%s\n' "$the_branch"
+  printf 'Processed branch name: %s\n' "$the_branch"
 
   gch $the_branch
 }
@@ -832,6 +882,10 @@ function finddir() {
   find $@ -type d
 }
 
+lsdir(){
+  find . -maxdepth 1 -type d
+}
+
 easyfind(){
   find . -type f -iname "*$1*"
 }
@@ -899,7 +953,16 @@ function perform-in-dirs() {
   done
 }
 
-alias dpsa='docker ps -a'
+### DOCKER COMMAND
+alias dpsa='dockerps -a'
+alias drestart-all='docker restart $(docker ps -qa)'
+alias dockerps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Names}}"'
+alias dcd='docker-compose down'
+alias dcud='docker-compose up -d'
+alias docker-restart='dcd && dcud'
+alias docker-clean='docker rm $(docker ps -aq -f status=exited)'
+
+
 
 convert-pem-to-crt(){
   source_pem=$1
@@ -986,6 +1049,13 @@ git-commit-diff() {
   git diff ${1}~1 ${1}
 }
 
+gcommitpath(){
+  git rev-list --pretty=oneline --ancestry-path $(gitdefaultbranch)..$(gitbranch)
+}
+
+view-commit(){
+  echo
+}
 
 get-current-bash-options(){
   echo "$-"
@@ -1046,6 +1116,7 @@ alias saml2console='firefox -new-window $(s2a console --link)'
 alias saml2link='s2a console --link | tr -d "\n" | xclip -selection clipboard'
 alias s2alogin='s2a login --skip-prompt '
 alias mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
+alias mcs1-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::779411946484:role/tlz_admin '
 alias mcs-alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
 alias amr-prod='set_prod_profile; s2alogin '
 alias prod='amr-prod'
@@ -1056,6 +1127,7 @@ alias amr-nonprod-link='set_nonprod_profile; saml2link '
 alias ranlink='amr-nonprod-link'
 alias rapi='ranlink'
 alias alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
+alias s2alist='s2a list-roles'
 
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
@@ -1111,8 +1183,8 @@ do_prompt(){
     while true; do
         read -p "$* [y/n]: " yn
         case $yn in
-            [Yy]*) return 0  ;;  
-            [Nn]*) echo "Aborted" ; return  1 ;;
+            [Yy]*) echo "Performing action..."; return 0  ;;  
+            [Nn]*) echo "Will not perform action..." ; return  1 ;;
         esac
     done
 }
@@ -1140,6 +1212,8 @@ backup(){
   mv ${file} ${file}.old
 }
 
+## terraform
+
 tf-backend() {
   if [ -z "${BACKEND_TEMPLATE_PATH}" ]; then
     BACKEND_TEMPLATE_PATH="${rmdReposPath}/backend.tf"
@@ -1160,10 +1234,13 @@ tf-backend() {
 
   read -p "workspace name [${tf_repo}]: " workspace_name
   workspace_name=${workspace_name:-$tf_repo}
+  echo "Going to use $workspace_name for the backend"
 
   cp ${BACKEND_TEMPLATE_PATH} .
-  sed -i "s/HOSTNAME/${region}/g" ${BACKEND_TEMPLATE_PATH} ./backend.tf
-  sed -i "s/WORKSPACE_NAME/${workspace_name}/g" ${BACKEND_TEMPLATE_PATH} ./backend.tf
+  sed -i "s/HOSTNAME/${region}/g"  ./backend.tf
+  sed -i "s/WORKSPACE_NAME/${workspace_name}/g" ./backend.tf
+
+  do_prompt "Run 'terraform init --reconfigure' ? " && terraform init --reconfigure
 }
 
 tf_dht(){
@@ -1180,9 +1257,12 @@ tf_local(){
   find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \; 
 }
 
+alias tfplan='terraform plan'
+alias tfinit='terraform init -reconfigure'
+
 
 ## terraform
-tf_get(){
+tf-get(){
   tmp_file=`mktemp`
   
   echo "terraform get"
@@ -1195,7 +1275,7 @@ tf_get(){
   terraform init 2>&1 | tee ${tmp_file}
   if [[ -n `cat ${tmp_file} | grep localterraform.com` ]]; then
     echo "need to run again"
-    tf_get
+    tf-get
   else
     echo "terraform get succeeded"
     find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
@@ -1242,3 +1322,160 @@ alias java11='java_version 11'
 alias java17='java_version 17'
 
 alias l='ls -CF --group-directories-first'
+
+
+## open tmp file in vim
+tmp(){
+  tmp_file=$(mktemp)
+  echo "your temp file: $tmp_file"
+  vim $tmp_file
+}
+
+tmp-dir(){
+  tmp_dir=$(mktemp -d)
+  pushd $tmp_dir
+}
+
+processFile() {          
+  file="$1"              
+  local IFS="\n"         
+  while read -r line; do 
+    echo -E "$line"      
+  done < $file           
+}
+
+## github
+mcs_repos(){
+  gh api /orgs/resmed/repos  --jq '.[].name | select(startswith("mcs"))' --paginate | tee ${github_resmed_path}/mcs/mcs-repos.txt
+}
+
+mcs_repos_sync(){
+  while test $# -gt 0; do
+    case "$1" in
+      -r)
+        shift
+  mcs_repos
+        shift
+        ;;
+      *)
+        echo "Unrecognized flag: $1"
+        return 1;
+        ;;
+    esac
+  done
+  
+  local IFS="\n"         
+  while read -r repo; do 
+    echo -E "repo: $repo"
+    if [ -d "${repo}" ]; then
+      pushd $repo
+      gfo
+      popd
+    else
+      gh repo clone "resmed/$repo"
+    fi
+  done < "${github_resmed_path}/mcs/mcs-repos.txt"
+  
+}
+
+install_gh(){
+  type -p curl >/dev/null || sudo apt install curl -y
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+  && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && sudo apt update \
+  && sudo apt install gh -y
+}
+
+
+main-branch(){
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+git remote set-head origin -a
+}
+
+history-grep(){
+  history | grep $@
+}
+
+lsdirs(){
+  ls -d */
+}
+function remove_xml_section() {
+  local file="$1"
+  local section_name="$2"
+  sed -i "/<$section_name>/,/<\/$section_name>/d" "$file"
+}
+
+alias m2='pushd ~/.m2'
+
+change-settings(){
+  
+  # Find all files matching ~/.m2/settings*.xml
+  files=(~/.m2/settings*.xml)
+  
+  # Check if any files were found
+  if [ ${#files[@]} -eq 0 ]; then
+      echo "No files matching ~/.m2/settings*.xml were found."
+      return 1
+  fi
+  
+  # Display the files to the user and prompt them to select one
+  echo "Please select a file to symlink to ~/.m2/settings.xml:"
+  select file in "${files[@]}"; do
+      if [ -n "$file" ]; then
+          # Update the symlink to point to the selected file
+          ln -sf "$file" ~/.m2/settings.xml
+          echo "Symlink updated to $file"
+          return 0
+      else
+          echo "Invalid selection."
+      fi
+  done
+
+}
+
+
+
+# Define a function to replace a string in a file
+function taskid(){
+    # Get the new task ID and file from function arguments
+    local new_taskid="$1"
+    local file="$2"
+
+    # Check that the arguments are not empty
+    if [[ -z $new_taskid || -z $file ]]; then
+        echo "Error: Both the new task ID and file must be provided."
+        return 1
+    fi
+    
+    # Check that the file exists
+    if [[ ! -f $file ]]; then
+        echo "Error: File not found."
+        return 1
+    fi
+    
+    # Replace TASKID with the new value in the specified file
+    sed -i "s/TASKID/$new_taskid/g" "$file"
+    
+    echo "Replacement complete."
+    return 0
+}
+
+gchfiledefault(){
+
+  local file="$1"
+  if [ -z $file ]; then
+    echo "enter file..."
+    return 1
+  fi
+  git checkout $(gitdefaultbranch) $1
+}
+
+
+pr(){
+
+  gh pr view $(gh pr list -L 1 --json number | jq '.[0].number') --web
+}
+
