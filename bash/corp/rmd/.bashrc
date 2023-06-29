@@ -3,14 +3,17 @@
 export STASH_BB_HOST='stash.ec2.local'
 export STASH_BB_PORT=7999
 export STASH_BB_HOST_PORT="${STASH_BB_HOST}:${STASH_BB_PORT}"
+export GITHUB_HOST='github'
 export RMDEU_BB_IDENTIFIER='rmdeu'
 export DHT_BB_IDENTIFIER='dht'
 export GIT_CLONE_SSH_PREFIX='ssh://git@'
+rmdReposPath=${reposPath}/rmd
+
+export github_resmed_path=${rmdReposPath}/github
 
 export DHT_SHON_TOKEN_PATH='~/dev/bitbucket/dht-shon-token'
 export STASH_SHON_TOKEN_PATH='~/dev/bitbucket/stash-shon-token'
 
-rmdReposPath=${reposPath}/rmd
 
 bb_host(){
   bb_identifier=$1
@@ -32,11 +35,11 @@ workspace-link-from-path(){
 
   repo_name=$(basename ${repo_path})
   project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
-  bb_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
+  git_host_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
 
-  host=$(bb-site-identifier-host ${bb_identifier})
+  host=$(bb-site-identifier-host ${git_host_identifier})
 
-  echo "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces/${repo_name}"
+  echo "https://ptfe.prod.${git_host_identifier}.live/app/resmed/workspaces/${repo_name}"
 }
 
 browse-workspace(){
@@ -62,11 +65,11 @@ search-workspace(){
 
   repo_name=$(basename ${repo_path})
   project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
-  bb_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
+  git_host_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
 
-  host=$(bb-site-identifier-host ${bb_identifier})
+  host=$(bb-site-identifier-host ${git_host_identifier})
 
-  firefox "https://ptfe.prod.${bb_identifier}.live/app/resmed/workspaces?search=${repo_name}"
+  firefox "https://ptfe.prod.${git_host_identifier}.live/app/resmed/workspaces?search=${repo_name}"
 }
 
 repo-link-from-path(){
@@ -74,9 +77,9 @@ repo-link-from-path(){
 
   repo_name=$(basename ${repo_path})
   project_name=$(echo `pwd` | awk -F '/' '{print $(NF-1)}')
-  bb_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
+  git_host_identifier=$(echo `pwd` | awk -F '/' '{print $(NF-2)}')
 
-  host=$(bb-site-identifier-host ${bb_identifier})
+  host=$(bb-site-identifier-host ${git_host_identifier})
 
   echo "https://${host}/projects/${project_name}/repos/${repo_name}"
 }
@@ -120,76 +123,83 @@ bb-site-identifier-host(){
 ## TODO: make this generic. just add hosting sites.
 ## use a case statement
 resclone(){
-  bb_identifier=$(pwd | awk -F '/' '{print $(NF-1)}')
+  git_host_identifier=$(pwd | awk -F '/' '{print $(NF-1)}')
   proj=$(basename `pwd`)
   repo=$1
+  clone_command='gh clone'
 
-  if [ "${bb_identifier}" == "stash" ]; then
-    host="${STASH_BB_HOST_PORT}"
-  else
-    host=$(bb_host ${bb_identifier})
-  fi
 
-  res_url="${GIT_CLONE_SSH_PREFIX}${host}/${proj}/${repo}"
-  echo "Cloning from ${res_url}"
+  case $git_host_identifier in
+    stash|dht)
+      host=`bb-site-identifier-host $git_host_identifier`
+      clone_command='git clone'
+      res_url="${GIT_CLONE_SSH_PREFIX}${host}/${proj}/${repo}"
+      echo "res_url: $res_url"
+      git clone $res_url
+      ;;
+    github)
+      host="${GITHUB_HOST}"
+      proj=resmed
+      res_url=resmed/$repo
+      gh repo clone resmed/$repo
+      ;;
+  esac
+      
 
-  #git clone --depth 1 --no-single-branch ${res_url}
-  git clone  ${res_url}
-  
   export REPO_CLONE_CONTEXT=${repo}
+  read -p "Open in IntelliJ? (y/n) " answer
+
+  if [[ "$answer" == "y" ]]; then
+        code "$repo"
+      else
+            echo "Skipping IntelliJ launch."
+  fi
 }
 
 ## GENERIC
 repos(){
-  name="*"
-  if [ -n "$1" ]; then
-    name="*$1*"
-  fi
-  find ${reposPath} -maxdepth 4 -mindepth 4 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-3)"'/'"$(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
-}
+  local use_full_path=1
+#  while getopts "f" opt; do
+#    case $opt in
+#      f)  
+#        use_full_path=0
+#        ;;
+#      \?) 
+#        echo "not a recognized flag"
+#        ;;
+#      :)  
+#        echo "Option -$OPTARG requires an argument." >&2
+#        exit 1
+#        ;;
+#    esac
+#   done
+#   shift $((OPTIND-1))
 
-res-repos(){
-  name="*"
-  if [ -n "$1" ]; then
-    name="*$1*"
-  fi
-  find ${rmdReposPath} -maxdepth 3 -mindepth 3 \( -name ".*" -prune \) -o \( -iname "${name}" -type d -print \) | awk -F '/'  '{print $(NF-2)"'/'"$(NF-1)"'/'"$NF}' | sort
-}
-
-select-res-repo(){
-  name_includes=$1
+  local file_pattern="${1:-*}"
+  local dir_name="${2:-*}"
   
-  ## easiesr to do the res-repos call twice than store
-  count=$(res-repos $name_includes | wc -l)
-  if [ $count -eq 1 ]; then
-    echo $(res-repos $name_includes)
-    return
-  fi
+  find ${reposPath} -maxdepth 4  -mindepth 4 -type d ! -name '.*' -name "*${file_pattern}*" -path "*/$dir_name/*" \
+    | if [ ${use_full_path} -eq 1 ]; then awk -F "${reposPath}/" '{print $2}'; else cat; fi \
+    | sort
 
-  select repo in $(res-repos $name_includes) exit; do
-    case $repo in
-      exit)
-        break ;;
-      *)
-        echo $repo;
-        break ;;
-    esac;
-  done
 }
+
+
 
 select-repo(){
-  name_includes=$1
-  
-  ## easiesr to do the res-repos call twice than store
-  count=$(repos $name_includes | wc -l)
-  if [ $count -eq 1 ]; then
-    echo $(repos $name_includes)
+  repos_list=($(repos $@  | xargs))
+  if [ "${#repos_list[@]}" -eq 1 ]; then
+    echo "${repos_list[0]}"
     return
+
   fi
 
-  select repo in $(repos $name_includes) exit; do
+  select repo in "${repos_list[@]}" all exit; do
     case $repo in
       exit)
+        break ;;
+      all)
+        echo "${repos_list[@]}"
         break ;;
       *)
         echo $repo;
@@ -199,9 +209,9 @@ select-repo(){
 }
 
 goto-repo(){
-  repo=$(select-repo $1)
+  repo=$(select-repo $@ | xargs)
   #echo "select-repo: <$repo>"
-  if [ ! -n "${repo}" ]; then
+  if [  "${#repo[@]}" == 0 ]; then
     echo "Exit"
     return 
   fi
@@ -217,20 +227,22 @@ goto-repo(){
 }
 
 code(){
-  repo=$(select-repo $@)
-  if [ ! -n "${repo}" ]; then
+  repo=($(select-repo $@ | xargs))
+  if [  "${#repo[@]}" == 0 ]; then
     echo "Exit"
     return 
   fi
-  repo_path=${reposPath}/${repo}
+  for r in "${repo[@]}"; do
+    repo_path=${reposPath}/${r}
 
-  stat -c "%n" $repo_path 
-  if [ ! $? -eq 0 ]; then
-    echo "No repo returned..."
-    return
-  fi
+    stat -c "%n" $repo_path 
+    if [ ! $? -eq 0 ]; then
+      echo "No repo returned..."
+      return
+    fi
 
-  idea $repo_path
+    idea $repo_path
+  done
 }
 
 context-code(){
@@ -242,6 +254,11 @@ rmd() {
 
   pushd ${rmdReposPath}
 }
+
+rmdgh(){
+  pushd ${rmdReposPath}/github
+}
+alias github='rmdgh'
 
 dht(){
   pushd ${rmdReposPath}/dht
@@ -280,3 +297,4 @@ cf-login(){
 }
 
 alias myokta='firefox https://resmed.okta.com'
+alias mcs='cd ${reposPath}/rmd/github/mcs'
