@@ -322,7 +322,6 @@ alias gmaster='git checkout master'
 alias gbragrep="git branch | grep"
 alias    gch='git checkout'
 alias    gco='gcommit'
-alias   gcom='gcommit -m'
 alias   gca='gcommit --amend'
 alias   gfo='git fetch origin -p'
 alias   gfa='git fetch --all -p'
@@ -355,6 +354,9 @@ alias git-chmod-exec='git update-index --chmod=+x --add '
 alias gstash='git stash'
 alias isgit='git -C . rev-parse'
 
+gcom(){
+  gcommit -m "$@"
+}
 gcommit(){ 
   git commit -S "$@"
 }
