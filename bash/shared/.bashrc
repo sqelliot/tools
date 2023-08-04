@@ -370,7 +370,7 @@ export GIT_EDITOR=vim
 function gbraremotegrep(){
   declare -a branches=()
   gfo
-  git branch -r | grep $1 | xargs
+  git branch -a | grep $1 | xargs
 }
 
 function gbrame() {
@@ -400,10 +400,6 @@ alias mvntree='mvn dependency:tree'
 alias mcirun='type mcirun; mci spring-boot:run'
 
 
-
-function gitnew() {
-  git checkout -b $1 origin/dev
-}
 
 function gogit() {
   pushd ${reposPath}/$1
@@ -445,23 +441,74 @@ function gitreset() {
   gfo && git reset --hard ${branch}
 }
 
-function gitnewbranch() {
-  if [ "$#" -lt 1 ]; then
-    echo "Usage: ${FUNCNAME[0]} <name> [target branch]"
-    return 0
-  fi
-  
-  name=$1
-  target_branch=$(gitdefaultbranch)
 
-  if [ "$#" = 2 ]; then
-    target_branch=$2
-  fi
+gitnewbranch() {
+    local task_id=$1
+    local semantic_name=$2
 
-  gfo
-  git checkout -b feature/${target_branch}/${git_branch_author_name}/${name} origin/$target_branch
+    # If task_id is not provided, prompt the user to enter it
+    if [ -z "$task_id" ]; then
+        read -p "Enter the task_id: " task_id
+    fi
 
+    # Define the list of valid semantic names
+    valid_semantic_names=("chore" "docs" "feat" "fix" "localize" "refactor" "style" "test")
+
+    # If semantic_name is not provided, prompt the user to select from the options
+    if [ -z "$semantic_name" ]; then
+        echo "Valid semantic names: ${valid_semantic_names[*]}"
+        PS3="Select a semantic name: "
+        select option in "${valid_semantic_names[@]}"; do
+            if [ -n "$option" ]; then
+                semantic_name=$option
+                break
+            else
+                echo "Invalid choice. Please try again."
+            fi
+        done
+    else
+        # Validate provided semantic_name
+        if [[ ! " ${valid_semantic_names[@]} " =~ " ${semantic_name} " ]]; then
+            echo "Error: Invalid semantic_name argument. Valid options are: ${valid_semantic_names[*]}"
+            return 1
+        fi
+    fi
+
+    # Fetch the latest changes from the remote repository
+    gfo
+
+    # Get the default branch name
+    default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+
+    # Create and switch to the new branch
+    branch_name="${semantic_name}/${task_id}"
+    git checkout -b "$branch_name" "$default_branch"
 }
+
+# Usage example:
+# gitnewbranch TASK-123 feat
+# or
+# gitnewbranch feat
+# or
+# gitnewbranch
+
+#function gitnewbranch() {
+#  if [ "$#" -lt 1 ]; then
+#    echo "Usage: ${FUNCNAME[0]} <name> [target branch]"
+#    return 0
+#  fi
+#  
+#  name=$1
+#  target_branch=$(gitdefaultbranch)
+#
+#  if [ "$#" = 2 ]; then
+#    target_branch=$2
+#  fi
+#
+#  gfo
+#  git checkout -b feature/${target_branch}/${git_branch_author_name}/${name} origin/$target_branch
+#
+#}
 
 function gitfeaturebranch() {
   if [ "$#" -lt 1 ]; then
@@ -568,8 +615,19 @@ function goup() {
 
 # Grabs only the jira number from the current git branch
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
+
+function is-jira-issue-format(){
+  if [[ "$1" =~ ^[A-Z]{3}-[0-9]+ ]]; then
+    echo 0
+  else
+    echo 1
+  fi
+}
+
 function git_jira_issue() {
-  gitbranch | awk -F '/' '{print $NF}' | awk -F '-' '{print $1"-"$2}'
+  result=$(gitbranch | awk -F '/' '{print $NF}' | awk -F '-' '{print $1"-"$2}')
+
+  [[ $(is-jira-issue-format $result) == 0 ]] && echo $result || echo ""
 }
 
 # update a branch
@@ -1302,6 +1360,7 @@ java_version(){
   fi
     
   echo $version
+  echo "$version" > ~/.java_version
   case $version in
     7)
       sudo update-alternatives --set java "${JAVA_7_CONFIG}" && set_java_home "${JAVA_7_HOME}"
@@ -1318,6 +1377,7 @@ java_version(){
   esac
 }
 
+
 alias java7='java_version 7'
 alias java8='java_version 8'
 alias java11='java_version 11'
@@ -1325,6 +1385,19 @@ alias java17='java_version 17'
 
 alias l='ls -CF --group-directories-first'
 
+set_java_home(){
+  target_java_home=$1
+  
+  if [ -z "$target_java_home" ]; then
+    target_java_home="${JAVA_11_HOME}"
+  fi  
+
+
+  echo "export JAVA_HOME=${target_java_home}" > ~/.java_home
+  source ~/.java_home
+}
+
+source ~/.java_home
 
 ## open tmp file in vim
 tmp(){
@@ -1481,3 +1554,49 @@ pr(){
   gh pr view $(gh pr list -L 1 --json number | jq '.[0].number') --web
 }
 
+alias echo-settings="sed 's/<password>.*<\/password>/<password>PASSWORD<\/password>/g' ~/.m2/settings.xml"
+
+
+
+## KUBE
+# Function to search for kubectl get pods and prompt user to select a pod
+select_kubectl_pod() {
+  local pod_names
+  pod_names=$(kubectl get pods -o=name)
+
+  if [[ -z "$pod_names" ]]; then
+    echo "No pods found."
+    return 1
+  fi
+
+  PS3="Select a pod by number: "
+  select pod_name in ${pod_names}; do
+    if [[ -n "$pod_name" ]]; then
+      break
+    else
+      echo "Invalid choice. Try again."
+    fi
+  done
+
+  # Extract the pod name from the full reference
+  pod_name="${pod_name##*/}"
+
+  local container_names
+  container_names=$(kubectl get pods "$pod_name" -o=jsonpath='{.spec.containers[*].name}')
+
+  if [[ -z "$container_names" ]]; then
+    echo "No containers found in the selected pod."
+    return 1
+  fi
+
+  PS3="Select a container by number: "
+  select container_name in ${container_names}; do
+    if [[ -n "$container_name" ]]; then
+      break
+    else
+      echo "Invalid choice. Try again."
+    fi
+  done
+
+  kubectl logs -f "$pod_name" -c "$container_name"
+}

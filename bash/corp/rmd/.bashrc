@@ -108,7 +108,7 @@ bb-site-identifier-host(){
   site_identifier=$1
   case $site_identifier in
     stash)
-      host=${STASH_BB_HOST}
+      host=${STASH_BB_HOST_PORT}
       ;;
     dht|rmdeu)
       host=$(bb_host ${site_identifier})
@@ -298,3 +298,6 @@ cf-login(){
 
 alias myokta='firefox https://resmed.okta.com'
 alias mcs='cd ${reposPath}/rmd/github/mcs'
+ghclone() {
+  gh repo clone resmed/$1
+}
