@@ -23,6 +23,11 @@ if [ $(hostname) == "WIN1050LH8G3" ]; then
   source ${toolsPath}/bash/corp/rmd/.bashrc
   git_branch_author_name=sean.elliott
 fi
+if [ $(hostname) == "MACQMQWTY2GFQ" ]; then
+  reposPath=~/dev/repos/
+  source ${toolsPath}/bash/corp/rmd/.bashrc
+  git_branch_author_name=sean.elliott
+fi
 if [[ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]]; then
   bashrcPath=~/.bash_aliases
   source ${toolsPath}/bash/corp/rmd/.bashrc
@@ -42,6 +47,7 @@ localBash=${toolsPath}/bash/local/.bashrc
 awsBash=${toolsPath}/bash/aws/.bashrc
 corpPath=${toolsPath}/bash/corp
 vimPath=${toolsPath}/vim/.vimrc
+inputrcPath=${toolsPath}/inputrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
 aptPath=${toolsPath}/install/apt
 export PATH=$PATH:${toolsPath}/bin
@@ -68,6 +74,11 @@ fi
 if [ ! -e "~/.vimrc" ]; then
   rm ~/.vimrc
   ln -s $vimPath ~/.vimrc
+fi
+##  inputrc symlink
+if [ ! -e "~/.inputrc" ]; then
+  rm ~/.inputrc
+  ln -s $inputrcPath ~/.inputrc
 fi
 
 #cd() {
@@ -138,7 +149,7 @@ editCorpBash() {
     fi
   fi
 
-  stat -c "%n" ${corpPath}/$target_corp_bash
+  stat -f "%n" ${corpPath}/$target_corp_bash
   if [ ! $? -eq 0 ]; then
     echo "Can't access ${target_corp_bash}..."
     return
@@ -347,7 +358,7 @@ alias gra='git rebase --abort'
 alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
 alias gcp='git cherry-pick '
 alias gcpa='gcp --abort'
-alias gcf='git clean -f'
+alias gcf='git clean -fd'
 alias gsa='GSA=`git stash apply`; echo $GSA; $GSA'
 alias grestore='git restore --staged .'
 alias git-chmod-exec='git update-index --chmod=+x --add '
@@ -391,7 +402,7 @@ mvn(){
   if [ $? == 0 ]; then
     ./mvnw $@
   else
-    /usr/bin/mvn $@
+    $(which mvn) $@
   fi
 }
 alias   mci='mvn clean install'
@@ -457,7 +468,7 @@ gitnewbranch() {
     # If semantic_name is not provided, prompt the user to select from the options
     if [ -z "$semantic_name" ]; then
         echo "Valid semantic names: ${valid_semantic_names[*]}"
-        PS3="Select a semantic name: "
+        echo "Select a semantic name: "
         select option in "${valid_semantic_names[@]}"; do
             if [ -n "$option" ]; then
                 semantic_name=$option
@@ -1172,9 +1183,8 @@ export eu_prod_profile='rmd-eu-prod'
 export eu_nonprod_profile='rmd-eu-nonprod'
 
 alias s2a='saml2aws -a ${SAML2AWS_PROFILE}'
-alias saml2console='firefox -new-window $(s2a console --link)'
-alias saml2link='s2a console --link | tr -d "\n" | xclip -selection clipboard'
-alias s2alogin='s2a login --skip-prompt '
+alias saml2console='open $(s2a console --link)'
+alias saml2link='s2a console --link | tr -d "\n" | pbcopy'
 alias mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
 alias mcs1-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::779411946484:role/tlz_admin '
 alias mcs-alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
@@ -1183,6 +1193,7 @@ alias prod='amr-prod'
 alias airview-prd='set_prod_profile; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
 alias amr-nonprod='set_nonprod_profile; s2alogin '
 alias nonprod='amr-nonprod'
+alias eunonprod='set_eu_nonprod_profile; s2alogin '
 alias amr-nonprod-link='set_nonprod_profile; saml2link '
 alias ranlink='amr-nonprod-link'
 alias rapi='ranlink'
@@ -1191,6 +1202,10 @@ alias s2alist='s2a list-roles'
 
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
+
+s2alogin(){
+  s2a login --skip-prompt $@ || s2a login $@
+}
 
 source_saml_aws_env(){
   source $AWS_PROFILE_FILE_PATH
@@ -1238,6 +1253,44 @@ set-saml2aws-profile(){
   source $SAML2AWS_FILE_PATH
 }
 
+#!/bin/bash
+
+samlselect() {
+    local env="$1"
+    
+    # Run saml2aws login with --skip-prompt to get the list of available roles
+    local saml2aws_output
+    saml2aws_output=$(saml2aws login --skip-prompt)
+
+    # Check if there are multiple matching accounts
+    if [[ "$saml2aws_output" == *"$env"* ]]; then
+        # Multiple accounts match the provided env, prompt to select one
+        echo "Select an AWS account to use: "
+        select account in $(echo "$saml2aws_output" | grep -oE '\[.*\]' | sed 's/\[\|\]//g'); do
+            if [[ -n "$account" ]]; then
+                break
+            else
+                echo "Invalid selection. Please choose a valid account number."
+            fi
+        done
+    else
+        # Only one account matches, use it
+        account="$env"
+    fi
+
+    # Prompt to select a role associated with the chosen account
+    echo "Select an AWS role to assume: "
+    select role in $(echo "$saml2aws_output" | grep -oE '\[.*\]' | sed 's/\[\|\]//g'); do
+        if [[ -n "$role" ]]; then
+            break
+        else
+            echo "Invalid selection. Please choose a valid role number."
+        fi
+    done
+
+    # Use saml2aws to assume the selected role
+    saml2aws login -a "$account" -r "$role"
+}
 
 do_prompt(){
     while true; do
@@ -1305,7 +1358,7 @@ tf-backend() {
 
 tf_dht(){
 
-  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
+  find . -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
 }
 
 tf_eu(){
@@ -1314,7 +1367,7 @@ tf_eu(){
 }
 
 tf_local(){
-  find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \; 
+  find . -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \; 
 }
 
 alias tfplan='terraform plan'
@@ -1338,7 +1391,7 @@ tf-get(){
     tf-get
   else
     echo "terraform get succeeded"
-    find -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
+    find . -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
   fi
 }
 
@@ -1360,22 +1413,38 @@ java_version(){
   fi
     
   echo $version
-  echo "$version" > ~/.java_version
+#  case $version in
+#    7)
+#      sudo update-alternatives --set java "${JAVA_7_CONFIG}" && set_java_home "${JAVA_7_HOME}"
+#      ;;
+#    8)
+#      sudo update-alternatives --set java "${JAVA_8_CONFIG}" && set_java_home "${JAVA_8_HOME}"
+#      ;;
+#    11)
+#      sudo update-alternatives --set java "${JAVA_11_CONFIG}" && set_java_home "${JAVA_11_HOME}"
+#      ;;
+#    17)
+#      sudo update-alternatives --set java "${JAVA_17_CONFIG}" && set_java_home "${JAVA_17_HOME}"
+#      ;;
+#  esac
   case $version in
     7)
-      sudo update-alternatives --set java "${JAVA_7_CONFIG}" && set_java_home "${JAVA_7_HOME}"
+      echo "export JAVA_HOME=$JAVA_7_HOME" > ~/.java_home
       ;;
     8)
-      sudo update-alternatives --set java "${JAVA_8_CONFIG}" && set_java_home "${JAVA_8_HOME}"
+      echo "export JAVA_HOME=$JAVA_8_HOME" > ~/.java_home
       ;;
     11)
-      sudo update-alternatives --set java "${JAVA_11_CONFIG}" && set_java_home "${JAVA_11_HOME}"
+      echo "export JAVA_HOME=$JAVA_11_HOME" > ~/.java_home
       ;;
     17)
-      sudo update-alternatives --set java "${JAVA_17_CONFIG}" && set_java_home "${JAVA_17_HOME}"
+      echo "export JAVA_HOME=$JAVA_17_HOME" > ~/.java_home
       ;;
   esac
+
+  source ~/.java_home
 }
+source ~/.java_home
 
 
 alias java7='java_version 7'
@@ -1397,7 +1466,7 @@ set_java_home(){
   source ~/.java_home
 }
 
-source ~/.java_home
+#source ~/.java_home
 
 ## open tmp file in vim
 tmp(){
@@ -1559,44 +1628,134 @@ alias echo-settings="sed 's/<password>.*<\/password>/<password>PASSWORD<\/passwo
 
 
 ## KUBE
-# Function to search for kubectl get pods and prompt user to select a pod
-select_kubectl_pod() {
-  local pod_names
-  pod_names=$(kubectl get pods -o=name)
+podget(){
+  team="${1:-messaging}"
+  kubectl get pods -n shared-$team
+}
+podsearch(){
+  team="${2:-messaging}"
+  pod_name_filter="${1-}"
+  kubectl get pods -n shared-$team -o=name | grep "$pod_name_filter" 
+}
 
-  if [[ -z "$pod_names" ]]; then
+# Function to search for kubectl get pods and prompt user to select a pod
+podlogs() {
+  local pod_names
+  team="messaging"
+  pod_name_filter=""
+  container_name_filter=""
+
+  while getopts "c:p:t:" opt; do
+    case $opt in
+      c)
+        container_name_filter="$OPTARG"
+        echo $container_name_filter
+        ;;
+      p)
+        pod_name_filter="$OPTARG"
+        echo $pod_name_filter
+       ;;
+      t)
+        team="$OPTARG"
+        ;;
+      \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+      :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+    esac
+  done
+  
+  kubectl get pods -n shared-$team 
+  pod_names=($(kubectl get pods -n shared-$team -o=name | grep "$pod_name_filter"))
+
+  if [[ "${#pod_names[@]}" -eq 0 ]]; then
     echo "No pods found."
     return 1
+  elif [[ "${#pod_names[@]}" -eq 1 ]]; then
+    pod_name="${pod_names[0]}"
+  else
+    echo "Select a pod by number: "
+    select pod_name in "${pod_names[@]}"; do
+      if [[ -n "$pod_name" ]]; then
+        break
+      else
+        echo "Invalid choice. Try again."
+      fi
+    done
   fi
-
-  PS3="Select a pod by number: "
-  select pod_name in ${pod_names}; do
-    if [[ -n "$pod_name" ]]; then
-      break
-    else
-      echo "Invalid choice. Try again."
-    fi
-  done
 
   # Extract the pod name from the full reference
   pod_name="${pod_name##*/}"
 
   local container_names
-  container_names=$(kubectl get pods "$pod_name" -o=jsonpath='{.spec.containers[*].name}')
+  kubectl get pods -n shared-$team "$pod_name" 
+  container_names=($(kubectl get  pods -n shared-$team "$pod_name" -o json | jq -r '.spec.containers[].name' | grep "$container_name_filter"))
 
-  if [[ -z "$container_names" ]]; then
+  if [[ "${#container_names[@]}" -eq 0 ]]; then
     echo "No containers found in the selected pod."
     return 1
+  elif [[ "${#container_names[@]}" -eq 1 ]]; then
+    container_name="${container_names[0]}"
+  else
+    echo "Select a container by number: "
+    select container_name in "${container_names[@]}"; do
+      if [[ -n "$container_name" ]]; then
+        break
+      else
+        echo "Invalid choice. Try again."
+      fi
+    done
   fi
 
-  PS3="Select a container by number: "
-  select container_name in ${container_names}; do
-    if [[ -n "$container_name" ]]; then
-      break
-    else
-      echo "Invalid choice. Try again."
-    fi
+  echo "kubectl logs -n shared-$team -f \"$pod_name\" -c \"$container_name\""
+  kubectl logs -n shared-$team -f "$pod_name" -c "$container_name"
+}
+
+messaginglogs(){
+  podlogs -t messaging $@
+}
+
+alias watch='watch '
+
+
+
+## AWS
+awsall(){
+  aws help | awk '/AVAILABLE SERVICES/,/SEE ALSO/' | grep -E 'o [[:alnum:]-]+' | awk '{print $NF}'
+}
+awscommon(){
+  cat ${toolsPath}/aws-top-commands.txt
+}
+awsselect(){
+  aws_cmds=(`awscommon`)
+  while getopts "a" opt; do
+    case $opt in
+      a)
+        aws_cmds=(`awsall`)
+        ;;
+      \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+      :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+    esac
   done
 
-  kubectl logs -f "$pod_name" -c "$container_name"
+  select aws_cmd in "${aws_cmds[@]}" exit; do
+    case $aws_cmd in
+      exit)
+        return
+        break ;;
+      *)
+        echo $aws_cmd
+        break ;;
+    esac
+  done
 }

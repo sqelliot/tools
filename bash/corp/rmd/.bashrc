@@ -129,6 +129,7 @@ resclone(){
   clone_command='gh clone'
 
 
+  result=0
   case $git_host_identifier in
     stash|dht)
       host=`bb-site-identifier-host $git_host_identifier`
@@ -136,17 +137,25 @@ resclone(){
       res_url="${GIT_CLONE_SSH_PREFIX}${host}/${proj}/${repo}"
       echo "res_url: $res_url"
       git clone $res_url
+      result=$?
       ;;
     github)
       host="${GITHUB_HOST}"
       proj=resmed
       res_url=resmed/$repo
       gh repo clone resmed/$repo
+      result=$?
       ;;
   esac
+
+  if [ "${result}" -ne 0 ]; then
+    echo "clone failed..."
+    return 1
+  fi
       
 
   export REPO_CLONE_CONTEXT=${repo}
+  pushd $repo
   read -p "Open in IntelliJ? (y/n) " answer
 
   if [[ "$answer" == "y" ]]; then
@@ -217,7 +226,7 @@ goto-repo(){
   fi
   repo_path=${reposPath}/${repo}
 
-  stat -c "%n" $repo_path  > /dev/null
+  stat -f "%n" $repo_path  > /dev/null
   if [ ! $? -eq 0 ]; then
     echo "No repo returned..."
     return
@@ -235,7 +244,7 @@ code(){
   for r in "${repo[@]}"; do
     repo_path=${reposPath}/${r}
 
-    stat -c "%n" $repo_path 
+    stat -f "%n" $repo_path 
     if [ ! $? -eq 0 ]; then
       echo "No repo returned..."
       return
@@ -301,3 +310,6 @@ alias mcs='cd ${reposPath}/rmd/github/mcs'
 ghclone() {
   gh repo clone resmed/$1
 }
+
+
+alias messagingpods='kubectl get pods -n shared-messaging'

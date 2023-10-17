@@ -32,6 +32,7 @@ function ec2lookup(){
   profile="${AWS_PROFILE:-default}"
   states="running,stopped,stopping,starting"
   sort_column=0
+  region="us-west-2"
   while true ; do
     case "$1" in
       -n)
@@ -54,18 +55,24 @@ function ec2lookup(){
         sort_column=$1
         shift
         ;;
+      --region)
+        shift
+        region=$1
+        shift
+        ;;
       *)
         break
         ;;
     esac
   done
 
-  echo "ec2lookup -n $name -p $profile -s $states"
+  echo "ec2lookup -n $name -p $profile -s $states --region $region"
 
   aws ec2 describe-instances \
     --filters "Name=tag:Name,Values=*${name}*" "Name=instance-state-name,Values=${states}" \
     --query "Reservations[].Instances[].[Tags[?Key==\`Name\`]|[0].Value,State.Name,PrivateIpAddress,PublicIpAddress,LaunchTime,InstanceId,Placement.AvailabilityZone,InstanceType] | sort_by(@,&[${sort_column}])" \
     --output table \
+    --region $region \
     --profile $profile
 }
 
