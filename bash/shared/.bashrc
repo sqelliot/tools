@@ -628,7 +628,7 @@ function goup() {
 # Example: drfix/dev/FCMS-0000-fix -> FCMS-0000
 
 function is-jira-issue-format(){
-  if [[ "$1" =~ ^[A-Z]{3}-[0-9]+ ]]; then
+  if [[ "$1" =~ ^[A-Z]{3,}-[0-9]+ ]]; then
     echo 0
   else
     echo 1
@@ -1198,7 +1198,12 @@ alias amr-nonprod-link='set_nonprod_profile; saml2link '
 alias ranlink='amr-nonprod-link'
 alias rapi='ranlink'
 alias alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
-alias s2alist='s2a list-roles'
+alias s2alist='s2a --skip-prompt list-roles'
+
+s2arolescsv(){
+  s2alist | grep -E "Account:|arn:aws:iam" | awk 'BEGIN { FS = ": " } /Account:/ { account = $2 } /arn:aws:iam/ { sub("arn:aws:iam::", "", $1); printf "%s,%s,%s\n", account, $1, $2 }' 
+
+}
 
 SAML2AWS_FILE_PATH=~/.aws/saml2aws-profile
 AWS_PROFILE_FILE_PATH=~/.aws/profile
@@ -1429,16 +1434,16 @@ java_version(){
 #  esac
   case $version in
     7)
-      echo "export JAVA_HOME=$JAVA_7_HOME" > ~/.java_home
+      echo "export JAVA_HOME=$(java_7_home)" > ~/.java_home
       ;;
     8)
-      echo "export JAVA_HOME=$JAVA_8_HOME" > ~/.java_home
+      echo "export JAVA_HOME=$(java_8_home)" > ~/.java_home
       ;;
     11)
-      echo "export JAVA_HOME=$JAVA_11_HOME" > ~/.java_home
+      echo "export JAVA_HOME=$(java_11_home)" > ~/.java_home
       ;;
     17)
-      echo "export JAVA_HOME=$JAVA_17_HOME" > ~/.java_home
+      echo "export JAVA_HOME=$(java_17_home)" > ~/.java_home
       ;;
   esac
 
@@ -1629,8 +1634,11 @@ alias echo-settings="sed 's/<password>.*<\/password>/<password>PASSWORD<\/passwo
 
 ## KUBE
 podget(){
-  team="${1:-messaging}"
+  team="${1:-iot}"
   kubectl get pods -n shared-$team
+}
+watchpod(){
+  watch -d "kubectl get pods -n shared-iot $@ "
 }
 podsearch(){
   team="${2:-messaging}"
