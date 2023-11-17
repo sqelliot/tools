@@ -167,7 +167,7 @@ resclone(){
 
 ## GENERIC
 repos(){
-  local use_full_path=1
+  local use_full_path=0
 #  while getopts "f" opt; do
 #    case $opt in
 #      f)  
@@ -188,7 +188,7 @@ repos(){
   local dir_name="${2:-*}"
   
   find ${reposPath} -maxdepth 4  -mindepth 4 -type d ! -name '.*' -name "*${file_pattern}*" -path "*/$dir_name/*" \
-    | if [ ${use_full_path} -eq 1 ]; then awk -F "${reposPath}/" '{print $2}'; else cat; fi \
+    | if [ ${use_full_path} -eq 0 ]; then sed "s|^$reposPath||"; else cat; fi \
     | sort
 
 }

@@ -2,7 +2,7 @@
 
 goldlnk=false
 reposPath=~/dev/repos
-bashrcPath=~/.bashrc
+bashAliasesPath=~/.bash_aliases
 auxilary_repos_path=${reposPath}/aux
 github_site_repos_path=${auxilary_repos_path}/github
 sqelliot_projects_path=${github_site_repos_path}/sqelliot
@@ -29,7 +29,7 @@ if [ $(hostname) == "MACQMQWTY2GFQ" ]; then
   git_branch_author_name=sean.elliott
 fi
 if [[ $(hostname) == "WIN1050LH8G3-Ubuntu-VM" ]]; then
-  bashrcPath=~/.bash_aliases
+  bashAliasesPath=~/.bash_aliases
   source ${toolsPath}/bash/corp/rmd/.bashrc
   git_branch_author_name=sean.elliott
 fi
@@ -51,6 +51,7 @@ inputrcPath=${toolsPath}/inputrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
 aptPath=${toolsPath}/install/apt
 export PATH=$PATH:${toolsPath}/bin
+export PATH=$PATH:~/bin
 updateFileMessage=$'
 
 #########################################
@@ -98,7 +99,7 @@ function sourceBash() {
 }
 
 refreshBash() {
-  sourceBash ${bashrcPath}
+  sourceBash ${bashAliasesPath}
 }
 
 ## Source other bash files
@@ -107,8 +108,8 @@ source ${awsBash}
 source ${tools_profile_bash_path}
 
 
-function editBashrc() {
-  vim ${bashrcPath}; sourceBash ${bashrcPath} 
+function editBashAliases() {
+  vim ${bashAliasesPath}; sourceBash ${bashAliasesPath} 
 }
 
 function e() {
@@ -278,8 +279,9 @@ function export_to_env() {
   export $var_name=$secret
 }
 
-myapt(){
-  sudo apt install $@ && echo $@ >> ${aptPath}
+initapt(){
+  sudo apt update
+  sudo apt install -y $(awk '{print $1}' $aptPath)
 }
 
 ## systemctl
@@ -302,13 +304,6 @@ function jrnl(){
   sudo journalctl -u $@
 }
 
-function mountdevlnk() {
-  sudo umount /project/NCL_SYS
-  sudo umount /project/geoint-2240a
-
-  sudo sshfs -o allow_other,IdentityFile=/home/sean/.ssh/id_rsa selliott@elliott2-lnx7-dev.devlnk.net:/net/geoint-2240a /project/geoint-2240a
-  sudo sshfs -o allow_other,IdentityFile=/home/sean/.ssh/id_rsa selliott@elliott2-lnx7-dev.devlnk.net:/project/NCL_SYS /project/NCL_SYS/
-}
 
 
 alias layerlog='sudo docker-compose --file /opt/api-gateway/docker-compose.yml logs -t -f --tail 200 api-gateway'
@@ -1767,3 +1762,6 @@ awsselect(){
     esac
   done
 }
+
+
+alias set-ssh-key-permissions='chmod 600 ~/.ssh/id_*'
