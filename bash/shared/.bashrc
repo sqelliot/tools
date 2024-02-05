@@ -49,6 +49,7 @@ corpPath=${toolsPath}/bash/corp
 vimPath=${toolsPath}/vim/.vimrc
 inputrcPath=${toolsPath}/inputrc
 tmuxPath=${toolsPath}/tmux/.tmux.config
+gpgConfPath=${toolsPath}/gpg/gpg-agent.conf
 aptPath=${toolsPath}/install/apt
 export PATH=$PATH:${toolsPath}/bin
 export PATH=$PATH:~/bin
@@ -71,17 +72,25 @@ export HISTFILESIZE=100000
 ## create tmux config symlink
 if [ ! -e "~/.tmux.conf" ]; then
   rm ~/.tmux.conf
-  ln -s $tmuxPath ~/.tmux.conf
 fi
+ln -s $tmuxPath ~/.tmux.conf
 ## vimrc symlink
 if [ ! -e "~/.vimrc" ]; then
   rm ~/.vimrc
-  ln -s $vimPath ~/.vimrc
 fi
+ln -s $vimPath ~/.vimrc
 ##  inputrc symlink
 if [ ! -e "~/.inputrc" ]; then
   rm ~/.inputrc
-  ln -s $inputrcPath ~/.inputrc
+fi
+ln -s $inputrcPath ~/.inputrc
+
+## gpg-agent conf
+if [ ! -e "~/.gnupg" ]; then
+  if [ ! -e "~/.gnupg/gpg-agent.conf" ]; then
+    rm ~/.gnupg/gpg-agent.conf
+  fi
+  ln -s $gpgConfPath ~/.gnupg/gpg-agent.conf
 fi
 
 #cd() {
