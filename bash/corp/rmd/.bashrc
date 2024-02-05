@@ -314,3 +314,14 @@ ghclone() {
 
 
 alias messagingpods='kubectl get pods -n shared-messaging'
+
+
+
+## saml2aws configure
+configure-saml2aws(){
+  
+  echo "nonprod-amr"
+  saml2aws configure --idp-account=nonprod-amr --profile=nonprod-amr --url=https://resmed.okta.com/home/amazon_aws/0oa4hc1t74n8BBFxv2p7/272  --username=sean.elliott@resmed.com --idp-provider=Okta --mfa=Auto --session-duration=28800 --skip-prompt
+  echo "prod-amr"
+  saml2aws configure --idp-account=prod-amr --profile=prod-amr --url=https://resmed.okta.com/home/amazon_aws/0oa4hbysofL5S7RbG2p7/272 --username=sean.elliott@resmed.com --idp-provider=Okta --mfa=Auto --session-duration=28800  --skip-prompt
+}
