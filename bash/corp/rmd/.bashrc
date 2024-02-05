@@ -217,7 +217,7 @@ select-repo(){
   done
 }
 
-goto-repo(){
+gorepo(){
   repo=$(select-repo $@ | xargs)
   #echo "select-repo: <$repo>"
   if [  "${#repo[@]}" == 0 ]; then
