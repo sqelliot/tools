@@ -226,7 +226,7 @@ gorepo(){
   fi
   repo_path=${reposPath}/${repo}
 
-  stat -f "%n" $repo_path  > /dev/null
+  stat --format "%n" $repo_path  > /dev/null
   if [ ! $? -eq 0 ]; then
     echo "No repo returned..."
     return
@@ -244,13 +244,14 @@ code(){
   for r in "${repo[@]}"; do
     repo_path=${reposPath}/${r}
 
-    stat -f "%n" $repo_path 
+    stat --format "%n" $repo_path 
     if [ ! $? -eq 0 ]; then
       echo "No repo returned..."
       return
     fi
 
-    idea $repo_path
+    pushd $repo_path
+    idea .
   done
 }
 
