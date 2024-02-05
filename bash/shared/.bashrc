@@ -61,6 +61,8 @@ updateFileMessage=$'
 #########################################
 
 '
+shopt -s histappend
+export HISTFILESIZE=100000
 
 ##########
 ## vars ##
@@ -150,7 +152,7 @@ editCorpBash() {
     fi
   fi
 
-  stat -f "%n" ${corpPath}/$target_corp_bash
+  stat --format "%n" ${corpPath}/$target_corp_bash
   if [ ! $? -eq 0 ]; then
     echo "Can't access ${target_corp_bash}..."
     return
@@ -306,7 +308,7 @@ function jrnl(){
 
 
 
-alias layerlog='sudo docker-compose --file /opt/api-gateway/docker-compose.yml logs -t -f --tail 200 api-gateway'
+alias layerlog='sudo docker compose --file /opt/api-gateway/docker-compose.yml logs -t -f --tail 200 api-gateway'
 
 alias baelog='cd /var/log/baesystems/ '
 alias baeopt='cd /opt/baesystems/ '
@@ -315,6 +317,7 @@ alias baeopt='cd /opt/baesystems/ '
 ##########################################################
 alias gpsho='git push origin'
 alias gd='git diff --color'
+alias gdc='gd --cache'
 alias gdhead='gd HEAD'
 alias gdc='git diff --cached '
 alias gdorigin='git diff origin/$(gitbranch)'
@@ -400,10 +403,13 @@ mvn(){
     $(which mvn) $@
   fi
 }
+alias mcc='mvn clean compile'
 alias   mci='mvn clean install'
 alias  mciskip='type mciskip && mci -Dmaven.test.skip=true'
 alias mvntree='mvn dependency:tree'
 alias mcirun='type mcirun; mci spring-boot:run'
+alias mifast='echo "Minimal mvn install..." && mvn install -Dmaven.test.skip=true -DskipTests -Djacoco.skip=true'
+alias mcifast='echo "Minimal mvn install..." && mvn clean install -Dmaven.test.skip=true -DskipTests -Djacoco.skip=true'
 
 
 
@@ -535,7 +541,7 @@ function gitfeaturebranch() {
 
   new_branch_name=""
   new_branch_name+="${feature_branch_name_prefix}"
-  new_branch_name+=$( [ "$use_target_branch_name" = false ] && echo "/${target_branch}")
+  new_branch_name+=$( [ "$use_target_branch_name" = true ] && echo "/${target_branch}")
   new_branch_name+="/${name}"
   new_branch_name+=$( [ "$use_author_name" = true ] && echo "-${git_branch_author_name}")
   
@@ -543,6 +549,7 @@ function gitfeaturebranch() {
   gfo
   git checkout -b ${new_branch_name} origin/$target_branch || git rebase origin/$target_branch
 }
+
 
 gittmpbranch(){
   gfo
@@ -661,6 +668,12 @@ function gjiracommit(){
     return 0
   fi
   msg=$@
+  jira_id="$(git_jira_issue)"
+  if [ -z "${jira_id}" ]; then
+    echo "Jira issue id for this branch is not set. Will not commit changes"
+    return 1
+  fi
+
   gcommit -m "$(git_jira_issue): ${msg}"
 }
 
@@ -714,6 +727,14 @@ gme(){
   gchgrep "${git_branch_author_name}" 
 }
 
+grefs(){
+  pattern=".*"
+  if [ ! -z $1 ]; then
+    pattern=$1 
+  fi
+  git for-each-ref --format='%(refname)' refs/heads/ refs/remotes/origin | awk '{sub(/^refs\/heads\//, ""); sub(/^refs\/remotes\/origin\//, ""); print}' | grep "$pattern" | sort | uniq
+}
+
 function gchgrep() {
   #branch=$(gbragrep  $1)
   #if [ ! "$branch" ];then 
@@ -724,8 +745,12 @@ function gchgrep() {
   #    return
   #  fi
   #fi
+  pattern=".*"
+  if [ ! -z $1 ]; then
+    pattern=$1 
+  fi
   declare -a branches=()
-  eval branches=("$(gbraremotegrep  $1)")
+  eval branches=("$(grefs $pattern)")
 
   branch_count=${#branches[@]}
   case $branch_count in
@@ -1023,10 +1048,11 @@ function perform-in-dirs() {
 alias dpsa='dockerps -a'
 alias drestart-all='docker restart $(docker ps -qa)'
 alias dockerps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Names}}"'
-alias dcd='docker-compose down'
-alias dcud='docker-compose up -d'
+alias dcd='docker compose down'
+alias dcud='docker compose up -d'
 alias docker-restart='dcd && dcud'
 alias docker-clean='docker rm $(docker ps -aq -f status=exited)'
+alias docker-stop-all='docker stop $(docker ps -aq)'
 
 
 
@@ -1171,26 +1197,40 @@ alias ls1='ls -1'
 
 alias tree2='tree -L 2'
 
+## okta-aws-cli
+export RMD_ORG_DOMAIN_GLOBAL='resmed.okta.com'
+export RMD_GLOBAL_OIDC_CLIENT_ID='0oapicxw19tkXuW2T2p7'
+export RMD_NONPROD_APP_ID='0oa4hc1t74n8BBFxv2p7'
+export RMD_NONPROD_APP_URL='https://resmed.okta.com/home/amazon_aws/0oa4hc1t74n8BBFxv2p7/272'
+
+okta_nonprod(){
+  okta-aws-cli --aws-acct-fed-app-id ${RMD_NONPROD_APP_ID} \
+               --oidc-client-id ${RMD_GLOBAL_OIDC_CLIENT_ID} \
+               --org-domain ${RMD_ORG_DOMAIN_GLOBAL} \
+               --open-browser \
+               --session-duration 28800
+}
+
 ## saml2aws
-export amr_nonprod_profile='rmd-amr-nonprod'
-export amr_prod_profile='rmd-amr-prod'
-export eu_prod_profile='rmd-eu-prod'
-export eu_nonprod_profile='rmd-eu-nonprod'
+export nonprod_amr_profile='nonprod-amr'
+export prod_amr_profile='prod-amr'
+export prod_eu_profile='prod-eu'
+export nonprod_eu_profile='nonprod-eu'
 
 alias s2a='saml2aws -a ${SAML2AWS_PROFILE}'
-alias saml2console='open $(s2a console --link)'
-alias saml2link='s2a console --link | tr -d "\n" | pbcopy'
+alias saml2console='wslview $(s2a console --link)'
+alias saml2link='s2a console --link | tr -d "\n" | xclip -selection clipboard'
 alias mcs-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::668994236368:role/tlz_admin '
 alias mcs1-dev='set_nonprod_profile; s2alogin --role=arn:aws:iam::779411946484:role/tlz_admin '
 alias mcs-alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
-alias amr-prod='set_prod_profile; s2alogin '
-alias prod='amr-prod'
+alias prod-amr='set_prod_profile; s2alogin '
+alias prod='prod-amr'
 alias airview-prd='set_prod_profile; s2alogin --role=arn:aws:iam::077995606180:role/tlz_developer'
-alias amr-nonprod='set_nonprod_profile; s2alogin '
-alias nonprod='amr-nonprod'
-alias eunonprod='set_eu_nonprod_profile; s2alogin '
-alias amr-nonprod-link='set_nonprod_profile; saml2link '
-alias ranlink='amr-nonprod-link'
+alias nonprod-amr='set_nonprod_profile; s2alogin '
+alias nonprod='nonprod-amr'
+alias eunonprod='set_nonprod_eu_profile; s2alogin '
+alias nonprod-amr-link='set_nonprod_profile; saml2link '
+alias ranlink='nonprod-amr-link'
 alias rapi='ranlink'
 alias alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
 alias s2alist='s2a --skip-prompt list-roles'
@@ -1215,10 +1255,13 @@ source_saml_aws_env(){
 source_saml_aws_env
 
 
-alias set_nonprod_profile='set-aws-env-profile ${amr_nonprod_profile}'
-alias set_prod_profile='set-aws-env-profile ${amr_prod_profile}'
-alias set_eu_nonprod_profile='set-aws-env-profile ${eu_nonprod_profile}'
-alias set_eu_prod_profile='set-aws-env-profile ${eu_prod_profile}'
+alias set_nonprod_profile='set-aws-env-profile ${nonprod_amr_profile}'
+alias set_prod_profile='set-aws-env-profile ${prod_amr_profile}'
+alias set_nonprod_eu_profile='set-aws-env-profile ${nonprod_eu_profile}'
+alias set_prod_eu_profile='set-aws-env-profile ${prod_eu_profile}'
+
+export SAML2AWS_KEYRING_BACKEND=pass
+export GPG_TTY=$(tty)
 
 set-aws-env-profile(){
   profile_name=$1
@@ -1356,7 +1399,7 @@ tf-backend() {
   do_prompt "Run 'terraform init --reconfigure' ? " && terraform init --reconfigure
 }
 
-tf_dht(){
+tf-dht(){
 
   find . -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
 }
@@ -1382,7 +1425,7 @@ tf-get(){
 #  echo "Temporarily replacing all localterraform.com hostnames for module sources"
 #  find -name "*.tf" -exec sed -i 's/localterraform.com/ptfe.prod.dht.live/g' {} \; 
 #  tf_eu
-  tf_dht
+  tf-dht
 
   #terraform get 2>&1 | tee ${tmp_file}
   terraform init 2>&1 | tee ${tmp_file}
@@ -1391,78 +1434,42 @@ tf-get(){
     tf-get
   else
     echo "terraform get succeeded"
-    find . -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
+#    find . -name "*.tf" -exec sed -i 's/ptfe.prod.dht.live/localterraform.com/g' {} \;
   fi
 }
 
-
-java_version(){
-  version=$1
-  versions_list=(7 8 11 17) 
-  if [ ! -n "${version}" ]; then
-    select v in "${versions_list[@]}" exit; do
-      case $v in
-        exit)
-          return break ;;
-        *)
-          echo $v
-          version=$v
-          break ;;
-      esac
-    done
-  fi
-    
-  echo $version
-#  case $version in
-#    7)
-#      sudo update-alternatives --set java "${JAVA_7_CONFIG}" && set_java_home "${JAVA_7_HOME}"
-#      ;;
-#    8)
-#      sudo update-alternatives --set java "${JAVA_8_CONFIG}" && set_java_home "${JAVA_8_HOME}"
-#      ;;
-#    11)
-#      sudo update-alternatives --set java "${JAVA_11_CONFIG}" && set_java_home "${JAVA_11_HOME}"
-#      ;;
-#    17)
-#      sudo update-alternatives --set java "${JAVA_17_CONFIG}" && set_java_home "${JAVA_17_HOME}"
-#      ;;
-#  esac
-  case $version in
-    7)
-      echo "export JAVA_HOME=$(java_7_home)" > ~/.java_home
-      ;;
-    8)
-      echo "export JAVA_HOME=$(java_8_home)" > ~/.java_home
-      ;;
-    11)
-      echo "export JAVA_HOME=$(java_11_home)" > ~/.java_home
-      ;;
-    17)
-      echo "export JAVA_HOME=$(java_17_home)" > ~/.java_home
-      ;;
-  esac
-
-  source ~/.java_home
-}
-source ~/.java_home
-
-
+alias get-java-home='dirname $(dirname `readlink -f /etc/alternatives/java`)'
+alias set-java-home='echo "export JAVA_HOME=`get-java-home`" > ~/.java_home && source ~/.java_home'
+alias jv='java --version || java -version'
+alias jh='echo $JAVA_HOME'
 alias java7='java_version 7'
 alias java8='java_version 8'
 alias java11='java_version 11'
 alias java17='java_version 17'
+set-java-home
+
+java-version(){
+
+  sudo update-alternatives --config java
+
+  set-java-home
+  jv
+}
+
+
 
 alias l='ls -CF --group-directories-first'
 
 set_java_home(){
-  target_java_home=$1
+  target_java_version=$1
   
-  if [ -z "$target_java_home" ]; then
-    target_java_home="${JAVA_11_HOME}"
+  if [ -z "$target_java_version" ]; then
+    sudo update-java-alternatives --auto
+  else
+    target_java_home=$(sudo update-java-alernatives --list | grep "java-1.${target_java_version}" | awk '{print $NF}')
+
+    echo "export JAVA_HOME=${target_java_home}" > ~/.java_home
   fi  
-
-
-  echo "export JAVA_HOME=${target_java_home}" > ~/.java_home
   source ~/.java_home
 }
 
@@ -1471,8 +1478,13 @@ set_java_home(){
 ## open tmp file in vim
 tmp(){
   tmp_file=$(mktemp)
-  echo "your temp file: $tmp_file"
-  vim $tmp_file
+  export TMP_FILE=$tmp_file
+}
+edit-tmp(){
+  if [ -z "${TMP_FILE}" ]; then
+    tmp
+  fi
+    vim $TMP_FILE
 }
 
 tmp-dir(){
@@ -1489,8 +1501,17 @@ processFile() {
 }
 
 ## github
+
+gh-repos(){
+  prefix=$1
+  gh api /orgs/resmed/repos --jq '.[].name | select(startswith("$prefix"))' --paginate
+}
 mcs_repos(){
   gh api /orgs/resmed/repos  --jq '.[].name | select(startswith("mcs"))' --paginate | tee ${github_resmed_path}/mcs/mcs-repos.txt
+}
+
+pr-url(){
+   wslview "https://github.com/resmed/$(curr_dir)/pull/new/$(gitbranch)"
 }
 
 mcs_repos_sync(){
@@ -1644,7 +1665,7 @@ podsearch(){
 # Function to search for kubectl get pods and prompt user to select a pod
 podlogs() {
   local pod_names
-  team="messaging"
+  team="iot"
   pod_name_filter=""
   container_name_filter=""
 
@@ -1763,5 +1784,17 @@ awsselect(){
   done
 }
 
+awsme(){
+  aws sts get-caller-identity
+}
+
 
 alias set-ssh-key-permissions='chmod 600 ~/.ssh/id_*'
+
+
+
+alias stripcolors='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"'
+
+
+## TMUX ##
+alias tname="tmux display-message -p '#S'"
