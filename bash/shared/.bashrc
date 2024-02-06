@@ -1807,3 +1807,47 @@ alias stripcolors='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"'
 
 ## TMUX ##
 alias tname="tmux display-message -p '#S'"
+
+
+## repo code ##
+gorepo(){
+  repo=$(select-repo $@ | xargs)
+  #echo "select-repo: <$repo>"
+  if [  "${#repo[@]}" == 0 ]; then
+    echo "Exit"
+    return
+  fi
+  repo_path=${reposPath}/${repo}
+
+  stat --format "%n" $repo_path  > /dev/null
+  if [ ! $? -eq 0 ]; then
+    echo "No repo returned..."
+    return
+  fi
+
+  pushd $repo_path
+}
+
+code(){
+  repo=($(select-repo $@ | xargs))
+  if [  "${#repo[@]}" == 0 ]; then
+    echo "Exit"
+    return
+  fi
+  for r in "${repo[@]}"; do
+    repo_path=${reposPath}/${r}
+
+    stat --format "%n" $repo_path
+    if [ ! $? -eq 0 ]; then
+      echo "No repo returned..."
+      return
+    fi
+
+    pushd $repo_path
+    idea .
+  done
+}
+
+context-code(){
+  code ${REPO_CLONE_CONTEXT}
+}
