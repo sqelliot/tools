@@ -448,8 +448,16 @@ function gogit() {
   pushd ${reposPath}/$1
 }
 
+git-copy-commit-id(){
+  git rev-parse --short HEAD | clipboard
+}
+
 function gitbranch() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ""
+}
+
+gitbranchnoslashes(){
+  echo $(gitbranch) | sed  's/\//-/g'
 }
 
 function gitclone() {
