@@ -418,6 +418,10 @@ alias gshow='git show --color --pretty=format:%b '
 ##### Maven commands ##### 
 MCI='mvn clean install'
 
+set-version() {
+  mvn versions:set -DnewVersion=$1 -DgenerateBackupPoms=false
+}
+
 
 mvn(){
   stat ./mvnw > /dev/null
@@ -427,11 +431,14 @@ mvn(){
     $(which mvn) $@
   fi
 }
+
+export MAVEN_OPTS="-Xmx2048m -Xmx1024m"
 alias mcc='mvn clean compile'
 alias   mci='mvn clean install'
 alias  mciskip='type mciskip && mci -Dmaven.test.skip=true'
 alias mvntree='mvn dependency:tree'
 alias mcirun='type mcirun; mci spring-boot:run'
+alias mvnrun='mvn spring-boot:run'
 alias mifast='echo "Minimal mvn install..." && mvn install -Dmaven.test.skip=true -DskipTests -Djacoco.skip=true'
 alias mcifast='echo "Minimal mvn install..." && mvn clean install -Dmaven.test.skip=true -DskipTests -Djacoco.skip=true'
 
