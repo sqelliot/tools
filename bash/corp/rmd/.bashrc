@@ -278,9 +278,27 @@ alias messagingpods='kubectl get pods -n shared-messaging'
 
 ## saml2aws configure
 configure-saml2aws(){
-  
-  echo "nonprod-amr"
-  saml2aws configure --idp-account=nonprod-amr --profile=nonprod-amr --url=https://resmed.okta.com/home/amazon_aws/0oa4hc1t74n8BBFxv2p7/272  --username=sean.elliott@resmed.com --idp-provider=Okta --mfa=Auto --session-duration=28800 --skip-prompt
-  echo "prod-amr"
-  saml2aws configure --idp-account=prod-amr --profile=prod-amr --url=https://resmed.okta.com/home/amazon_aws/0oa4hbysofL5S7RbG2p7/272 --username=sean.elliott@resmed.com --idp-provider=Okta --mfa=Auto --session-duration=28800  --skip-prompt
+  profile=$1
+  url=$2
+  region="${3:-us-west-2}"
+
+  saml2aws configure \
+    --idp-account="${profile}" \
+    --profile="${profile}" \
+    --url=$url \
+    --username=sean.elliott@resmed.com \
+    --idp-provider=Okta \
+    --mfa=Auto \
+    --session-duration=28800 \
+    --skip-prompt \
+    --region=$region 
+}
+
+init-sam2aws-configs(){
+  echo "nonprod-global"
+  configure-saml2aws nonprod-global https://resmed.okta.com/home/amazon_aws/0oa4hc1t74n8BBFxv2p7/272
+  echo "prod-global"
+  configure-saml2aws prod-global https://resmed.okta.com/home/amazon_aws/0oa4hbysofL5S7RbG2p7/272
+  echo "nonprod-eu"
+  configure-saml2aws nonprod-eu https://resmed.okta.com/home/amazon_aws/0oabej0gdfNbZ4j7u2p7/272 eu-central-1
 }
