@@ -47,7 +47,7 @@ browse-workspace(){
 }
 
 browse-repo(){
-  firefox $(repo-link-from-path)
+  wslview $(repo-link-from-path)
 
 }
 
