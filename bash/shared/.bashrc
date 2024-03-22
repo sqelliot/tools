@@ -1080,6 +1080,7 @@ alias dcud='docker compose up -d'
 alias docker-restart='dcd && dcud'
 alias docker-clean='docker rm $(docker ps -aq -f status=exited)'
 alias docker-stop-all='docker stop $(docker ps -aq)'
+alias docker-sha256="docker inspect --format='{{index .RepoDigests 0}}'"
 
 
 
@@ -1261,6 +1262,8 @@ alias ranlink='nonprod-amr-link'
 alias rapi='ranlink'
 alias alpha='set_nonprod_profile; s2alogin --role=arn:aws:iam::360808914875:role/tlz_admin'
 alias s2alist='s2a --skip-prompt list-roles'
+alias s2afetchroles='s2alist | tee ~/.aws/${SAML2AWS_PROFILE}_roles'
+alias s2aprintroles='cat ~/.aws/${SAML2AWS_PROFILE}_roles'
 
 s2arolescsv(){
   s2alist | grep -E "Account:|arn:aws:iam" | awk 'BEGIN { FS = ": " } /Account:/ { account = $2 } /arn:aws:iam/ { sub("arn:aws:iam::", "", $1); printf "%s,%s,%s\n", account, $1, $2 }' 
@@ -1291,15 +1294,16 @@ export SAML2AWS_KEYRING_BACKEND=pass
 export GPG_TTY=$(tty)
 
 set-aws-env-profile(){
-  profile_name=$1
-  echo "Setting $profile_name profile..."
+  s2a_profile_name=$1
+  aws_profile_name=$s2a_profile_name
+  echo "Setting $s2a_profile_name profile..."
 
 
   truncate -s 0 $AWS_PROFILE_FILE_PATH
-  echo "export AWS_PROFILE=${profile_name}" >> $AWS_PROFILE_FILE_PATH
+  echo "export AWS_PROFILE=${aws_profile_name}" >> $AWS_PROFILE_FILE_PATH
 
   truncate -s 0 $SAML2AWS_FILE_PATH
-  echo "export SAML2AWS_PROFILE=${profile_name}" >> $SAML2AWS_FILE_PATH
+  echo "export SAML2AWS_PROFILE=${s2a_profile_name}" >> $SAML2AWS_FILE_PATH
 
 #  echo "SAML2AWS_PROFILE=${SAML2AWS_PROFILE}"
 #  echo "AWS_PROFILE=${AWS_PROFILE}"
@@ -1467,7 +1471,7 @@ tf-get(){
 
 alias get-java-home='dirname $(dirname `readlink -f /etc/alternatives/java`)'
 alias set-java-home='echo "export JAVA_HOME=`get-java-home`" > ~/.java_home && source ~/.java_home'
-alias jv='java --version || java -version'
+alias jv='echo $JAVA_HOME && java --version || java -version'
 alias jh='echo $JAVA_HOME'
 alias java7='java_version 7'
 alias java8='java_version 8'
@@ -1538,7 +1542,15 @@ mcs_repos(){
 }
 
 pr-url(){
-   wslview "https://github.com/resmed/$(curr_dir)/pull/new/$(gitbranch)"
+   gh pr create -w
+}
+
+prview(){
+  gh pr view --web
+}
+showpr(){
+
+  gh pr view $(gh pr list -L 1 --json number | jq '.[0].number') --web
 }
 
 mcs_repos_sync(){
@@ -1665,11 +1677,6 @@ gchfiledefault(){
   git checkout $(gitdefaultbranch) $1
 }
 
-
-pr(){
-
-  gh pr view $(gh pr list -L 1 --json number | jq '.[0].number') --web
-}
 
 alias echo-settings="sed 's/<password>.*<\/password>/<password>PASSWORD<\/password>/g' ~/.m2/settings.xml"
 
@@ -1825,10 +1832,19 @@ alias stripcolors='sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"'
 
 ## TMUX ##
 alias tname="tmux display-message -p '#S'"
+alias tnames="tmux list-sessions -F '#S'"
+
+tclean-sessions() {
+  for session in $(tnames); do
+    if [ "${session}" != `tname` ]; then
+      tmux kill-session -t $session 
+    fi
+   done
+}
 
 
-## repo code ##
-gorepo(){
+get-repo-path(){
+
   repo=$(select-repo $@ | xargs)
   #echo "select-repo: <$repo>"
   if [  "${#repo[@]}" == 0 ]; then
@@ -1842,8 +1858,19 @@ gorepo(){
     echo "No repo returned..."
     return
   fi
+ 
+  echo "${repo_path}"
+}
 
-  pushd $repo_path
+## repo code ##
+repo(){
+
+  pushd $(get-repo-path $@)
+}
+
+repo-window(){
+  path=$(get-repo-path $@)
+  tmux new-window -c "${path}"  -n $(basename "${path}")
 }
 
 code(){
@@ -1863,6 +1890,7 @@ code(){
 
     pushd $repo_path
     idea .
+    popd
   done
 }
 
