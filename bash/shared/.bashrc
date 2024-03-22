@@ -386,7 +386,8 @@ gselect(){
 }
 
 gcom(){
-  gcommit -m "$@"
+  msg="$@"
+  gcommit -m "${msg}"
 }
 gcommit(){ 
   git commit -S "$@"
