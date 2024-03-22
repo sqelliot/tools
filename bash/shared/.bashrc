@@ -359,7 +359,7 @@ alias   grv='git remote -v'
 alias   gri='git rebase -i'
 alias    gsta='git status'
 alias   gka='gitk --all'
-alias grc='git rebase --continue'
+alias grc='gadd . && git rebase --continue'
 alias gra='git rebase --abort'
 alias gcommitcontents='git diff-tree --no-commit-id --name-only -r '
 alias gcp='git cherry-pick '
@@ -371,6 +371,20 @@ alias git-chmod-exec='git update-index --chmod=+x --add '
 alias gstash='git stash'
 alias isgit='git -C . rev-parse'
 
+gselect(){
+  select name in $(git diff --name-only) exit; do
+    case $name in
+      exit)
+        return
+        break;;
+      *)
+        gpatch $name
+        break;;
+    esac
+  done
+  
+}
+
 gcom(){
   gcommit -m "$@"
 }
@@ -379,8 +393,10 @@ gcommit(){
 }
 
 gbranchlog(){
-  git log $(gitdefaultbranch)..$(gtibranch)
+  git log $(gitdefaultbranch)..$(gitbranch) $@
 }
+
+
 
 export GIT_EDITOR=vim
 
