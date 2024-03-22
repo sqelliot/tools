@@ -317,7 +317,6 @@ function jrnl(){
 
 
 
-alias layerlog='sudo docker compose --file /opt/api-gateway/docker-compose.yml logs -t -f --tail 200 api-gateway'
 
 alias baelog='cd /var/log/baesystems/ '
 alias baeopt='cd /opt/baesystems/ '
