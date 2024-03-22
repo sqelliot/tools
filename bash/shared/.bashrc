@@ -656,8 +656,15 @@ function is-jira-issue-format(){
   fi
 }
 
+git-branch-suffix(){
+  gitbranch | awk -F '/' '{print $NF}'
+}
+
+#git-base-branch(){
+#}
+
 function git_jira_issue() {
-  result=$(gitbranch | awk -F '/' '{print $NF}' | awk -F '-' '{print $1"-"$2}')
+  result=$(git-branch-suffix | awk -F '-' '{print $1"-"$2}')
 
   [[ $(is-jira-issue-format $result) == 0 ]] && echo $result || echo ""
 }
