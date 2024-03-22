@@ -496,14 +496,19 @@ function gitreset() {
 gitnewbranch() {
     local task_id=$1
     local semantic_name=$2
+    local meta_info=$3
 
     # If task_id is not provided, prompt the user to enter it
     if [ -z "$task_id" ]; then
         read -p "Enter the task_id: " task_id
     fi
 
+    if [ ! -z "$meta_info" ]; then
+       meta_info="-${meta_info}"
+    fi
+
     # Define the list of valid semantic names
-    valid_semantic_names=("chore" "docs" "feat" "fix" "localize" "refactor" "style" "test")
+    valid_semantic_names=("chore" "docs" "feature" "fix" "refactor" "style" "test")
 
     # If semantic_name is not provided, prompt the user to select from the options
     if [ -z "$semantic_name" ]; then
@@ -529,37 +534,12 @@ gitnewbranch() {
     gfo
 
     # Get the default branch name
-    default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+    default_branch=$(gitdefaultbranch)
 
     # Create and switch to the new branch
-    branch_name="${semantic_name}/${task_id}"
+    branch_name="${semantic_name}/${task_id}${meta_info}"
     git checkout -b "$branch_name" "$default_branch"
 }
-
-# Usage example:
-# gitnewbranch TASK-123 feat
-# or
-# gitnewbranch feat
-# or
-# gitnewbranch
-
-#function gitnewbranch() {
-#  if [ "$#" -lt 1 ]; then
-#    echo "Usage: ${FUNCNAME[0]} <name> [target branch]"
-#    return 0
-#  fi
-#  
-#  name=$1
-#  target_branch=$(gitdefaultbranch)
-#
-#  if [ "$#" = 2 ]; then
-#    target_branch=$2
-#  fi
-#
-#  gfo
-#  git checkout -b feature/${target_branch}/${git_branch_author_name}/${name} origin/$target_branch
-#
-#}
 
 function gitfeaturebranch() {
   if [ "$#" -lt 1 ]; then
